@@ -71,39 +71,27 @@ if (!function_exists('com_office_cd')) {
     {
         $CI =& get_instance();
         $CI->load->model('Common_model');
-        
-        // 디버깅: 전달된 값 확인
-        $debug_info = "<!-- DEBUG com_office_cd: office_cd='" . htmlspecialchars($office_cd) . "', opt_item1='" . htmlspecialchars($opt_item1) . "' -->\n";
-        $debug_info .= "<!-- DEBUG: office_cd empty check = " . (empty($office_cd) ? 'true' : 'false') . " -->\n";
-        $debug_info .= "<!-- DEBUG: office_cd value length = " . strlen($office_cd) . " -->\n";
-        
+
         // T02 그룹 코드 조회
         $t02_list = array();
         try {
             $sql = "EXEC [dbo].[Proc_Com_Code_List] @GRP_CD = ?, @OPT_ITEM1 = ?";
             $query = $CI->db->query($sql, array('T02', $opt_item1));
             $result = $query->result();
-            
-            $debug_info .= "<!-- DEBUG: Query result count = " . count($result) . " -->\n";
-            
+
             if (!empty($result)) {
                 foreach ($result as $row) {
-                    $cd = trim($row->COMN_CD ?? $row->CD ?? $row->COM_CD ?? '');
-                    $nm = trim($row->CD_NM ?? $row->COM_NM ?? '');
                     $t02_list[] = array(
-                        'cd' => $cd,
-                        'nm' => $nm
+                        'cd' => trim($row->COMN_CD ?? $row->CD ?? $row->COM_CD ?? ''),
+                        'nm' => trim($row->CD_NM ?? $row->COM_NM ?? '')
                     );
-                    $debug_info .= "<!-- DEBUG: Code item - cd='" . htmlspecialchars($cd) . "', nm='" . htmlspecialchars($nm) . "', match=" . ($office_cd == $cd ? 'true' : 'false') . " -->\n";
                 }
             }
         } catch (Exception $e) {
             log_message('error', 'Failed to load office code list: ' . $e->getMessage());
-            $debug_info .= "<!-- DEBUG: Exception = " . htmlspecialchars($e->getMessage()) . " -->\n";
         }
-        
-        $html = $debug_info;
-        $html .= '<select name="OFFICE_CD" style="height:25px;" class="custom-select">' . "\n";
+
+        $html = '<select name="OFFICE_CD" style="height:25px;" class="custom-select">' . "\n";
         $selected_all = (empty($office_cd)) ? ' selected' : '';
         $html .= '<option value=""' . $selected_all . '>전체</option>' . "\n";
         
@@ -664,3 +652,54 @@ if (!function_exists('com_cust_st_filed')) {
     }
 }
 
+/**
+ * 고객 교환 리스트 선택 박스 생성
+ * @param string $R_CUST_CD 선택된 고객 코드
+ * @param string $A_CRN CRN 값
+ * @return string HTML
+ */
+if (!function_exists('com_cust_exchange')) {
+    function com_cust_exchange($R_CUST_CD = '', $A_CRN = '')
+    {
+        $CI =& get_instance();
+        $CI->load->model('Common_model');
+
+        // com_cust_exchange 그룹 코드 조회
+        $Ex_Cust_list = array();
+        try {
+            $sql = "EXEC [dbo].[Proc_Oms_Cust_Exchange_List] ?";
+            $query = $CI->db->query($sql, array($A_CRN));
+
+            if ($query) {
+                $result = $query->result();
+
+                if (!empty($result)) {
+                    foreach ($result as $row) {
+                        $Ex_Cust_list[] = array(
+                            'cd' => trim($row->CUST_CD ?? ''),
+                            'nm' => trim($row->CUST_NM ?? '')
+                        );
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            log_message('error', 'Failed to load customer exchange list: ' . $e->getMessage());
+        }
+        
+        $html = '<select name="R_CUST_CD" id="R_CUST_CD" style="width:70px;" class="custom-select">' . "\n";
+        $html .= '<option value="">선택</option>' . "\n";
+        
+        if (!empty($Ex_Cust_list)) {
+            foreach ($Ex_Cust_list as $item) {
+                $fare_cd = $item['cd'];
+                $fare_nm = $item['nm'];
+                // 빈 값인 경우 옵션 출력하지 않음
+                if (empty($fare_cd)) continue;
+                $html .= '<option value="' . htmlspecialchars($fare_cd) . '">' . htmlspecialchars($fare_nm) . '</option>' . "\n";
+            }
+        }
+
+        $html .= '</select>' . "\n";
+        return $html;
+    }
+}

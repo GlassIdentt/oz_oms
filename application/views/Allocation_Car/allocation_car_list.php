@@ -638,9 +638,7 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 								<div style="width: 50px;"></div>
 								<div style="width: 20px;"></div>
 								<span class="font_bold">오더전달</span>
-								<select name="ORDER_DELIVERY" class="text-input-style">
-									<option value="">선택</option>
-								</select>
+								<?php echo com_aloc_type($R_CUST_CD); ?>
 								<button class="event-btn forward-btn" data-name="오더전달">
 									<span class="event-btn-icon icon-arrow"></span>
 									<span>오더전달</span>
