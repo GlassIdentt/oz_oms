@@ -551,15 +551,52 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 			event.preventDefault();
 			event.stopPropagation();
 		}
+		
+		console.log('showTitleSelectLayer 함수 호출됨');
+		
 		var layer = document.getElementById('title_item');
-		if (layer) {
-			layer.style.display = 'block';
-			layer.style.opacity = '0';
-			layer.style.transition = 'opacity 0.3s';
+		var overlay = document.getElementById('title_item_overlay');
+		
+		console.log('레이어 요소:', layer);
+		console.log('오버레이 요소:', overlay);
+		
+		if (!layer) {
+			console.error('title_item 레이어를 찾을 수 없습니다.');
+			return false;
+		}
+		
+		if (!overlay) {
+			console.error('title_item_overlay 오버레이를 찾을 수 없습니다.');
+		}
+		
+		// 레이어와 오버레이를 body에 직접 추가 (이미 있으면 이동)
+		if (layer && layer.parentElement !== document.body) {
+			document.body.appendChild(layer);
+		}
+		if (overlay && overlay.parentElement !== document.body) {
+			document.body.appendChild(overlay);
+		}
+		
+		// 오버레이 표시
+		if (overlay) {
+			overlay.style.display = 'block';
+			// 페이드인 효과를 위해 약간의 지연 후 show 클래스 추가
 			setTimeout(function() {
-				layer.style.opacity = '1';
+				overlay.classList.add('show');
 			}, 10);
 		}
+		
+		// 레이어 표시
+		if (layer) {
+			layer.style.display = 'block';
+			layer.style.visibility = 'visible';
+			// 페이드인 효과를 위해 약간의 지연 후 show 클래스 추가
+			setTimeout(function() {
+				layer.classList.add('show');
+				console.log('레이어 표시 완료');
+			}, 10);
+		}
+		
 		return false;
 	}		
 </script>		
