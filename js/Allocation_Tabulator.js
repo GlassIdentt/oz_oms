@@ -1,3 +1,16 @@
+/**
+ * 이벤트 기본 동작 방지 및 전파 중지
+ * @param {Event} event - 이벤트 객체
+ * @returns {boolean} - 항상 false 반환
+ */
+function preventEventDefault(event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    return false;
+}
+
 function ORD_CHANGE(SO_NO){
     window.open('ord_change_info.php?ORDER_NO='+SO_NO,'ORD_change'+ORD_ID,'scrollbars=yes,width=900,height=300,left=0,top=0');
 }
@@ -22,11 +35,8 @@ function OP(a,b){
 
 function operat_run(event){
     // 이벤트가 전달된 경우 기본 동작 방지
-    if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-    }
-    
+    preventEventDefault(event);
+
     if (document.querySelector('#CAR_NO').value == '' || document.querySelector('#DRV_CD').value == ''){
         showToast('차량검색이 안되었거나, 차량번호만 입력 되었습니다!!  차량을 검색해서 선택해 주십시요!!');
         document.querySelector('#CAR_NO').focus();		
@@ -93,12 +103,9 @@ function grid_form_data(resultData_length){
     
 }
 
-function operat_cancle(i, event){	   
+function operat_cancle(i, event){
     // 이벤트가 전달된 경우 기본 동작 방지
-    if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-    }
+    preventEventDefault(event);
     
     // Query 변수 업데이트
     if (typeof buildQuery === 'function') {
@@ -121,12 +128,10 @@ function operat_cancle(i, event){
     return false;
 }	
 
-function Aloc_Type_Change(event){	   
+function Aloc_Type_Change(event){
     // 이벤트가 전달된 경우 기본 동작 방지
-    if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-    }	
+    preventEventDefault(event);
+
     if (document.querySelector('#ALOC_STAT').value == '') {
         showToast('배차유형 항목을 선택해 주십시요');			
         document.querySelector('#ALOC_STAT').focus();
@@ -153,7 +158,9 @@ function excelDown(){
 }	
 
 
-function ORD_DELIVER(){	   
+function ORD_DELIVER(event){
+    preventEventDefault(event);
+
     if (document.querySelector('#R_CUST_CD').value=='') {
         showToast('오더를 전달 할 업체를 선택해 주십시요!');
         document.querySelector('#R_CUST_CD').focus();
@@ -166,16 +173,19 @@ function ORD_DELIVER(){
         document.querySelector('#CNT_NO').value=resultData_length;
         if (resultData_length == 0){
             showToast('오더가 선택되지 않았습니다!, 1개 이상의 오더를 선택하세요!!');				
-            return;
+            return false;
         }else{
 
 			document.Allocation_Car.action=(typeof SITE_URL !== 'undefined' ? SITE_URL + '/' : '') + 'Allocation_car/order_exchange_insert_process?Allocation_page='+$Allocation_page+'&R_CUST_CD='+$R_CUST_CD;
             document.Allocation_Car.submit();			
-        }		
+        }	
+		return false;	
     }
 }
 
-function ORD_DELIVER_CANCLE(){	   
+function ORD_DELIVER_CANCLE(event){
+    preventEventDefault(event);
+
     if (document.querySelector('#R_CUST_CD').value=='') {
         showToast('오더를 취소할 업체를 선택해 주십시요!');
         document.querySelector('#R_CUST_CD').focus();
@@ -188,21 +198,19 @@ function ORD_DELIVER_CANCLE(){
         document.querySelector('#CNT_NO').value=resultData_length;
         if (resultData_length == 0){
             showToast('오더가 선택되지 않았습니다!, 1개 이상의 오더를 선택하세요!!');				
-            return;
+            return false;
         }else{
-            document.Allocation_Car.action='order_exchange_cancle_process.php?'+$Query+'&Allocation_page='+$Allocation_page+'&R_CUST_CD='+$R_CUST_CD;
+			document.Allocation_Car.action=(typeof SITE_URL !== 'undefined' ? SITE_URL + '/' : '') + 'Allocation_car/order_exchange_cancle_process?Allocation_page='+$Allocation_page+'&R_CUST_CD='+$R_CUST_CD;
             document.Allocation_Car.submit();			
-        }		
+        }	
+		return false;	
     }
 }
 
 function app_order_sand(event){
-
     // 이벤트가 전달된 경우 기본 동작 방지
-    if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-    }	
+    preventEventDefault(event);
+
     let Query=document.Allocation_Car.Query.value;
     let $Allocation_page=document.querySelector('#Allocation_page').value;
     let resultData_length=grid_form_data(); // 그리드 데이터 가져오기
@@ -211,17 +219,15 @@ function app_order_sand(event){
         showToast('오더가 선택되지 않았습니다!, 1개 이상의 오더를 선택하세요!!');
         return false;
     }else{
-        document.Allocation_Car.action='app_order_sand_process.php?'+Query+'&Allocation_page='+$Allocation_page;
+		document.Allocation_Car.action=(typeof SITE_URL !== 'undefined' ? SITE_URL + '/' : '') + 'Allocation_car/app_order_sand_process.php?'+Query+'&Allocation_page='+$Allocation_page;
         document.Allocation_Car.submit();
     }
     return false;
 }
 
-function sms_order(event){	  
-    if (event) {
-        event.preventDefault();
-        event.stopPropagation();
-    }	 	
+function sms_order(event){
+    preventEventDefault(event);
+
     let Query=document.Allocation_Car.Query.value;	
     let $Allocation_page=document.querySelector('#Allocation_page').value;
     let resultData_length=grid_form_data(); // 그리드 데이터 가져오기
@@ -230,7 +236,7 @@ function sms_order(event){
         showToast('오더가 선택되지 않았습니다!, 1개 이상의 오더를 선택하세요!!');
         return false;
     }else{
-        document.Allocation_Car.action='ord_sms_sand_process`.php?`'+Query+'&Allocation_page='+$Allocation_page;
+		document.Allocation_Car.action=(typeof SITE_URL !== 'undefined' ? SITE_URL + '/' : '') + 'Allocation_car/ord_sms_sand_process`.php?`'+Query+'&Allocation_page='+$Allocation_page;
         document.Allocation_Car.submit();			
     }
 	return false;
@@ -240,8 +246,8 @@ function kakao_sand(){
     if (document.Allocation_Car.CHK_COUNT.value == 0){
         showToast('오더를 선택해 주십시요!!');
     }else{
-        var Query=document.Allocation_Car.Query.value;			
-        document.Allocation_Car.action='ord_kakao_sand_process_2.php?'+Query;						
+        var Query=document.Allocation_Car.Query.value;		
+		document.Allocation_Car.action=(typeof SITE_URL !== 'undefined' ? SITE_URL + '/' : '') + 'Allocation_car/ord_kakao_sand_process`.php?`'+Query+'&Allocation_page='+$Allocation_page;							
         document.Allocation_Car.submit();
     }
 }
@@ -262,12 +268,14 @@ function sms_sand_3(){
     }
 }	
             
-function SandCheck(){
+function SandCheck(event){
+    preventEventDefault(event);
+
     with(document.sms_from){
         if(MMS_TXT.value == ''){
             showToast('전송할 내용을 입력해 주십시요!');
             MMS_TXT.focus();
-            return;
+            return false;
         }else{
             let MMS_TXT=document.querySelector('#MMS_TXT').value;	   
             let CC=document.sms_from.CC.value; 
@@ -279,9 +287,10 @@ function SandCheck(){
                 showToast('오더가 선택되지 않았습니다!, 1개 이상의 오더를 선택하세요!!');
                 return;
             }else{
-                document.Allocation_Car.action='custom_mms_sand_process.php?CC='+CC+'&MMS_TXT='+MMS_TXT+'&'+Query+'&Allocation_page='+$Allocation_page;				
+				document.Allocation_Car.action=(typeof SITE_URL !== 'undefined' ? SITE_URL + '/' : '') + 'Allocation_car/custom_mms_sand_process.php?CC='+CC+'&MMS_TXT='+MMS_TXT+'&'+Query+'&Allocation_page='+$Allocation_page;			
                 document.Allocation_Car.submit();				
-            }		
+            }
+			return false;		
         }
     }
 }
@@ -309,10 +318,6 @@ function contents(a){
     }
 }	
 
-function IIC_AT(){	  
-     var ff='OPR';
-     IIC_AT_F(ff);	 
-}
 
 function GpsLocationViewer(a){
     openWindow('trace_location.php?MOBILE_ID='+a,'gps_open','scrollbars=yes,width=710,height=710');
@@ -321,23 +326,26 @@ function ord_lms_view(a){
     openWindow('../order/order_lms_view.php?SO_NO='+a,'Order_lms_view','scrollbars=yes,width=500,height=700,left=0,top=0');
 }	
     
-function order_print_chk(){	
+function order_print_chk(event){	
+	preventEventDefault(event);
     let Query=document.Allocation_Car.Query.value;	
     let $Allocation_page=document.querySelector('#Allocation_page').value;
     let resultData_length=grid_form_data(); // 그리드 데이터 가져오기
     document.querySelector('#CNT_NO').value=resultData_length;
     if (resultData_length == 0){
         showToast('오더가 선택되지 않았습니다!, 1개 이상의 오더를 선택하세요');	
-        return;
+        return false;
     }else{
         window.open('','order_print_chk','scrollbars=yes,width=800,height=900,left=0,top=0'); 
-        document.Allocation_Car.action='../order/order_print_chk.asp';
+		document.Allocation_Car.action=(typeof SITE_URL !== 'undefined' ? SITE_URL + '/' : '') + 'Orders/order_print_chk.php';			
         document.Allocation_Car.target='order_print_chk';        
         document.Allocation_Car.submit();  	
     }	
+	return false;
 } 	
 
-function order_receipt_print_chk(){
+function order_receipt_print_chk(event){
+	preventEventDefault(event);
     let RCK=document.querySelector('#RCK').value
     let Ex_Ex='';
     if (RCK === '3'){
@@ -352,24 +360,25 @@ function order_receipt_print_chk(){
     document.querySelector('#CNT_NO').value=resultData_length;
     if (resultData_length == 0){
         showToast('오더가 선택되지 않았습니다!, 1개 이상의 오더를 선택하세요');	
-        return;
+        return false;
     }else{
         switch(RCK){
         case '1': 		
             window.open('','order_receipt_print_chk','scrollbars=yes,width=800,height=900,left=0,top=0'); 
-            document.Allocation_Car.action='../order/stock_permit/order_receipt_print_chk.asp';		
+			document.Allocation_Car.action=(typeof SITE_URL !== 'undefined' ? SITE_URL + '/' : '') + 'Orders/order_receipt_print_chk.php';	
             document.Allocation_Car.target='order_receipt_print_chk';        
             document.Allocation_Car.submit();     			
         break;		
         case '2':
         case '3':		
             window.open('','kwe_receipt_print_chk','scrollbars=yes,width=880,height=900,left=0,top=0'); 		
-            document.Allocation_Car.action='../order/stock_permit/order_receipt_print_insert.php?Ex_Ex='+Ex_Ex;				
+			document.Allocation_Car.action=(typeof SITE_URL !== 'undefined' ? SITE_URL + '/' : '') + 'Orders/stock_permit/order_receipt_print_insert.php?Ex_Ex='+Ex_Ex;			
             document.Allocation_Car.target='kwe_receipt_print_chk';        
             document.Allocation_Car.submit();     			
         break;
         }		 	
     }	 
+	return false;
 }
 
 // ========================================
