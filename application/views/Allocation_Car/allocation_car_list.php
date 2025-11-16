@@ -538,10 +538,10 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 	function search_form(){
 		// Query 변수 업데이트
 		buildQuery();
-		
+
 		let $Allocation_page = document.querySelector('#Allocation_page').value;
 		let Query = document.querySelector('#Query').value;
-		document.querySelector('#Allocation_Car').action = 'allocation_car_list.php?Allocation_page=' + $Allocation_page;
+		document.querySelector('#Allocation_Car').action = '<?php echo site_url("allocation_car_list"); ?>?Allocation_page=' + $Allocation_page;
 		document.querySelector('#Allocation_Car').submit();
     }		
 </script>		
@@ -638,7 +638,7 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 								<div style="width: 50px;"></div>
 								<div style="width: 20px;"></div>
 								<span class="font_bold">오더전달</span>
-								<?php echo com_aloc_type($R_CUST_CD); ?>
+								<?php echo com_cust_exchange(''); ?>
 								<button class="event-btn forward-btn" data-name="오더전달">
 									<span class="event-btn-icon icon-arrow"></span>
 									<span>오더전달</span>

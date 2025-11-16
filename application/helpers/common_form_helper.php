@@ -638,8 +638,8 @@ if (!function_exists('com_cust_st_filed')) {
         
         if (!empty($t35_list)) {
             foreach ($t35_list as $item) {
-                $fare_cd = $item['cd'];
-                $fare_nm = $item['nm'];
+                $fare_cd = $item['cd'] ?? '';
+                $fare_nm = $item['nm'] ?? '';
                 // 빈 값인 경우 옵션 출력하지 않음
                 if (empty($fare_cd)) continue;
                 $selected = (!empty($st_filed) && $st_filed == $fare_cd) ? ' selected' : '';
@@ -653,13 +653,13 @@ if (!function_exists('com_cust_st_filed')) {
 }
 
 /**
- * 고객 교환 리스트 선택 박스 생성
+ * 오더더 교환 리스트 선택 박스 생성
  * @param string $R_CUST_CD 선택된 고객 코드
  * @param string $A_CRN CRN 값
  * @return string HTML
  */
 if (!function_exists('com_cust_exchange')) {
-    function com_cust_exchange($R_CUST_CD = '', $A_CRN = '')
+    function com_cust_exchange($A_CRN = '')
     {
         $CI =& get_instance();
         $CI->load->model('Common_model');
@@ -691,11 +691,11 @@ if (!function_exists('com_cust_exchange')) {
         
         if (!empty($Ex_Cust_list)) {
             foreach ($Ex_Cust_list as $item) {
-                $fare_cd = $item['cd'];
-                $fare_nm = $item['nm'];
+                $CUST_CD = $item['cd'];
+                $CUST_NM = $item['nm'];
                 // 빈 값인 경우 옵션 출력하지 않음
-                if (empty($fare_cd)) continue;
-                $html .= '<option value="' . htmlspecialchars($fare_cd) . '">' . htmlspecialchars($fare_nm) . '</option>' . "\n";
+                if (empty($CUST_CD)) continue;
+                $html .= '<option value="' . htmlspecialchars($CUST_CD) . '">' . htmlspecialchars($CUST_NM) . '</option>' . "\n";
             }
         }
 
