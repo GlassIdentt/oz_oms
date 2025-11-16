@@ -548,9 +548,9 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 					<!-- Query 변수 저장용 hidden input -->
 					<input type="hidden" name="Query" id="Query" value="<?php echo htmlspecialchars($query_string); ?>">
 					<input type="hidden" name="Allocation_page" id="Allocation_page" value="<?php echo htmlspecialchars(is_string($menu_allocation_page) ? $menu_allocation_page : ''); ?>">
-					<input type="hidden" name="GridData" id="GridData" value="">
-					<input type="hidden" name="CNT_NO" id="CNT_NO" value="">
-					<input type="hidden" name="A_CAR_KEY" id="A_CAR_KEY" value="">  
+					<input type="hidden" name="GridData" id="GridData">
+					<input type="hidden" name="CNT_NO" id="CNT_NO">
+					<input type="hidden" name="A_CAR_KEY" id="A_CAR_KEY">  
         		<div class="container_top_aloc_list" style="height: 100px; border: 0px solid #000; width: 100%;">
             			<div id="step_1" style="height: 30px; width: 100%; border: 0px solid #000;">
 							<nav style="display: flex; align-items: center; height: 100%; gap: 10px; padding: 0 5px;">
@@ -605,11 +605,11 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 									<span class="event-btn-icon icon-cancel"></span>
 									<span>배차취소</span>
 								</button>
-								<button class="event-btn select-btn" data-name="스마트오더전송">
+								<button class="event-btn select-btn" data-name="스마트오더전송" onclick="return app_order_sand(event);">
 									<span class="event-btn-icon icon-message"></span>
 									<span>스마트오더전송</span>
 								</button>
-								<button class="event-btn select-btn" data-name="MMS오더전송">
+								<button class="event-btn select-btn" data-name="MMS오더전송" onclick="return sms_order(event);">
 								<span class="event-btn-icon icon-envelope"></span>
 									<span>MMS오더전송</span>
 								</button>

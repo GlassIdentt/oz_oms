@@ -1,18 +1,18 @@
 function ORD_CHANGE(SO_NO){
-    window.open('ord_change_info.asp?ORDER_NO='+SO_NO,'ORD_change'+ORD_ID,'scrollbars=yes,width=900,height=300,left=0,top=0');
+    window.open('ord_change_info.php?ORDER_NO='+SO_NO,'ORD_change'+ORD_ID,'scrollbars=yes,width=900,height=300,left=0,top=0');
 }
 function car_open(){
     CT=document.OPR.CAR_NO.value;
-    openWindow('car_reg2.asp?gb=1&pgubun=1&CT='+CT,'ALLOCATIONCAR','scrollbars=yes,width=850,height=450,left=0,top=0,reszie=yes');
+    openWindow('car_reg2.php?gb=1&pgubun=1&CT='+CT,'ALLOCATIONCAR','scrollbars=yes,width=850,height=450,left=0,top=0,reszie=yes');
 }
 
 function car_open2(A){
     S_CAR_NO=document.OPR.CAR_NO.value;
-    openWindow('car_reg2.asp?gb=1&pgubun=1&S_CAR_NO='+S_CAR_NO,'ALLOCATIONCAR'+A,'scrollbars=yes,width=850,height=450,left=0,top=0,reszie=yes');
+    openWindow('car_reg2.php?gb=1&pgubun=1&S_CAR_NO='+S_CAR_NO,'ALLOCATIONCAR'+A,'scrollbars=yes,width=850,height=450,left=0,top=0,reszie=yes');
 }	
 
 function car_hor_reg(SO_NO){
-    openWindow('car_hor_reg_2.asp?SO_NO='+SO_NO,'ALLOCATIONCAR','scrollbars=no,width=885,height=470,left=0,top=0,reszie=yes');
+    openWindow('car_hor_reg_2.php?SO_NO='+SO_NO,'ALLOCATIONCAR','scrollbars=no,width=885,height=470,left=0,top=0,reszie=yes');
 }
 //-->
 function OP(a,b){
@@ -51,7 +51,7 @@ function operat_run(event){
                 document.querySelector('#CAR_NO').focus();	
                 return false;
             }else{
-                document.Allocation_Car.action='custom_allocation_car_process.asp?'+Query+'&Allocation_page='+$Allocation_page;
+                document.Allocation_Car.action='custom_allocation_car_process.php?'+Query+'&Allocation_page='+$Allocation_page;
                 document.Allocation_Car.submit();			
             }
         }	
@@ -115,7 +115,7 @@ function operat_cancle(i, event){
         showToast('오더가 선택되지 않았습니다! 1개 이상의 오더를 선택하세요!!');
         return false;
     }else{
-        document.Allocation_Car.action='custom_allocation_car_process.asp?'+Query+'&Allocation_page='+$Allocation_page;
+        document.Allocation_Car.action='custom_allocation_car_process.php?'+Query+'&Allocation_page='+$Allocation_page;
         //document.Allocation_Car.submit();			
     }
     return false;
@@ -135,7 +135,7 @@ function ALOC_STAT_C(){
             showToast('오더가 선택되지 않았습니다! 1개 이상의 오더를 선택하세요!!');
             return;
         }else{
-            document.Allocation_Car.action='aloc_type_change_process.asp?'+Query+'&Allocation_page='+$Allocation_page+'&ALOC_STAT='+$ALOC_STAT;
+            document.Allocation_Car.action='aloc_type_change_process.php?'+Query+'&Allocation_page='+$Allocation_page+'&ALOC_STAT='+$ALOC_STAT;
             document.Allocation_Car.submit();			
         }	  
     }
@@ -161,7 +161,7 @@ function ORD_DELIVER(){
             showToast('오더가 선택되지 않았습니다!, 1개 이상의 오더를 선택하세요!!');				
             return;
         }else{
-            document.Allocation_Car.action='order_exchange_insert_process_2.asp?'+$Query+'&Allocation_page='+$Allocation_page+'&R_CUST_CD='+$R_CUST_CD;
+            document.Allocation_Car.action='order_exchange_insert_process.php?'+$Query+'&Allocation_page='+$Allocation_page+'&R_CUST_CD='+$R_CUST_CD;
             document.Allocation_Car.submit();			
         }		
     }
@@ -182,38 +182,50 @@ function ORD_DELIVER_CANCLE(){
             showToast('오더가 선택되지 않았습니다!, 1개 이상의 오더를 선택하세요!!');				
             return;
         }else{
-            document.Allocation_Car.action='order_exchange_cancle_process_2.asp?'+$Query+'&Allocation_page='+$Allocation_page+'&R_CUST_CD='+$R_CUST_CD;
+            document.Allocation_Car.action='order_exchange_cancle_process.php?'+$Query+'&Allocation_page='+$Allocation_page+'&R_CUST_CD='+$R_CUST_CD;
             document.Allocation_Car.submit();			
         }		
     }
 }
 
-function app_order_sand(){	   
-    let Query=document.Allocation_Car.Query.value;	
+function app_order_sand(event){
+
+    // 이벤트가 전달된 경우 기본 동작 방지
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }	
+    let Query=document.Allocation_Car.Query.value;
     let $Allocation_page=document.querySelector('#Allocation_page').value;
     let resultData_length=grid_form_data(); // 그리드 데이터 가져오기
     document.querySelector('#CNT_NO').value=resultData_length;
     if (resultData_length == 0){
         showToast('오더가 선택되지 않았습니다!, 1개 이상의 오더를 선택하세요!!');
-        return;
+        return false;
     }else{
-        document.Allocation_Car.action='app_order_sand_process.asp?'+Query+'&Allocation_page='+$Allocation_page;
-        document.Allocation_Car.submit();			
+        document.Allocation_Car.action='app_order_sand_process.php?'+Query+'&Allocation_page='+$Allocation_page;
+        document.Allocation_Car.submit();
     }
+    return false;
 }
 
-function sms_order(){	   	
+function sms_order(event){	  
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }	 	
     let Query=document.Allocation_Car.Query.value;	
     let $Allocation_page=document.querySelector('#Allocation_page').value;
     let resultData_length=grid_form_data(); // 그리드 데이터 가져오기
     document.querySelector('#CNT_NO').value=resultData_length;
     if (resultData_length == 0){
         showToast('오더가 선택되지 않았습니다!, 1개 이상의 오더를 선택하세요!!');
-        return;
+        return false;
     }else{
-        document.Allocation_Car.action='ord_sms_sand_process.asp?'+Query+'&Allocation_page='+$Allocation_page;
+        document.Allocation_Car.action='ord_sms_sand_process`.php?`'+Query+'&Allocation_page='+$Allocation_page;
         document.Allocation_Car.submit();			
     }
+	return false;
 }
 
 function kakao_sand(){	   
@@ -221,7 +233,7 @@ function kakao_sand(){
         showToast('오더를 선택해 주십시요!!');
     }else{
         var Query=document.Allocation_Car.Query.value;			
-        document.Allocation_Car.action='ord_kakao_sand_process_2.asp?'+Query;						
+        document.Allocation_Car.action='ord_kakao_sand_process_2.php?'+Query;						
         document.Allocation_Car.submit();
     }
 }
@@ -237,7 +249,7 @@ function sms_sand_3(){
     }else{
 
         document.Allocation_Car.target='emptyFr';						
-        document.Allocation_Car.action='pickup_sms_sand_process_3.asp';						
+        document.Allocation_Car.action='pickup_sms_sand_process.asp';						
         document.Allocation_Car.submit();
     }
 }	
@@ -259,7 +271,7 @@ function SandCheck(){
                 showToast('오더가 선택되지 않았습니다!, 1개 이상의 오더를 선택하세요!!');
                 return;
             }else{
-                document.Allocation_Car.action='custom_mms_sand_process.asp?CC='+CC+'&MMS_TXT='+MMS_TXT+'&'+Query+'&Allocation_page='+$Allocation_page;				
+                document.Allocation_Car.action='custom_mms_sand_process.php?CC='+CC+'&MMS_TXT='+MMS_TXT+'&'+Query+'&Allocation_page='+$Allocation_page;				
                 document.Allocation_Car.submit();				
             }		
         }
@@ -295,10 +307,10 @@ function IIC_AT(){
 }
 
 function GpsLocationViewer(a){
-    openWindow('trace_location.asp?MOBILE_ID='+a,'gps_open','scrollbars=yes,width=710,height=710');
+    openWindow('trace_location.php?MOBILE_ID='+a,'gps_open','scrollbars=yes,width=710,height=710');
 }
 function ord_lms_view(a){
-    openWindow('../order/order_lms_view.asp?SO_NO='+a,'Order_lms_view','scrollbars=yes,width=500,height=700,left=0,top=0');
+    openWindow('../order/order_lms_view.php?SO_NO='+a,'Order_lms_view','scrollbars=yes,width=500,height=700,left=0,top=0');
 }	
     
 function order_print_chk(){	
@@ -344,7 +356,7 @@ function order_receipt_print_chk(){
         case '2':
         case '3':		
             window.open('','kwe_receipt_print_chk','scrollbars=yes,width=880,height=900,left=0,top=0'); 		
-            document.Allocation_Car.action='../order/stock_permit/order_receipt_print_insert.asp?Ex_Ex='+Ex_Ex;				
+            document.Allocation_Car.action='../order/stock_permit/order_receipt_print_insert.php?Ex_Ex='+Ex_Ex;				
             document.Allocation_Car.target='kwe_receipt_print_chk';        
             document.Allocation_Car.submit();     			
         break;

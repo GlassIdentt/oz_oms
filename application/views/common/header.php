@@ -130,24 +130,21 @@ if (empty($top_menu_list)) {
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>OMS - <?php echo $submenu_category_name; ?></title>
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-    <link rel="stylesheet" href="<?php echo base_url('css/layout.css'); ?>">
-    <link rel="stylesheet" href="<?php echo base_url('css/tabulator.css'); ?>">
-
-
-
+    <link rel="stylesheet" href="<?php echo base_url('css/layout.css'); ?>?version=<?php echo substr(md5(mt_rand()), 0, 10); ?>">
+    <link rel="stylesheet" href="<?php echo base_url('css/tabulator.css'); ?>?version=<?php echo substr(md5(mt_rand()), 0, 10); ?>">
     <link href="https://unpkg.com/tabulator-tables@6.3.1/dist/css/tabulator.min.css" rel="stylesheet">
     <script src="https://unpkg.com/tabulator-tables@6.3.1/dist/js/tabulator.min.js"></script>	    
     <!-- jQuery UI Datepicker -->
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/ui-lightness/jquery-ui.css">
-    <link rel="stylesheet" href="<?php echo base_url('css/datepicker.css'); ?>">
+    <link rel="stylesheet" href="<?php echo base_url('css/datepicker.css'); ?>?version=<?php echo substr(md5(mt_rand()), 0, 10); ?>">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.2/i18n/datepicker-ko.min.js"></script>
-    <script src="<?php echo base_url('js/common.js'); ?>"></script>
+    <script src="<?php echo base_url('js/common.js'); ?>?version=<?php echo substr(md5(mt_rand()), 0, 10); ?>"></script>
     <?php if (isset($folder_name) && $folder_name == 'Allocation_Car'): ?>
-    <script type="text/javascript" src="https://oss.sheetjs.com/sheetjs/xlsx.full.min.js"></script>      
-    <script src="<?php echo base_url('js/Allocation_Tabulator.js'); ?>"></script>
-    <script src="<?php echo base_url('js/gird_drag_select.js'); ?>"></script>
+    <script type="text/javascript" src="https://oss.sheetjs.com/sheetjs/xlsx.full.min.js"></script>
+    <script src="<?php echo base_url('js/Allocation_Tabulator.js'); ?>?version=<?php echo substr(md5(mt_rand()), 0, 10); ?>"></script>
+    <script src="<?php echo base_url('js/gird_drag_select.js'); ?>?version=<?php echo substr(md5(mt_rand()), 0, 10); ?>"></script>
     <?php endif; ?>
 </head>
 <body>
