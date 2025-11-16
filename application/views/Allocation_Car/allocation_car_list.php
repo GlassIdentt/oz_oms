@@ -683,11 +683,14 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 								<input type="text" name="CAR_TON" id="CAR_TON" class="Reg_Box" style="width:60px;" readonly value="<?php echo htmlspecialchars($car_ton); ?>">
 								<input type="hidden" name="A_CAR_KEY" id="A_CAR_KEY">
 							</nav>
-					</div>
+						</div>
 		</div>
 		<div id="allocation_car_list_<?php echo $menu_allocation_page; ?>" style="height: 600px; max-height: 600px; flex: 1; border: 1px solid #CCC2C2; width: 100%; overflow: hidden;"></div>
 		<div id="dropdown" class="dropdown"></div>
 
+
+				</form>
+			</div>
 		<script>
 				// ========== 1. 데이터 및 전역 변수 선언 ==========
 				let tabledata = <?php echo $grid_data_json; ?>;
@@ -1981,9 +1984,6 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				    document.head.appendChild(style);
 				}
         </script>
-				</form>
-			</div>
-
 <script>
 // RECEIPT_TYPE select의 선택값 설정
 document.addEventListener('DOMContentLoaded', function() {
