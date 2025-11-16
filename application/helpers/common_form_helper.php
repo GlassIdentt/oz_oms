@@ -88,7 +88,7 @@ if (!function_exists('com_office_cd')) {
             
             if (!empty($result)) {
                 foreach ($result as $row) {
-                    $cd = trim($row->CD ?? $row->COM_CD ?? '');
+                    $cd = trim($row->COMN_CD ?? $row->CD ?? $row->COM_CD ?? '');
                     $nm = trim($row->CD_NM ?? $row->COM_NM ?? '');
                     $t02_list[] = array(
                         'cd' => $cd,
@@ -111,6 +111,8 @@ if (!function_exists('com_office_cd')) {
             foreach ($t02_list as $item) {
                 $com_cd = $item['cd'];
                 $com_nm = $item['nm'];
+                // 빈 값인 경우 옵션 출력하지 않음
+                if (empty($com_cd)) continue;
                 // $office_cd가 빈값이 아닐 때만 selected 체크
                 $selected = (!empty($office_cd) && $office_cd == $com_cd) ? ' selected' : '';
                 $html .= '<option value="' . htmlspecialchars($com_cd) . '"' . $selected . '>' . htmlspecialchars($com_nm) . '</option>' . "\n";
@@ -161,6 +163,8 @@ if (!function_exists('com_io_type')) {
             foreach ($t38_list as $item) {
                 $com_cd = $item['cd'];
                 $com_nm = $item['nm'];
+                // 빈 값인 경우 옵션 출력하지 않음
+                if (empty($com_cd)) continue;
                 // $io_type이 빈값이 아닐 때만 selected 체크
                 $selected = (!empty($io_type) && $io_type == $com_cd) ? ' selected' : '';
                 $html .= '<option value="' . htmlspecialchars($com_cd) . '"' . $selected . '>' . htmlspecialchars($com_nm) . '</option>' . "\n";
@@ -209,6 +213,8 @@ if (!function_exists('com_close_type')) {
             foreach ($t21_list as $item) {
                 $com_cd = $item['cd'];
                 $com_nm = $item['nm'];
+                // 빈 값인 경우 옵션 출력하지 않음
+                if (empty($com_cd)) continue;
                 $selected = ($mt_field == $com_cd) ? ' selected' : '';
                 $html .= '<option value="' . htmlspecialchars($com_cd) . '"' . $selected . '>' . htmlspecialchars($com_nm) . '</option>' . "\n";
             }
@@ -257,6 +263,8 @@ if (!function_exists('com_search_type')) {
             foreach ($t35_list as $item) {
                 $com_cd = $item['cd'];
                 $com_nm = $item['nm'];
+                // 빈 값인 경우 옵션 출력하지 않음
+                if (empty($com_cd)) continue;
                 // $n_field이 빈값이 아닐 때만 selected 체크
                 $selected = (!empty($n_field) && $n_field == $com_cd) ? ' selected' : '';
                 $html .= '<option value="' . htmlspecialchars($com_cd) . '"' . $selected . '>' . htmlspecialchars($com_nm) . '</option>' . "\n";
@@ -305,11 +313,13 @@ if (!function_exists('com_aloc_type')) {
             foreach ($t08_list as $item) {
                 $fare_cd = $item['cd'];
                 $fare_nm = $item['nm'];
+                // 빈 값인 경우 옵션 출력하지 않음
+                if (empty($fare_cd)) continue;
                 $selected = (!empty($aloc_type) && $aloc_type == $fare_cd) ? ' selected' : '';
                 $html .= '<option value="' . htmlspecialchars($fare_cd) . '"' . $selected . '>' . htmlspecialchars($fare_nm) . '</option>' . "\n";
             }
         }
-        
+
         $html .= '</select>' . "\n";
         return $html;
     }
@@ -321,90 +331,79 @@ if (!function_exists('com_aloc_stat')) {
     {
         $CI =& get_instance();
         $CI->load->model('Common_model');
-        
+
         // T08 그룹 코드 조회
         $t08_list = array();
+        $debug_html = '';
         try {
             $sql = "EXEC [dbo].[Proc_Com_Code_List] @GRP_CD = ?, @OPT_ITEM1 = ?";
             $query = $CI->db->query($sql, array('T08', ''));
             $result = $query->result();
-            
+
+            // 디버깅: 반환된 컬럼 확인
+            if (!empty($result) && isset($result[0])) {
+                $first_row = $result[0];
+                $columns = get_object_vars($first_row);
+                $debug_html .= "<!-- DEBUG com_aloc_stat: Available columns = " . implode(', ', array_keys($columns)) . " -->\n";
+                $debug_html .= "<!-- DEBUG com_aloc_stat: First row data = " . print_r($first_row, true) . " -->\n";
+            }
+
             if (!empty($result)) {
                 foreach ($result as $row) {
+                    // 실제 객체의 모든 속성 확인
+                    $row_vars = get_object_vars($row);
+
+                    // 가능한 모든 컬럼명 시도
+                    $cd = '';
+                    $nm = '';
+
+                    // CD 값 찾기
+                    if (isset($row->COMN_CD)) $cd = trim($row->COMN_CD);
+                    elseif (isset($row->CD)) $cd = trim($row->CD);
+                    elseif (isset($row->FARE_CD)) $cd = trim($row->FARE_CD);
+                    elseif (isset($row->COM_CD)) $cd = trim($row->COM_CD);
+                    elseif (isset($row->GRP_CD)) $cd = trim($row->GRP_CD);
+
+                    // NM 값 찾기
+                    if (isset($row->CD_NM)) $nm = trim($row->CD_NM);
+                    elseif (isset($row->FARE_NM)) $nm = trim($row->FARE_NM);
+                    elseif (isset($row->COM_NM)) $nm = trim($row->COM_NM);
+                    elseif (isset($row->GRP_NM)) $nm = trim($row->GRP_NM);
+
                     $t08_list[] = array(
-                        'cd' => trim($row->CD ?? $row->FARE_CD ?? $row->COM_CD ?? ''),
-                        'nm' => trim($row->CD_NM ?? $row->FARE_NM ?? $row->COM_NM ?? '')
+                        'cd' => $cd,
+                        'nm' => $nm
                     );
+
+                    $debug_html .= "<!-- DEBUG com_aloc_stat row: cd='$cd', nm='$nm', all_props=" . implode(',', array_keys($row_vars)) . " -->\n";
                 }
             }
         } catch (Exception $e) {
             log_message('error', 'Failed to load allocation type code list: ' . $e->getMessage());
+            $debug_html .= "<!-- DEBUG com_aloc_stat ERROR: " . $e->getMessage() . " -->\n";
         }
-        
-        $html = '<select name="ALOC_STAT" id="ALOC_STAT" style="width:70px;" class="custom-select">' . "\n";
+
+        $html = $debug_html;  // 디버깅 정보 먼저 출력
+        $html .= '<select name="ALOC_STAT" id="ALOC_STAT" style="width:70px;" class="custom-select">' . "\n";
         $html .= '<option value="">전체</option>' . "\n";
-        
+
         if (!empty($t08_list)) {
             foreach ($t08_list as $item) {
                 $fare_cd = $item['cd'];
                 $fare_nm = $item['nm'];
-                $selected = (!empty($aloc_type) && $aloc_type == $fare_cd) ? ' selected' : '';
-                $html .= '<option value="' . htmlspecialchars($fare_cd) . '"' . $selected . '>' . htmlspecialchars($fare_nm) . '</option>' . "\n";
-            }
-        }
-        
-        $html .= '</select>' . "\n";
-        return $html;
-    }
-}
-
-
-/**
- * 배차상태 코드 선택 박스 생성
- * @param string $aloc_stat 선택된 배차상태 코드
- * @return string HTML
- */
-if (!function_exists('com_aloc_stat')) {
-    function com_aloc_stat($aloc_stat = '')
-    {
-        $CI =& get_instance();
-        $CI->load->model('Common_model');
-        
-        // T08 그룹 코드 조회
-        $t08_list = array();
-        try {
-            $sql = "EXEC [dbo].[Proc_Com_Code_List] @GRP_CD = ?, @OPT_ITEM1 = ?";
-            $query = $CI->db->query($sql, array('T08', ''));
-            $result = $query->result();
-            
-            if (!empty($result)) {
-                foreach ($result as $row) {
-                    $t08_list[] = array(
-                        'cd' => trim($row->CD ?? $row->FARE_CD ?? $row->COM_CD ?? ''),
-                        'nm' => trim($row->CD_NM ?? $row->FARE_NM ?? $row->COM_NM ?? '')
-                    );
-                }
-            }
-        } catch (Exception $e) {
-            log_message('error', 'Failed to load allocation stat code list: ' . $e->getMessage());
-        }
-        
-        $html = '<select name="ALOC_STAT" style="width:70px;height:25px;" class="Reg_Box">' . "\n";
-        $html .= '<option value="">전체</option>' . "\n";
-        
-        if (!empty($t08_list)) {
-            foreach ($t08_list as $item) {
-                $fare_cd = $item['cd'];
-                $fare_nm = $item['nm'];
+                // 빈 값인 경우 옵션 출력하지 않음
+                if (empty($fare_cd)) continue;
                 $selected = (!empty($aloc_stat) && $aloc_stat == $fare_cd) ? ' selected' : '';
                 $html .= '<option value="' . htmlspecialchars($fare_cd) . '"' . $selected . '>' . htmlspecialchars($fare_nm) . '</option>' . "\n";
             }
         }
-        
+
         $html .= '</select>' . "\n";
         return $html;
     }
 }
+
+
 
 /**
  * 업체 특이사항 텍스트 영역 생성
@@ -510,6 +509,8 @@ if (!function_exists('com_bank_line')) {
                 foreach ($code_list_b as $item) {
                     $c_bank_cd = $item['cd'];
                     $c_bank_nm = $item['nm'];
+                    // 빈 값인 경우 옵션 출력하지 않음
+                    if (empty($c_bank_nm)) continue;
                     $selected = (!empty($a_bank_nm) && $a_bank_nm == $c_bank_nm) ? ' selected' : '';
                     $html .= '			<option value="' . htmlspecialchars($c_bank_nm) . '"' . $selected . '>' . htmlspecialchars($c_bank_nm) . '</option>' . "\n";
                 }
@@ -566,6 +567,8 @@ if (!function_exists('com_car_position')) {
             foreach ($t09_list as $item) {
                 $com_cd = $item['cd'];
                 $com_nm = $item['nm'];
+                // 빈 값인 경우 옵션 출력하지 않음
+                if (empty($com_cd)) continue;
                 $selected = (!empty($car_position) && $car_position == $com_cd) ? ' selected' : '';
                 $html .= '<option value="' . htmlspecialchars($com_cd) . '"' . $selected . '>' . htmlspecialchars($com_nm) . '</option>' . "\n";
             }
@@ -613,6 +616,8 @@ if (!function_exists('com_cost_item')) {
             foreach ($t06_list as $item) {
                 $com_cd = $item['cd'];
                 $com_nm = $item['nm'];
+                // 빈 값인 경우 옵션 출력하지 않음
+                if (empty($com_cd)) continue;
                 $selected = (!empty($fare_cd) && $fare_cd == $com_cd) ? ' selected' : '';
                 $html .= '<option value="' . htmlspecialchars($com_cd) . '"' . $selected . '>' . htmlspecialchars($com_nm) . '</option>' . "\n";
             }
@@ -660,6 +665,8 @@ if (!function_exists('com_cust_st_filed')) {
             foreach ($t35_list as $item) {
                 $fare_cd = $item['cd'];
                 $fare_nm = $item['nm'];
+                // 빈 값인 경우 옵션 출력하지 않음
+                if (empty($fare_cd)) continue;
                 $selected = (!empty($st_filed) && $st_filed == $fare_cd) ? ' selected' : '';
                 $html .= '<option value="' . htmlspecialchars($fare_cd) . '"' . $selected . '>' . htmlspecialchars($fare_nm) . '</option>' . "\n";
             }
