@@ -51,7 +51,7 @@ function operat_run(event){
                 document.querySelector('#CAR_NO').focus();	
                 return false;
             }else{
-                document.Allocation_Car.action='custom_allocation_car_process.php?'+Query+'&Allocation_page='+$Allocation_page;
+				document.Allocation_Car.action=(typeof SITE_URL !== 'undefined' ? SITE_URL + '/' : '') + 'Allocation_car/custom_allocation_car_process?Allocation_page='+$Allocation_page;
                 document.Allocation_Car.submit();			
             }
         }	
@@ -115,8 +115,8 @@ function operat_cancle(i, event){
         showToast('오더가 선택되지 않았습니다! 1개 이상의 오더를 선택하세요!!');
         return false;
     }else{
-        document.Allocation_Car.action='custom_allocation_car_process.php?'+Query+'&Allocation_page='+$Allocation_page;
-        //document.Allocation_Car.submit();			
+		document.Allocation_Car.action=(typeof SITE_URL !== 'undefined' ? SITE_URL + '/' : '') + 'Allocation_car/custom_allocation_car_process?Allocation_page='+$Allocation_page;
+        document.Allocation_Car.submit();			
     }
     return false;
 }	
@@ -132,6 +132,7 @@ function Aloc_Type_Change(event){
         document.querySelector('#ALOC_STAT').focus();
         return;	 
     }else{
+		let Query=document.querySelector('#Query') ? document.querySelector('#Query').value : '';
         let $Allocation_page=document.querySelector('#Allocation_page').value;
         let $ALOC_STAT=document.querySelector('#ALOC_STAT').value;	
         let resultData_length=grid_form_data(); // 그리드 데이터 가져오기
@@ -140,8 +141,8 @@ function Aloc_Type_Change(event){
             showToast('오더가 선택되지 않았습니다! 1개 이상의 오더를 선택하세요!!');
 			return false;
         }else{
-            document.Allocation_Car.action='aloc_type_change_process.php?'+Query+'&Allocation_page='+$Allocation_page+'&ALOC_STAT='+$ALOC_STAT;
-            document.Allocation_Car.submit();			
+            document.Allocation_Car.action=(typeof SITE_URL !== 'undefined' ? SITE_URL + '/' : '') + 'Allocation_car/aloc_type_change_process?'+Query+'&Allocation_page='+$Allocation_page+'&ALOC_STAT='+$ALOC_STAT;
+            document.Allocation_Car.submit();
         }	
 		return false;  
     }
@@ -167,7 +168,8 @@ function ORD_DELIVER(){
             showToast('오더가 선택되지 않았습니다!, 1개 이상의 오더를 선택하세요!!');				
             return;
         }else{
-            document.Allocation_Car.action='order_exchange_insert_process.php?'+$Query+'&Allocation_page='+$Allocation_page+'&R_CUST_CD='+$R_CUST_CD;
+
+			document.Allocation_Car.action=(typeof SITE_URL !== 'undefined' ? SITE_URL + '/' : '') + 'Allocation_car/order_exchange_insert_process?Allocation_page='+$Allocation_page+'&R_CUST_CD='+$R_CUST_CD;
             document.Allocation_Car.submit();			
         }		
     }

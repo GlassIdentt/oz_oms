@@ -339,7 +339,10 @@ echo "<!-- DEBUG: grid_data 출력 끝 -->\n";
 $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT | JSON_HEX_APOS);
 ?>
 
-<script language="JavaScript"> 
+<script language="JavaScript">
+    // Site URL for AJAX and form submissions
+    var SITE_URL = '<?php echo site_url(); ?>';
+
     function loadScript(src, callback) {
         var script = document.createElement('script');
         script.onload = callback;

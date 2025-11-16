@@ -146,7 +146,7 @@ if (!function_exists('com_io_type')) {
             if (!empty($result)) {
                 foreach ($result as $row) {
                     $t38_list[] = array(
-                        'cd' => trim($row->CD ?? $row->COM_CD ?? ''),
+                        'cd' => trim($row->COMN_CD ?? $row->CD ?? $row->COM_CD ?? ''),
                         'nm' => trim($row->CD_NM ?? $row->COM_NM ?? '')
                     );
                 }
@@ -197,7 +197,7 @@ if (!function_exists('com_close_type')) {
             if (!empty($result)) {
                 foreach ($result as $row) {
                     $t21_list[] = array(
-                        'cd' => trim($row->CD ?? $row->COM_CD ?? ''),
+                        'cd' => trim($row->COMN_CD ?? $row->CD ?? $row->COM_CD ?? ''),
                         'nm' => trim($row->CD_NM ?? $row->COM_NM ?? '')
                     );
                 }
@@ -247,7 +247,7 @@ if (!function_exists('com_search_type')) {
             if (!empty($result)) {
                 foreach ($result as $row) {
                     $t35_list[] = array(
-                        'cd' => trim($row->CD ?? $row->COM_CD ?? ''),
+                        'cd' => trim($row->COMN_CD ?? $row->CD ?? $row->COM_CD ?? ''),
                         'nm' => trim($row->CD_NM ?? $row->COM_NM ?? '')
                     );
                 }
@@ -297,7 +297,7 @@ if (!function_exists('com_aloc_type')) {
             if (!empty($result)) {
                 foreach ($result as $row) {
                     $t08_list[] = array(
-                        'cd' => trim($row->CD ?? $row->FARE_CD ?? $row->COM_CD ?? ''),
+                        'cd' => trim($row->COMN_CD ?? $row->CD ?? $row->FARE_CD ?? $row->COM_CD ?? ''),
                         'nm' => trim($row->CD_NM ?? $row->FARE_NM ?? $row->COM_NM ?? '')
                     );
                 }
@@ -334,25 +334,13 @@ if (!function_exists('com_aloc_stat')) {
 
         // T08 그룹 코드 조회
         $t08_list = array();
-        $debug_html = '';
         try {
             $sql = "EXEC [dbo].[Proc_Com_Code_List] @GRP_CD = ?, @OPT_ITEM1 = ?";
             $query = $CI->db->query($sql, array('T08', ''));
             $result = $query->result();
 
-            // 디버깅: 반환된 컬럼 확인
-            if (!empty($result) && isset($result[0])) {
-                $first_row = $result[0];
-                $columns = get_object_vars($first_row);
-                $debug_html .= "<!-- DEBUG com_aloc_stat: Available columns = " . implode(', ', array_keys($columns)) . " -->\n";
-                $debug_html .= "<!-- DEBUG com_aloc_stat: First row data = " . print_r($first_row, true) . " -->\n";
-            }
-
             if (!empty($result)) {
                 foreach ($result as $row) {
-                    // 실제 객체의 모든 속성 확인
-                    $row_vars = get_object_vars($row);
-
                     // 가능한 모든 컬럼명 시도
                     $cd = '';
                     $nm = '';
@@ -370,21 +358,20 @@ if (!function_exists('com_aloc_stat')) {
                     elseif (isset($row->COM_NM)) $nm = trim($row->COM_NM);
                     elseif (isset($row->GRP_NM)) $nm = trim($row->GRP_NM);
 
+                    // 빈 값인 경우 건너뛰기
+                    if (empty($cd)) continue;
+
                     $t08_list[] = array(
                         'cd' => $cd,
                         'nm' => $nm
                     );
-
-                    $debug_html .= "<!-- DEBUG com_aloc_stat row: cd='$cd', nm='$nm', all_props=" . implode(',', array_keys($row_vars)) . " -->\n";
                 }
             }
         } catch (Exception $e) {
             log_message('error', 'Failed to load allocation type code list: ' . $e->getMessage());
-            $debug_html .= "<!-- DEBUG com_aloc_stat ERROR: " . $e->getMessage() . " -->\n";
         }
 
-        $html = $debug_html;  // 디버깅 정보 먼저 출력
-        $html .= '<select name="ALOC_STAT" id="ALOC_STAT" style="width:70px;" class="custom-select">' . "\n";
+        $html = '<select name="ALOC_STAT" id="ALOC_STAT" style="width:70px;" class="custom-select">' . "\n";
         $html .= '<option value="">전체</option>' . "\n";
 
         if (!empty($t08_list)) {
@@ -463,7 +450,7 @@ if (!function_exists('com_bank_line')) {
             if (!empty($result)) {
                 foreach ($result as $row) {
                     $code_list_b[] = array(
-                        'cd' => trim($row->CD ?? $row->COM_CD ?? ''),
+                        'cd' => trim($row->COMN_CD ?? $row->CD ?? $row->COM_CD ?? ''),
                         'nm' => trim($row->CD_NM ?? $row->COM_NM ?? '')
                     );
                 }
@@ -551,7 +538,7 @@ if (!function_exists('com_car_position')) {
             if (!empty($result)) {
                 foreach ($result as $row) {
                     $t09_list[] = array(
-                        'cd' => trim($row->CD ?? $row->COM_CD ?? ''),
+                        'cd' => trim($row->COMN_CD ?? $row->CD ?? $row->COM_CD ?? ''),
                         'nm' => trim($row->CD_NM ?? $row->COM_NM ?? '')
                     );
                 }
@@ -600,7 +587,7 @@ if (!function_exists('com_cost_item')) {
             if (!empty($result)) {
                 foreach ($result as $row) {
                     $t06_list[] = array(
-                        'cd' => trim($row->CD ?? $row->COM_CD ?? ''),
+                        'cd' => trim($row->COMN_CD ?? $row->CD ?? $row->COM_CD ?? ''),
                         'nm' => trim($row->CD_NM ?? $row->COM_NM ?? '')
                     );
                 }
@@ -649,7 +636,7 @@ if (!function_exists('com_cust_st_filed')) {
             if (!empty($result)) {
                 foreach ($result as $row) {
                     $t35_list[] = array(
-                        'cd' => trim($row->CD ?? $row->FARE_CD ?? $row->COM_CD ?? ''),
+                        'cd' => trim($row->COMN_CD ?? $row->CD ?? $row->FARE_CD ?? $row->COM_CD ?? ''),
                         'nm' => trim($row->CD_NM ?? $row->FARE_NM ?? $row->COM_NM ?? '')
                     );
                 }
