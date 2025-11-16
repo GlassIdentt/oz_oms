@@ -298,7 +298,7 @@ if (!function_exists('com_aloc_type')) {
             log_message('error', 'Failed to load allocation type code list: ' . $e->getMessage());
         }
         
-        $html = '<select name="ALOC_TYPE" style="width:70px;height:25px;" class="custom-select">' . "\n";
+        $html = '<select name="ALOC_TYPE" id="ALOC_TYPE" style="width:70px;" class="custom-select">' . "\n";
         $html .= '<option value="">전체</option>' . "\n";
         
         if (!empty($t08_list)) {
@@ -314,6 +314,50 @@ if (!function_exists('com_aloc_type')) {
         return $html;
     }
 }
+
+
+if (!function_exists('com_aloc_stat')) {
+    function com_aloc_stat($aloc_stat = '')
+    {
+        $CI =& get_instance();
+        $CI->load->model('Common_model');
+        
+        // T08 그룹 코드 조회
+        $t08_list = array();
+        try {
+            $sql = "EXEC [dbo].[Proc_Com_Code_List] @GRP_CD = ?, @OPT_ITEM1 = ?";
+            $query = $CI->db->query($sql, array('T08', ''));
+            $result = $query->result();
+            
+            if (!empty($result)) {
+                foreach ($result as $row) {
+                    $t08_list[] = array(
+                        'cd' => trim($row->CD ?? $row->FARE_CD ?? $row->COM_CD ?? ''),
+                        'nm' => trim($row->CD_NM ?? $row->FARE_NM ?? $row->COM_NM ?? '')
+                    );
+                }
+            }
+        } catch (Exception $e) {
+            log_message('error', 'Failed to load allocation type code list: ' . $e->getMessage());
+        }
+        
+        $html = '<select name="ALOC_STAT" id="ALOC_STAT" style="width:70px;" class="custom-select">' . "\n";
+        $html .= '<option value="">전체</option>' . "\n";
+        
+        if (!empty($t08_list)) {
+            foreach ($t08_list as $item) {
+                $fare_cd = $item['cd'];
+                $fare_nm = $item['nm'];
+                $selected = (!empty($aloc_type) && $aloc_type == $fare_cd) ? ' selected' : '';
+                $html .= '<option value="' . htmlspecialchars($fare_cd) . '"' . $selected . '>' . htmlspecialchars($fare_nm) . '</option>' . "\n";
+            }
+        }
+        
+        $html .= '</select>' . "\n";
+        return $html;
+    }
+}
+
 
 /**
  * 배차상태 코드 선택 박스 생성

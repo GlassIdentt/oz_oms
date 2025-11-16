@@ -121,7 +121,12 @@ function operat_cancle(i, event){
     return false;
 }	
 
-function ALOC_STAT_C(){	   
+function Aloc_Type_Change(event){	   
+    // 이벤트가 전달된 경우 기본 동작 방지
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }	
     if (document.querySelector('#ALOC_STAT').value == '') {
         showToast('배차유형 항목을 선택해 주십시요');			
         document.querySelector('#ALOC_STAT').focus();
@@ -133,11 +138,12 @@ function ALOC_STAT_C(){
         document.querySelector('#CNT_NO').value=resultData_length;
         if (resultData_length == 0){
             showToast('오더가 선택되지 않았습니다! 1개 이상의 오더를 선택하세요!!');
-            return;
+			return false;
         }else{
             document.Allocation_Car.action='aloc_type_change_process.php?'+Query+'&Allocation_page='+$Allocation_page+'&ALOC_STAT='+$ALOC_STAT;
             document.Allocation_Car.submit();			
-        }	  
+        }	
+		return false;  
     }
 }	
 

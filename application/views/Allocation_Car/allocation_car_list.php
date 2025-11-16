@@ -627,10 +627,10 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 								</button>
 								<div style="width: 20px;"></div>
 								<span class="font_bold">배차유형변경</span>
-								<?php echo com_aloc_type(''); ?>
-								<button class="event-btn select-btn" data-name="배차유형등록">
+								<?php echo com_aloc_stat(''); ?>
+								<button class="event-btn select-btn" data-name="배차유형변경" onclick="return Aloc_Type_Change(event);">
 									<span class="event-btn-icon icon-save"></span>
-									<span>배차유형등록</span>
+									<span>배차유형변경</span>
 								</button>
 								<div style="width: 50px;"></div>
 								<div style="width: 20px;"></div>
