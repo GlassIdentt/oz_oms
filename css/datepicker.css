@@ -1,0 +1,65 @@
+/* Datepicker 크기 조정 */
+.ui-datepicker {
+    font-size: 13px !important;
+    width: auto !important;
+}
+.ui-datepicker table {
+    font-size: 13px !important;
+}
+.ui-datepicker .ui-datepicker-header {
+    font-size: 13px !important;
+    padding: 8px 0 !important;
+    height: auto !important;
+    line-height: 1.4 !important;
+}
+.ui-datepicker .ui-datepicker-title {
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 100% !important;
+}
+.ui-datepicker .ui-datepicker-prev,
+.ui-datepicker .ui-datepicker-next {
+    top: 8px !important;
+}
+.ui-datepicker .ui-datepicker-calendar th {
+    padding: 5px !important;
+    font-size: 12px !important;
+}
+.ui-datepicker .ui-datepicker-calendar td {
+    padding: 3px !important;
+}
+.ui-datepicker .ui-datepicker-calendar td a {
+    padding: 5px !important;
+    font-size: 12px !important;
+    line-height: 1.2 !important;
+}
+.ui-datepicker-multi .ui-datepicker-group {
+    width: 18em !important;
+    padding: 0 5px !important;
+}
+.ui-datepicker-multi-3 .ui-datepicker-group {
+    width: calc(17em + 20px) !important;
+}
+/* 달력 월별 구분선 - 첫 번째와 두 번째 달력에만 적용 */
+.ui-datepicker-multi-3 .ui-datepicker-group:first-child,
+.ui-datepicker-multi-3 .ui-datepicker-group:nth-child(2) {
+    border-right: 1px solid #ccc !important;
+    margin-right: 5px !important;
+}
+/* 3번째 달력의 구분선 제거 */
+.ui-datepicker-multi-3 .ui-datepicker-group:last-child {
+    border-right: none !important;
+    margin-right: 0 !important;
+}
+.ui-datepicker-multi .ui-datepicker-group table {
+    width: 100% !important;
+}
+/* 헤더 텍스트 색상 */
+.ui-datepicker .ui-datepicker-title,
+.ui-datepicker .ui-datepicker-title .custom-header-text {
+    color: #000000 !important;
+}
+

@@ -1,0 +1,176 @@
+       
+.tabulator .tabulator-row {
+	border-bottom: 1px solid #ccc; /* 각 행 아래에 경계 추가 */
+	height: 26px; /* 행 높이 설정 */
+	background-color: white; /* 기본 배경색 */
+}
+
+/* 그리드 데이터 셀 폰트 설정 */
+.tabulator .tabulator-cell {
+	font-size: 11px !important;
+	font-family: Dotum, 돋움, sans-serif !important;
+}
+
+/* 그리드 체크박스 크기 설정 */
+.tabulator-row-header input[type="checkbox"],
+.tabulator .tabulator-row-header input[type="checkbox"],
+.tabulator-header input[type="checkbox"] {
+	width: 15px !important;
+	height: 15px !important;
+	min-width: 15px !important;
+	min-height: 15px !important;
+	cursor: pointer;
+	appearance: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	border: 1px solid #999;
+	border-radius: 2px;
+	background-color: #fff;
+	position: relative;
+	vertical-align: middle;
+}
+
+/* 체크박스 체크 상태 스타일 */
+.tabulator-row-header input[type="checkbox"]:checked,
+.tabulator .tabulator-row-header input[type="checkbox"]:checked,
+.tabulator-header input[type="checkbox"]:checked {
+	background-color: #FF8C00 !important; /* 오렌지색 배경 */
+	border-color: #FF8C00 !important;
+}
+
+/* 체크박스 체크 표시 (흰색 굵게) */
+.tabulator-row-header input[type="checkbox"]:checked::after,
+.tabulator .tabulator-row-header input[type="checkbox"]:checked::after,
+.tabulator-header input[type="checkbox"]:checked::after {
+	content: "✓";
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	color: #FFFFFF !important; /* 흰색 */
+	font-size: 12px !important;
+	font-weight: bold !important;
+	line-height: 1;
+}
+
+.tabulator .tabulator-header-filter input {
+    font-size: 11px !important;
+}
+.tabulator-header {
+	font-size:11.5px;		
+	background-color: #231f20; /* 제목 항목 배경색을 블랙으로 설정 */
+	color: #000000 !important; /* 제목 항목 글자색을 화이트로 설정 */
+}
+.tabulator .tabulator-col-title {
+	display: flex;
+	flex-grow: 1;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	text-align: center; /* 텍스트 가운데 정렬 */	
+	font-family: 돋움;		
+}		
+/* 선택된 행의 배경색 */
+.selected-row {
+	background-color: lightblue !important; /* 선택된 행의 배경색 */
+}			
+.OrderView	{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;	
+}	
+.custom_carno_num-cell {
+	width:69px;
+	height:23px;		
+	background-image: url('../images/gps_bg.gif'); /* 배경 이미지 URL */
+	background-size: cover;
+	position: relative;top: -3px;left: -3px;
+}
+
+.section_carno_num-cell {
+	width:69px;
+	height:23px;		
+	background-image: url('../images/gugan_gps_bg.gif'); /* 배경 이미지 URL */
+	background-size: cover;
+	position: relative;top: -3px;left: -3px;
+}
+
+.OrderView_Start	{
+	display: flex;
+	flex-direction: column;
+	align-items: start;
+	justify-content: start;	
+}	
+
+#dropdown {
+	display: none;
+	position: absolute;
+	background-color: white;
+	border: 1px solid #ccc;
+	z-index: 10;
+}
+
+#dropdown div {
+	padding: 8px;
+	cursor: pointer;
+}
+
+#dropdown div:hover {
+	background-color: #f0f0f0;
+}
+
+	
+.tabulator {
+	background-color: #fafafa; /* 가장 연한 회색 배경색 */
+}
+
+.tabulator .tabulator-tableholder {
+	background-color: #fafafa; /* 데이터가 없는 영역 배경색 - 가장 연한 회색 */
+}
+
+/* 데이터가 없을 때 빈 행 숨김 */
+.tabulator .tabulator-row:empty,
+.tabulator .tabulator-row:has(.tabulator-cell:only-child:empty),
+.tabulator .tabulator-row .tabulator-cell:empty:not(:has(*)) {
+	display: none !important;
+}
+
+/* 모든 셀이 비어있는 행 숨김 */
+.tabulator .tabulator-row:has(.tabulator-cell:not(:has(*)):empty) {
+	display: none !important;
+}	
+
+.tabulator .tabulator-row {
+	border-bottom: 1px solid #ccc; /* 각 행 아래에 경계 추가 */
+	height: 26px; /* 행 높이 설정 */
+	background-color: white; /* 기본 배경색 */
+}
+.tabulator-header-filter {
+	height: 23px; /* 원하는 높이로 설정 */
+	line-height: 15px; /* 텍스트 수직 정렬을 위해 설정 */
+	font-size: 9px; /* 테이블 폰트 사이즈 11px로 설정 */	
+}
+.tabulator-tooltip {
+	background-color: #FFFF00; /* 원하는 배경색으로 변경 */
+	color: #000000; /* 텍스트 색상 (선택 사항) */
+	border: 1px solid #388E3C; /* 테두리 색상 (선택 사항) */
+}	
+
+
+/* Tabulator 컨텍스트 메뉴 항목 스타일 */
+.tabulator-menu-item {
+    border: 1px solid #888; /* 테두리 1px (색상은 예시로 #888을 사용했습니다) */
+    border-radius: 10px;    /* 테두리 라운딩 10px */
+    background-color: #f8eb9f; /* 배경색 #ccc */
+    font-weight: bold;      /* 글자 굵게 */
+    font-size: 12px;        /* 글자 크기 11px */
+    padding: 5px 10px;      /* 내부 여백 추가 (가독성 향상) */
+    margin: 5px;            /* 메뉴 항목 간 간격 추가 */
+}
+
+/* 메뉴 항목에 마우스를 올렸을 때의 스타일 (선택 사항) */
+.tabulator-menu-item:hover {
+    background-color: #ddd; /* 마우스 올렸을 때 배경색 변경 */
+    cursor: pointer;        /* 마우스 커서 변경 */
+}

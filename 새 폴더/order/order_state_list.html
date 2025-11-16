@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>주문 상태 목록</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            min-height: 100%;
+            width: 100%;
+            overflow: auto;
+        }
+
+        body {
+            font-family: 'Malgun Gothic', '맑은 고딕', Arial, sans-serif;
+            position: relative;
+        }
+
+        .background-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 1900px;
+            height: 1030px;
+            background-image: url('../images/oms_layout.png');
+            background-size: 100% 100%;
+            background-position: left top;
+            background-repeat: no-repeat;
+            z-index: -1;
+            display: flex;
+            flex-grow: 1;
+            flex-direction: column;
+            align-items: start;
+            justify-content: start;
+            height: 100%;
+            border: 0px solid red;
+            width: 100%;
+            position: relative;
+            z-index: 2;
+        }
+
+        .top_area {
+            width: 100%;
+            height: 150px;
+            border: 1px solid red;
+            display: flex;
+            flex-grow: 1;
+            flex-direction: row;
+            align-items: start;
+            justify-content: start;
+        }
+
+        .empty {
+            width: 25px;
+            height: 150px;
+            border: 1px solid red;
+        }
+
+        .logo {
+            width: 330px;
+            height: 150px;
+            border: 1px solid red;
+        }
+
+        .TopMenu {
+            flex-grow: 1;
+            width: 700px;            
+            height: 150px;
+            border: 1px solid red;
+        }
+
+        .link {
+            height: 150px;
+            width: 390px;
+            border: 1px solid red;
+        }
+
+        .contents_area {
+            width: 100%;
+            height: 710px;
+            border: 1px solid rgb(112, 29, 221);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .bottom_area {
+            width: 100%;
+            height: 50px;
+            border: 1px solid red;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-image">
+        <div class="top_area">
+            <div class="empty"></div>
+            <div class="logo"></div>
+            <div class="TopMenu"></div>
+            <div class="link"></div>
+        </div>
+        <div class="contents_area"></div>
+        <div class="bottom_area"></div>
+    </div>
+</body>
+</html>
