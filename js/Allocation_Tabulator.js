@@ -236,7 +236,7 @@ function sms_order(event){
         showToast('오더가 선택되지 않았습니다!, 1개 이상의 오더를 선택하세요!!');
         return false;
     }else{
-		document.Allocation_Car.action=(typeof SITE_URL !== 'undefined' ? SITE_URL + '/' : '') + 'Allocation_car/ord_sms_sand_process`.php?`'+Query+'&Allocation_page='+$Allocation_page;
+		document.Allocation_Car.action=(typeof SITE_URL !== 'undefined' ? SITE_URL + '/' : '') + 'Allocation_car/Allocation_car_sms_sand_process`.php?`'+Query+'&Allocation_page='+$Allocation_page;
         document.Allocation_Car.submit();			
     }
 	return false;
