@@ -16,45 +16,39 @@
             // Orders, Allocation_Car, Inquiry 폴더일 때만 bottom_stats_container 출력
             $allowed_folders = array('Orders', 'Allocation_Car', 'Inquiry');
             if (in_array($current_folder_name, $allowed_folders)):
+                // 프로시저 호출하여 통계 항목 목록 가져오기
+                $CI->load->model('Common_model');
+                $counter_items = $CI->Common_model->get_code_list_by_category('T42', 'COUNTER');
             ?>
             <div class="bottom_stats_container">
+                <?php 
+                if (!empty($counter_items)) {
+                    foreach ($counter_items as $index => $item) {
+                        $cd_nm = isset($item->CD_NM) ? $item->CD_NM : '';
+                        $opt_item2 = isset($item->OPT_ITEM2) ? $item->OPT_ITEM2 : '';
+                        
+                        // 첫 번째 항목은 stats_value만, 나머지는 stats_value stats_value_small
+                        $value_class = ($index == 0) ? 'stats_value' : 'stats_value stats_value_small';
+                ?>
                 <div class="stats_item">
-                    <span class="stats_label">총매출:</span>
-                    <div id="T_S_AMT" class="stats_value"></div>
+                    <span class="stats_label"><?php echo htmlspecialchars($cd_nm); ?>:</span>
+                    <div id="<?php echo htmlspecialchars($opt_item2); ?>" class="<?php echo $value_class; ?>"></div>
                 </div>
-                <div class="stats_item">
-                    <span class="stats_label">총매입:</span>
-                    <div id="T_B_AMT" class="stats_value"></div>
-                </div>
-                <div class="stats_item">
-                    <span class="stats_label">총수익:</span>
-                    <div id="TTC" class="stats_value"></div>
-                </div>
-                <div class="stats_item">
-                    <span class="stats_label">총오더수:</span>
-                    <div id="T_Order_Count" class="stats_value stats_value_small"></div>
-                </div>
-                <div class="stats_item">
-                    <span class="stats_label">AIR:</span>
-                    <div id="T_AIR" class="stats_value stats_value_small"></div>
-                </div>
-                <div class="stats_item">
-                    <span class="stats_label">LCL:</span>
-                    <div id="T_LCL" class="stats_value stats_value_small"></div>
-                </div>
-                <div class="stats_item">
-                    <span class="stats_label">FCL:</span>
-                    <div id="T_FCL" class="stats_value stats_value_small"></div>
-                </div>
-                <div class="stats_item">
-                    <span class="stats_label">GNL:</span>
-                    <div id="T_GNL" class="stats_value stats_value_small"></div>
-                </div>
-                <div class="stats_item">
-                    <span class="stats_label">CAS:</span>
-                    <div id="T_CAS" class="stats_value stats_value_small"></div>
-                </div>
+                <?php 
+                    }
+                }
+                ?>
             </div>
+            <script>
+            // 통계 항목 매핑 정보를 JavaScript 변수로 전달
+            var counterItemsMapping = <?php echo json_encode(array_map(function($item) {
+                return array(
+                    'id' => isset($item->OPT_ITEM2) ? $item->OPT_ITEM2 : '',
+                    'field' => isset($item->OPT_ITEM2) ? $item->OPT_ITEM2 : '',
+                    'label' => isset($item->CD_NM) ? $item->CD_NM : ''
+                );
+            }, $counter_items ?: array()), JSON_UNESCAPED_UNICODE); ?>;
+            </script>
             <?php endif; ?>
         </div>
     </div>
