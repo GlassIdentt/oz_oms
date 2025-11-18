@@ -15,6 +15,7 @@
             
             // Orders, Allocation_Car, Inquiry 폴더일 때만 bottom_stats_container 출력
             $allowed_folders = array('Orders', 'Allocation_Car', 'Inquiry');
+            $counter_items = array();
             if (in_array($current_folder_name, $allowed_folders)):
                 // 프로시저 호출하여 통계 항목 목록 가져오기
                 $CI->load->model('Common_model');
@@ -39,8 +40,10 @@
                 }
                 ?>
             </div>
+            <?php endif; ?>
+            
             <script>
-            // 통계 항목 매핑 정보를 JavaScript 변수로 전달
+            // 통계 항목 매핑 정보를 JavaScript 변수로 전달 (조건 밖에서 정의)
             var counterItemsMapping = <?php echo json_encode(array_map(function($item) {
                 return array(
                     'id' => isset($item->OPT_ITEM2) ? $item->OPT_ITEM2 : '',
@@ -48,8 +51,8 @@
                     'label' => isset($item->CD_NM) ? $item->CD_NM : ''
                 );
             }, $counter_items ?: array()), JSON_UNESCAPED_UNICODE); ?>;
+            console.log('counterItemsMapping:', counterItemsMapping);
             </script>
-            <?php endif; ?>
         </div>
     </div>
     

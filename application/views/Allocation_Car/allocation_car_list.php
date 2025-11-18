@@ -1805,6 +1805,16 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				                }
 				            });
 				        }, 100);
+				        
+				        // 데이터가 없어도 통계 카운터는 실행 (0으로 표시)
+				        setTimeout(function() {
+				            if (typeof updateOrderCounter === 'function') {
+				                console.log('tableBuilt (데이터 없음)에서 updateOrderCounter 호출');
+				                updateOrderCounter();
+				            } else {
+				                console.warn('updateOrderCounter 함수가 아직 정의되지 않았습니다.');
+				            }
+				        }, 800);
 				        return;
 				    }
 				    
@@ -1842,6 +1852,16 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        headerCell.appendChild(checkbox);
 				    }
 				    addDragSelectionEvents();
+				    
+				    // 테이블이 완전히 빌드된 후 통계 카운터 실행
+				    setTimeout(function() {
+				        if (typeof updateOrderCounter === 'function') {
+				            console.log('tableBuilt에서 updateOrderCounter 호출');
+				            updateOrderCounter();
+				        } else {
+				            console.warn('updateOrderCounter 함수가 아직 정의되지 않았습니다.');
+				        }
+				    }, 800);
 				});
 				
 				table.on("cellClick", function(e, cell) {
@@ -2011,6 +2031,16 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        
 				        table.redraw(true);
 				        console.log('=== 테이블 렌더링 완료 ===');
+				        
+				        // 테이블 렌더링 완료 후 통계 카운터 실행
+				        setTimeout(function() {
+				            if (typeof updateOrderCounter === 'function') {
+				                console.log('window.onload에서 updateOrderCounter 호출');
+				                updateOrderCounter();
+				            } else {
+				                console.warn('updateOrderCounter 함수가 아직 정의되지 않았습니다.');
+				            }
+				        }, 1000);
 				    }, 100);
 				};
 				
