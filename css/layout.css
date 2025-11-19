@@ -165,7 +165,7 @@
         .stats_label {
             font-size: 12px;
             font-weight: bold;
-            color: #333;
+            color: #000000;
         }
 
         /* 통계 값 (자동 너비) */
@@ -183,6 +183,7 @@
             display: block;
             line-height: 25px;
             vertical-align: middle;
+            font-weight: normal;
         }
 
         /* 작은 통계 값 */

@@ -135,7 +135,7 @@ function updateOrderCounter() {
 	                }
 	                
 	                // CSS 스타일 강제 적용 (화면에 확실히 보이도록)
-	                // 총매출과 총매입에 대해서는 더 강력하게 적용
+	                // 모든 항목에 동일한 폰트 컬러 적용
 	                var cssProps = {
 	                    'display': 'block',
 	                    'visibility': 'visible',
@@ -149,18 +149,10 @@ function updateOrderCounter() {
 	                    'line-height': '25px',
 	                    'font-size': '12px',
 	                    'font-weight': 'normal',
+	                    'color': '#000000',
 	                    'z-index': '9999',
 	                    'position': 'relative'
 	                };
-	                
-	                // 총매출과 총매입에 대해서는 색상을 더 명확하게 설정
-	                if (item.id === 'T_S_AMT' || item.id === 'T_B_AMT') {
-	                    cssProps['color'] = '#000000';
-	                    cssProps['font-size'] = '12px';
-	                    cssProps['font-weight'] = 'bold';
-	                } else {
-	                    cssProps['color'] = '#000000';
-	                }
 	                
 	                $element.css(cssProps);
 	                
@@ -174,13 +166,7 @@ function updateOrderCounter() {
 	                    element.style.setProperty('font-size', '12px', 'important');
 	                    element.style.setProperty('line-height', '25px', 'important');
 	                    element.style.setProperty('background-color', '#ffffff', 'important');
-	                    
-	                    // 총매출과 총매입에 대해서는 추가 설정
-	                    if (item.id === 'T_S_AMT' || item.id === 'T_B_AMT') {
-	                        element.style.setProperty('font-weight', 'bold', 'important');
-	                        element.style.setProperty('min-width', '120px', 'important');
-	                        console.log('총매출/총매입 스타일 강제 적용 완료');
-	                    }
+	                    element.style.setProperty('font-weight', 'normal', 'important');
 	                }
 	                
 	                console.log('값 설정 완료:', item.id, '=', displayValue);
