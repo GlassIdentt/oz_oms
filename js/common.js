@@ -118,3 +118,60 @@ function showToast(message, type = 'success') {
         setTimeout(() => toast.remove(), 300);
     }, 1100);
 }
+
+// ========== 필터 상태 저장/복원 함수 ==========
+function saveFilterState($Form_Id) {
+    const filters = {};
+    const headerFilters = table.getHeaderFilters();
+    
+    headerFilters.forEach(filter => {
+        if (filter.value && filter.value.trim() !== '') {
+            filters[filter.field] = filter.value;
+        }
+    });
+    
+    if (Object.keys(filters).length > 0) {
+        localStorage.setItem('tabulatorFilters_'+$Form_Id, JSON.stringify(filters));
+    } else {
+        localStorage.removeItem('tabulatorFilters_'+$Form_Id);
+    }
+}
+
+function loadFilterState($Form_Id) {
+    const savedFilters = localStorage.getItem('tabulatorFilters_'+$Form_Id);
+    
+    if (savedFilters) {
+        const filters = JSON.parse(savedFilters);
+        Object.keys(filters).forEach(field => {
+            table.setHeaderFilterValue(field, filters[field]);
+        });
+        // 필터 복원 직후 강조 표시 (추가)
+        setTimeout(function() {
+            updateFilterHighlight($Form_Id);
+        }, 300);
+    }
+}
+// ========== 필터 상태 저장/복원 함수 ==========
+
+
+// ========== 필터 활성화 상태 표시 함수 ==========
+function updateFilterHighlight() {
+    // 모든 헤더 필터 input에서 filter-active 클래스 제거
+    document.querySelectorAll('.tabulator-header-filter input').forEach(input => {
+        input.classList.remove('filter-active');
+    });
+    const headerFilters = table.getHeaderFilters();
+    
+    // 값이 있는 필터만 강조
+    headerFilters.forEach(filter => {
+        if (filter.value && filter.value.trim() !== '') {
+            const column = table.getColumn(filter.field);
+            if (column) {
+                const filterInput = column.getElement().querySelector('.tabulator-header-filter input');
+                if (filterInput) {
+                    filterInput.classList.add('filter-active');
+                }
+            }
+        }
+    });
+}

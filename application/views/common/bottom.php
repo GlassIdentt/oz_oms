@@ -396,6 +396,70 @@ document.addEventListener('DOMContentLoaded', function() {
 		// 또는 단순히 초기 로드 시에만 적용
 	});
 });
+
+
+// ========== CSS 스타일 추가 ==========
+if (!document.getElementById('custom-header-style')) {
+    let style = document.createElement('style');
+    style.id = 'custom-header-style';
+    style.textContent = `
+        /* 헤더 래퍼 */
+        .custom-header-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            height: 100%;
+            padding: 0 2px;
+        }
+        
+        /* 헤더 타이틀 */
+        .header-title {
+            flex: 1;
+            text-align: center;
+            line-height: 1.2;
+            font-size: 12px;
+        }
+        
+        /* 정렬 버튼 */
+        .custom-sort-button {
+            cursor: pointer;
+            display: inline-block;
+            padding: 2px 4px;
+            margin-left: 2px;
+            user-select: none;
+            font-size: 10px;
+            color: #666;
+            flex-shrink: 0;
+        }
+        
+        .custom-sort-button:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 2px;
+            color: #000;
+        }
+        
+        /* 헤더 필터 입력란 스타일 개선 */
+        .tabulator-col .tabulator-header-filter input {
+            width: 100% !important;
+            box-sizing: border-box !important;
+            padding: 2px 4px !important;
+            font-size: 11px !important;
+            height: 25px !important;
+            margin-top: 2px !important;
+        }
+        
+        /* 헤더 높이 증가 */
+        .tabulator .tabulator-header .tabulator-col {
+            min-height: 40px !important;
+        }
+        
+        .tabulator .tabulator-header .tabulator-col .tabulator-col-content {
+            padding: 4px !important;
+        }
+    `;
+    document.head.appendChild(style);
+}
 </script>
 </body>
 </html>
