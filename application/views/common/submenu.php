@@ -22,6 +22,7 @@ $current_file = isset($current_file) ? $current_file : '';
 // URL 파라미터 확인
 $allocation_page = $CI->input->get('Allocation_page');
 $section_allocation_page = $CI->input->get('Section_Allocation_page');
+$order_page = $CI->input->get('Order_Page');
 
 // T41 그룹에서 해당 폴더의 서브 메뉴 조회
 $submenu_list = array();
@@ -52,9 +53,18 @@ if (empty($submenu_list)) {
     $query_params = '';
     $menu_allocation_page = '';
     $menu_section_allocation_page = '';
+    $menu_order_page = '';
 
+    // 오더등록현황 시리즈 (Order_Page 사용)
+    if ($menu->CD_NM == '오더등록현황') {
+        $query_params = '?Order_Page=Ch_1';
+        $menu_order_page = 'Ch_1';
+    } elseif ($menu->CD_NM == '오더등록현황-2') {
+        $query_params = '?Order_Page=Ch_2';
+        $menu_order_page = 'Ch_2';
+    }
     // 종합배차현황 시리즈 (Allocation_page 사용)
-    if ($menu->CD_NM == '종합배차현황') {
+    elseif ($menu->CD_NM == '종합배차현황') {
         $query_params = '?Allocation_page=ch_1';
         $menu_allocation_page = 'ch_1';
     } elseif ($menu->CD_NM == '종합배차현황-2') {
@@ -77,7 +87,14 @@ if (empty($submenu_list)) {
     }
 
     // 활성화 상태 판단
-    if (!empty($menu_allocation_page)) {
+    if (!empty($menu_order_page)) {
+        // 오더등록현황 시리즈: Order_Page 파라미터로 판단
+        $is_active = ($order_page == $menu_order_page);
+        // Order_Page가 없으면 기본값 Ch_1로 판단
+        if (empty($order_page) && $menu_order_page == 'Ch_1') {
+            $is_active = true;
+        }
+    } elseif (!empty($menu_allocation_page)) {
         // 종합배차현황 시리즈: Allocation_page 파라미터로 판단
         $is_active = ($allocation_page == $menu_allocation_page);
     } elseif (!empty($menu_section_allocation_page)) {

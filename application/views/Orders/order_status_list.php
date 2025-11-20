@@ -26,6 +26,16 @@ $CI->load->helper('common_form');
 
 // ASP Request 파라미터를 PHP로 변환
 // POST 우선, 없으면 GET에서 가져오기
+
+// Order_Page 파라미터 처리 (allocation_page -> Order_Page로 변경)
+$order_page_post = $CI->input->post('Order_Page');
+$order_page_get = $CI->input->get('Order_Page');
+$order_page = !empty($order_page_post) ? $order_page_post : (!empty($order_page_get) ? $order_page_get : '');
+// Order_Page가 빈 문자열이면 기본값으로 Ch_1 설정
+if (empty($order_page)) {
+    $order_page = 'Ch_1';
+}
+
 $s_code = $CI->input->post('S_CODE') ?: $CI->input->get('S_CODE');
 $s_code = !empty($s_code) ? $s_code : '';
 
@@ -37,7 +47,10 @@ if (empty($seardate) || is_null($seardate)) {
     $seardate = '01';
 }
 
-// SEARDATE 값 변환 (01 -> LOAD_REQ_DT, 02 -> ORD_REGDATE)
+// 프로시저 호출용 원본 값 저장 (01 또는 02)
+$seardate_for_proc = $seardate;
+
+// SEARDATE 값 변환 (01 -> LOAD_REQ_DT, 02 -> ORD_REGDATE) - 화면 표시용
 $seardate_01 = '';
 $seardate_02 = '';
 switch ($seardate) {
@@ -50,10 +63,16 @@ switch ($seardate) {
         $seardate_02 = 'selected';
         break;
     case 'LOAD_REQ_DT':
+        $seardate_for_proc = '01';
         $seardate_01 = 'selected';
         break;
     case 'ORD_REGDATE':
+        $seardate_for_proc = '02';
+        $seardate_02 = 'selected';
+        break;
     case 'ORD_DT':
+        $seardate = 'ORD_REGDATE';
+        $seardate_for_proc = '02';
         $seardate_02 = 'selected';
         break;
 }
@@ -64,7 +83,27 @@ if (empty($s_date)) {
     $t_date = str_replace('-', '', $today);
     $s_date = $today;
 } else {
-    $t_date = str_replace('-', '', $s_date);
+    // S_DATE가 YYYY-MM-DD 형식이면 YYYYMMDD로 변환
+    if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $s_date)) {
+        $t_date = str_replace('-', '', $s_date);
+    } 
+    // S_DATE가 이미 YYYYMMDD 형식인 경우
+    elseif (preg_match('/^\d{8}$/', $s_date)) {
+        $t_date = $s_date;
+        // S_DATE는 YYYY-MM-DD 형식으로 유지
+        $s_date = substr($s_date, 0, 4) . '-' . substr($s_date, 4, 2) . '-' . substr($s_date, 6, 2);
+    }
+    // 다른 형식이거나 잘못된 형식인 경우 오늘 날짜 사용
+    else {
+        $t_date = str_replace('-', '', $today);
+        $s_date = $today;
+    }
+}
+
+// T_DATE가 8자리 숫자인지 최종 확인 (프로시저 호출 전 검증)
+if (empty($t_date) || strlen($t_date) != 8 || !is_numeric($t_date)) {
+    $t_date = str_replace('-', '', $today);
+    $s_date = $today;
 }
 
 $s_date2 = $CI->input->post('S_DATE2') ?: $CI->input->get('S_DATE2');
@@ -77,6 +116,16 @@ if (empty($s_date2)) {
 
 $so_mode = $CI->input->post('SO_MODE') ?: $CI->input->get('SO_MODE');
 $so_mode = str_replace('@', "'", $so_mode);
+
+// Order_Page에 따른 SO_MODE 기본값 설정
+if (empty($so_mode)) {
+    if ($order_page == 'Ch_2') {
+        $so_mode = 'AIR,';
+    } else {
+        // Ch_1 또는 기타의 경우 기본값은 빈 문자열 유지
+        $so_mode = '';
+    }
+}
 
 $so_mode_gubun = $CI->input->post('SO_MODE_GUBUN') ?: $CI->input->get('SO_MODE_GUBUN');
 $so_mode_gubun = !empty($so_mode_gubun) ? $so_mode_gubun : '';
@@ -151,18 +200,23 @@ try {
     // TOLS_L(7) = @S_TEXT VARCHAR(50)
     // TOLS_L(8) = @SORT_SQL VARCHAR(500)
     
+    // T_DATE 파라미터 최종 검증 (8자리 숫자 형식)
+    if (empty($t_date) || strlen($t_date) != 8 || !is_numeric($t_date)) {
+        $t_date = str_replace('-', '', date('Y-m-d'));
+    }
+    
     $sql = "EXEC [dbo].[Proc_So_Order_List_5_Json] @SEARDATE = ?, @T_DATE = ?, @IO_TYPE = ?, @OFFICE_CD = ?, @SO_MODE = ?, @G_HBL_NO = ?, @S_CODE = ?, @S_TEXT = ?, @SORT_SQL = ?";
     
     $proc_query = $CI->db->query($sql, array(
-        $seardate,      // @SEARDATE VARCHAR(10)
-        $t_date,        // @T_DATE VARCHAR(10) - 날짜에서 "-" 제거된 값
-        $io_type,       // @IO_TYPE VARCHAR(10)
-        $office_cd,     // @OFFICE_CD VARCHAR(2)
-        $so_mode,       // @SO_MODE VARCHAR(50)
-        $g_hbl_no,      // @G_HBL_NO VARCHAR(20) - G_HBL_NO 사용
-        $n_field,       // @S_CODE VARCHAR(2) - N_Field 사용
-        $s_text,        // @S_TEXT VARCHAR(50)
-        $sort_sql       // @SORT_SQL VARCHAR(500)
+        $seardate_for_proc,  // @SEARDATE VARCHAR(10) - 프로시저 호출용 (01 또는 02)
+        $t_date,             // @T_DATE VARCHAR(10) - 날짜에서 "-" 제거된 값 (YYYYMMDD 형식)
+        $io_type,            // @IO_TYPE VARCHAR(10)
+        $office_cd,          // @OFFICE_CD VARCHAR(2)
+        $so_mode,            // @SO_MODE VARCHAR(50)
+        $g_hbl_no,           // @G_HBL_NO VARCHAR(20) - G_HBL_NO 사용
+        $n_field,            // @S_CODE VARCHAR(2) - N_Field 사용
+        $s_text,             // @S_TEXT VARCHAR(50)
+        $sort_sql            // @SORT_SQL VARCHAR(500)
     ));
     
     if ($proc_query) {
@@ -217,8 +271,8 @@ try {
 			<nav style="display: flex; align-items: center; justify-content: space-between; height: 100%; background-color: #cccccc;">
 				<div style="width: 10px; height: 100%;"></div>
 				<select name="SEARDATE" class="text-input-style">
-				<option value="LOAD_REQ_DT" <?php echo ($seardate == 'LOAD_REQ_DT' || $seardate_01 == 'selected') ? 'selected' : ''; ?>>픽업요청일</option>
-				<option value="ORD_REGDATE" <?php echo ($seardate == 'ORD_REGDATE' || $seardate == 'ORD_DT' || $seardate_02 == 'selected') ? 'selected' : ''; ?>>오더등록일</option>
+				<option value="01" <?php echo ($seardate == '01' || $seardate == 'LOAD_REQ_DT' || $seardate_01 == 'selected') ? 'selected' : ''; ?>>픽업요청일</option>
+				<option value="02" <?php echo ($seardate == '02' || $seardate == 'ORD_REGDATE' || $seardate == 'ORD_DT' || $seardate_02 == 'selected') ? 'selected' : ''; ?>>오더등록일</option>
 				</select>
 				<input type="text" id="S_DATE" name="S_DATE" readonly style="width:70px;cursor:pointer;" class="text-input-style datepicker" value="<?php echo htmlspecialchars($s_date); ?>">
 				<span class="font_bold">사업장</span>
@@ -231,7 +285,7 @@ try {
 				</span>
 				<span class="font_bold">HBL_NO</span>
 				<input type="search" name="HBL_NO" class="Reg_Box" style="width:120px;" value="<?php echo htmlspecialchars($hbl_no); ?>">
-				<span class="font_bold">업체</span>
+				<span class="font_bold"></span>
 				<?php echo com_search_type($n_field, $opt_item1); ?>
 				<input type="search" name="S_TEXT" class="Reg_Box" style="width:180px;ime-mode:active;" value="<?php echo htmlspecialchars($s_text); ?>" onkeydown="if (window.event.keyCode==13) { search_form('Y','S') }">
 				<button class="event-btn select-btn" data-name="검색" onclick="search_form();">
@@ -252,7 +306,7 @@ try {
 		</div>			
 	</div>
 	<div id="step_2" style="height: 5px;"></div>
-	<div id="Order_status_list" style="height: calc(100vh - 200px); max-height: none; flex: 1; border: 1px solid #CCC2C2; width: 100%; overflow: hidden; margin-top: 0;"></div>
+	<div id="Order_status_list" style="height: calc(100vh - 200px); max-height: 650px; flex: 1; border: 1px solid #CCC2C2; width: 100%; overflow: hidden; margin-top: 0;"></div>
 </div>
 <script>
 			var tabledata = <?php echo json_encode($json_data); ?>;

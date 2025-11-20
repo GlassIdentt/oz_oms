@@ -545,60 +545,7 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 		document.querySelector('#Allocation_Car').submit();
     }
 	
-	// 타이틀항목 추가삭제 레이어 표시 함수
-	function showTitleSelectLayer(event) {
-		if (event) {
-			event.preventDefault();
-			event.stopPropagation();
-		}
-		
-		console.log('showTitleSelectLayer 함수 호출됨');
-		
-		var layer = document.getElementById('title_item');
-		var overlay = document.getElementById('title_item_overlay');
-		
-		console.log('레이어 요소:', layer);
-		console.log('오버레이 요소:', overlay);
-		
-		if (!layer) {
-			console.error('title_item 레이어를 찾을 수 없습니다.');
-			return false;
-		}
-		
-		if (!overlay) {
-			console.error('title_item_overlay 오버레이를 찾을 수 없습니다.');
-		}
-		
-		// 레이어와 오버레이를 body에 직접 추가 (이미 있으면 이동)
-		if (layer && layer.parentElement !== document.body) {
-			document.body.appendChild(layer);
-		}
-		if (overlay && overlay.parentElement !== document.body) {
-			document.body.appendChild(overlay);
-		}
-		
-		// 오버레이 표시
-		if (overlay) {
-			overlay.style.display = 'block';
-			// 페이드인 효과를 위해 약간의 지연 후 show 클래스 추가
-			setTimeout(function() {
-				overlay.classList.add('show');
-			}, 10);
-		}
-		
-		// 레이어 표시
-		if (layer) {
-			layer.style.display = 'block';
-			layer.style.visibility = 'visible';
-			// 페이드인 효과를 위해 약간의 지연 후 show 클래스 추가
-			setTimeout(function() {
-				layer.classList.add('show');
-				console.log('레이어 표시 완료');
-			}, 10);
-		}
-		
-		return false;
-	}		
+	
 </script>		
 
 <div class="contents_area" id="contentsArea" style="padding: 0 20px; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start;">
@@ -613,8 +560,8 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
         <div id="step_1" style="height: 30px; width: 100%; border: 0px solid #000;">
 			<nav style="display: flex; align-items: center; height: 100%; gap: 10px; padding: 0 5px;">
 				<select name="SEARDATE" class="text-input-style">
-				<option value="LOAD_REQ_DT" <?php echo ($seardate == 'LOAD_REQ_DT') ? 'selected' : ''; ?>>픽업요청일</option>
-				<option value="ORD_DT" <?php echo ($seardate == 'ORD_DT') ? 'selected' : ''; ?>>오더등록일</option>
+				<option value="01" <?php echo ($seardate == 'LOAD_REQ_DT') ? 'selected' : ''; ?>>픽업요청일</option>
+				<option value="02" <?php echo ($seardate == 'ORD_DT') ? 'selected' : ''; ?>>오더등록일</option>
 				</select>
 				<input type="text" id="S_DATE" name="S_DATE" style="width:70px;cursor:pointer;" class="text-input-style datepicker" value="<?php echo htmlspecialchars($s_date); ?>" readonly>
 				<span class="font_bold">사업장</span>
