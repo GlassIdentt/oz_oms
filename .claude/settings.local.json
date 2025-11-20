@@ -1,17 +1,73 @@
 {
-  "permissions": {
-    "allow": [
-      "Bash(git init:*)",
-      "Bash(git add:*)",
-      "Bash(git commit:*)",
-      "Bash(git config:*)",
-      "Bash(git remote add:*)",
-      "Bash(git branch:*)",
-      "Bash(git push:*)",
-      "Bash(schtasks /Create /TN \"OZ_OMS_AutoPush\" /TR \"d:\\ProJectHome\\ozitsolution\\oz_oms\\auto_git_push.bat\" /SC MINUTE /MO 30 /F)",
-      "Bash(powershell.exe -Command \"schtasks /Create /TN ''OZ_OMS_AutoPush'' /TR ''d:\\ProJectHome\\ozitsolution\\oz_oms\\auto_git_push.bat'' /SC MINUTE /MO 30 /F\")"
-    ],
-    "deny": [],
-    "ask": []
-  }
+	"permissions": {
+		"allow": [
+			"Bash(git init:*)",
+			"Bash(git add:*)",
+			"Bash(git commit:*)",
+			"Bash(git config:*)",
+			"Bash(git remote add:*)",
+			"Bash(git branch:*)",
+			"Bash(git push:*)"
+			//"Bash(schtasks /Create /TN \"OZ_OMS_AutoPush\" /TR \"d:\\ProJectHome\\ozitsolution\\oz_oms\\auto_git_push.bat\" /SC MINUTE /MO 30 /F)",
+			// "Bash(powershell.exe -Command \"schtasks /Create /TN ''OZ_OMS_AutoPush'' /TR ''d:\\ProJectHome\\ozitsolution\\oz_oms\\auto_git_push.bat'' /SC MINUTE /MO 30 /F\")"
+		],
+		"deny": [],
+		"ask": []
+	},
+
+	// 에디터 기본 설정
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"editor.formatOnSave": true,
+	"editor.formatOnPaste": true,
+	"editor.formatOnType": false,
+	"editor.tabSize": 4,
+	"editor.insertSpaces": true,
+	"editor.detectIndentation": true,
+	"editor.autoIndent": "full",
+
+	// 들여쓰기 가이드 표시
+	"editor.guides.indentation": true,
+	"editor.guides.highlightActiveIndentation": true,
+	"editor.renderWhitespace": "boundary",
+
+	// Prettier 전역 설정
+	"prettier.tabWidth": 4,
+	"prettier.useTabs": false,
+	"prettier.semi": true,
+	"prettier.singleQuote": true,
+	"prettier.printWidth": 100,
+	"prettier.trailingComma": "es5",
+	"prettier.arrowParens": "always",
+	"prettier.endOfLine": "auto",
+
+	// 파일 타입별 설정
+	"[javascript]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode",
+		"editor.formatOnSave": true,
+		"editor.tabSize": 2
+	},
+	"[typescript]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode",
+		"editor.formatOnSave": true,
+		"editor.tabSize": 2
+	},
+	"[html]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode",
+		"editor.formatOnSave": true,
+		"editor.tabSize": 2
+	},
+	"[css]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode",
+		"editor.formatOnSave": true,
+		"editor.tabSize": 2
+	},
+	"[json]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode",
+		"editor.formatOnSave": true,
+		"editor.tabSize": 2
+	},
+	"[python]": {
+		"editor.tabSize": 4,
+		"editor.insertSpaces": true
+	}
 }

@@ -604,6 +604,7 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 <div class="contents_area" id="contentsArea" style="padding: 0 20px; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start;">
      <div class="container_top_aloc_list" style="height: 100px; border: 0px solid #000; width: 100%;">
 		<form name="Allocation_Car" id="Allocation_Car" method="post" style="display: flex; flex-direction: column; width: 100%; height: 100%;">
+		<input type="hidden" name="Form_Id" id="Form_Id" value="Allocation_page_<?php echo htmlspecialchars(is_string($menu_allocation_page) ? $menu_allocation_page : ''); ?>">	
 		<input type="hidden" name="Query" id="Query" value="<?php echo htmlspecialchars($query_string); ?>">
 		<input type="hidden" name="Allocation_page" id="Allocation_page" value="<?php echo htmlspecialchars(is_string($menu_allocation_page) ? $menu_allocation_page : ''); ?>">
 		<input type="hidden" name="GridData" id="GridData">
@@ -986,8 +987,20 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				// ========== 11. 컬럼 데이터 정의 ==========
 				const columnData = [
 				    {
-				        title:"<div class='custom-header'>담당자<br><span class='custom-sort-button' data-sort-field='OP_NM'></span></div>", 
+				        title:"담당자", 
 						headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>담당자</div>
+				                        <span class='custom-sort-button' data-sort-field='OP_NM'>▼</span>
+				                    </div>`;
+				        },						
 				        field:"OP_NM", 
 				        width:45, 
 				        hozAlign:"center", 
@@ -1000,7 +1013,12 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				    {title:" ", field:"SO_PT",formatter: SoPtFormatter, width:25, headerSort: false,minWidth: 25,maxWidth: 25,visible: true},
 				    {title:"M", field:"S_ORDER",hozAlign:"center",  width:25,headerSort: false,minWidth: 25,maxWidth: 25,visible: true},
 				    {
-				        title:"<div class='custom-header'>상품<br><span class='custom-sort-button' data-sort-field='SO_MODE_H'></span></div>", 
+				        title:"상품", 
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>상품<br><span class='custom-sort-button' data-sort-field='SO_MODE_H'>▼</span></div>
+				                    </div>`;
+				        },						
 				        field:"SO_MODE_H", 
 				        width:40,
 				        hozAlign:"center",
@@ -1008,7 +1026,12 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>구분<br><span class='custom-sort-button' data-sort-field='IO_TYPE'></span></div>", 
+				        title:"구분", 
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>구분<br><span class='custom-sort-button' data-sort-field='IO_TYPE'>▼</span></div>
+				                    </div>`;
+				        },						
 				        field:"IO_TYPE", 
 				        width:30,
 				        hozAlign:"center", 
@@ -1020,8 +1043,20 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				    {title:"픽업<br>완료", field:"LOAD_HM",hozAlign:"center",formatter: LoadHmFormatter,  width:35,headerSort: false,minWidth: 35,maxWidth: 35,visible: true},
 				    {title:"하차<br>도착", field:"UNLOAD_HM",hozAlign:"center",formatter: UnLoadHmFormatter,  width:35,headerSort: false,minWidth: 35,maxWidth: 35,visible: true},
 				    {
-				        title:"<div class='custom-header'>일반배차<br><span class='custom-sort-button' data-sort-field='CUSTOM_CARNO_NUM'></span></div>", 
+				        title:"일반배차", 
 				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>일반배차</div>
+				                        <span class='custom-sort-button' data-sort-field='CUSTOM_CARNO_NUM'>▼</span>
+				                    </div>`;
+				        },
 				        field:"CUSTOM_CARNO_NUM", 
 				        width:70, 
 				        tooltip:true,
@@ -1030,8 +1065,20 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true 
 				    },
 				    {
-				        title:"<div class='custom-header'>배차업체<br><span class='custom-sort-button' data-sort-field='TRAN_NM_H'></span></div>", 
+				        title:"배차업체", 
 				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>배차업체</div>
+				                        <span class='custom-sort-button' data-sort-field='TRAN_NM_H'>▼</span>
+				                    </div>`;
+				        },
 				        field:"TRAN_NM_H", 
 				        width:100,
 				        tooltip:true,
@@ -1040,8 +1087,20 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>차량전화<br><span class='custom-sort-button' data-sort-field='CAR_TEL_H'></span></div>", 
+				        title:"차량전화", 
 				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>차량전화</div>
+				                        <span class='custom-sort-button' data-sort-field='CAR_TEL_H'>▼</span>
+				                    </div>`;
+				        },	
 				        field:"CAR_TEL_H", 
 				        width:90, 
 				        hozAlign:"left", 
@@ -1049,8 +1108,20 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>구간배차<br><span class='custom-sort-button' data-sort-field='G_CAR_NO'></span></div>", 
+				        title:"구간배차", 
 				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>구간배차</div>
+				                        <span class='custom-sort-button' data-sort-field='G_CAR_NO'>▼</span>
+				                    </div>`;
+				        },
 				        field:"G_CAR_NO", 
 				        width:70, 
 				        hozAlign:"left", 
@@ -1059,8 +1130,20 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>배차유형<br><span class='custom-sort-button' data-sort-field='ALOC_TYPE'></span></div>", 
+				        title:"배차유형", 
 				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>배차유형</div>
+				                        <span class='custom-sort-button' data-sort-field='ALOC_TYPE'>▼</span>
+				                    </div>`;
+				        },	
 				        field:"ALOC_TYPE", 
 				        width:55, 
 				        hozAlign:"center", 
@@ -1069,8 +1152,20 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>발주처<br><span class='custom-sort-button' data-sort-field='ACT_SHIP_A_NM'></span></div>", 
+				        title:"발주처", 
 				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>발주처</div>
+				                        <span class='custom-sort-button' data-sort-field='ACT_SHIP_A_NM'>▼</span>
+				                    </div>`;
+				        },	
 				        field:"ACT_SHIP_A_NM", 
 				        width:100, 
 				        tooltip:true,
@@ -1079,8 +1174,20 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>발주처전화<br><span class='custom-sort-button' data-sort-field='ACT_SHIP_TEL'></span></div>", 
+				        title:"발주처전화", 
 				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>발주처전화</div>
+				                        <span class='custom-sort-button' data-sort-field='ACT_SHIP_TEL'>▼</span>
+				                    </div>`;
+				        },	
 				        field:"ACT_SHIP_TEL", 
 				        width:90,
 				        tooltip:true,
@@ -1089,8 +1196,20 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>발주담당<br><span class='custom-sort-button' data-sort-field='ACT_SHIP_PIC_NM'></span></div>",
+				        title:"발주담당",
 				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>발주담당</div>
+				                        <span class='custom-sort-button' data-sort-field='ACT_SHIP_PIC_NM'>▼</span>
+				                    </div>`;
+				        },	
 				        field:"ACT_SHIP_PIC_NM", 
 				        width:70,
 				        tooltip:true,
@@ -1099,8 +1218,20 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>화주<br><span class='custom-sort-button' data-sort-field='SHIP_NM'></span></div>", 
+				        title:"화주", 
 				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>화주</div>
+				                        <span class='custom-sort-button' data-sort-field='SHIP_NM'>▼</span>
+				                    </div>`;
+				        },	
 				        field:"SHIP_NM", 
 				        width:100, 
 				        tooltip:true,
@@ -1110,8 +1241,20 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>픽업지<br><span class='custom-sort-button' data-sort-field='LOAD_NM'></span></div>", 
+				        title:"픽업지", 
 				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>픽업지</div>
+				                        <span class='custom-sort-button' data-sort-field='LOAD_NM'>▼</span>
+				                    </div>`;
+				        },	
 				        field:"LOAD_NM", 
 				        width:100,
 				        tooltip:true,
@@ -1120,8 +1263,20 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>픽업지전화<br><span class='custom-sort-button' data-sort-field='LOAD_TEL'></span></div>", 
+				        title:"픽업지전화", 
 				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>픽업지전화</div>
+				                        <span class='custom-sort-button' data-sort-field='LOAD_TEL'>▼</span>
+				                    </div>`;
+				        },	
 				        field:"LOAD_TEL", 
 				        width:90,
 				        tooltip:true,
@@ -1130,8 +1285,20 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>픽업담당<br><span class='custom-sort-button' data-sort-field='LOAD_PIC_NM'></span></div>", 
+				        title:"픽업담당", 
 				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>픽업담당</div>
+				                        <span class='custom-sort-button' data-sort-field='LOAD_PIC_NM'>▼</span>
+				                    </div>`;
+				        },	
 				        field:"LOAD_PIC_NM", 
 				        width:70,
 				        tooltip:true,
@@ -1140,8 +1307,20 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>픽업지역<br><span class='custom-sort-button' data-sort-field='LOAD_AREA'></span></div>", 
+				        title:"픽업지역", 
 				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>픽업지역</div>
+				                        <span class='custom-sort-button' data-sort-field='LOAD_AREA'>▼</span>
+				                    </div>`;
+				        },	
 				        field:"LOAD_AREA", 
 				        width:80, 
 				        tooltip:true,
@@ -1150,7 +1329,12 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>픽업<br>요청<span class='custom-sort-button' data-sort-field='LOAD_REQ_HM'></span></div>", 
+				        title:"픽업요청", 
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>픽업<br>요청<br><span class='custom-sort-button' data-sort-field='LOAD_REQ_HM'>▼</span></div>
+				                    </div>`;
+				        },	 
 				        field:"LOAD_REQ_HM", 
 				        width:45, 
 				        hozAlign:"center", 
@@ -1159,7 +1343,12 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				    },
 				    {title:"픽업<br>예정", field:"ARR_PLAN_HM",hozAlign:"center", width:35,headerSort: false,minWidth: 35,maxWidth: 35,visible: true},
 				    {
-				        title:"<div class='custom-header'>총수량<br><span class='custom-sort-button' data-sort-field='PKG'></span></div>", 
+				        title:"총수량", 
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>총수량<br><span class='custom-sort-button' data-sort-field='PKG'>▼</span></div>
+				                    </div>`;
+				        },	
 				        field:"PKG", 
 				        width:50, 
 				        hozAlign:"center", 
@@ -1182,7 +1371,12 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>총부피<br><span class='custom-sort-button' data-sort-field='CBM'></span></div>", 
+				        title:"총부피", 
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>총부피<br><span class='custom-sort-button' data-sort-field='CBM'>▼</span></div>
+				                    </div>`;
+				        },	
 				        field:"CBM", 
 				        width:50, 
 				        hozAlign:"center", 
@@ -1205,7 +1399,12 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>총무게<br><span class='custom-sort-button' data-sort-field='WGT'></span></div>", 
+				        title:"총무게", 
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>총무게<br><span class='custom-sort-button' data-sort-field='WGT'>▼</span></div>
+				                    </div>`;
+				        },	
 				        field:"WGT", 
 				        width:50, 
 				        hozAlign:"center", 
@@ -1237,8 +1436,20 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>비고<br><span class='custom-sort-button' data-sort-field='ORD_ETC'></span></div>",
+				        title:"비고",
 				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>비고</div>
+				                        <span class='custom-sort-button' data-sort-field='ORD_ETC'>▼</span>
+				                    </div>`;
+				        },	
 				        field:"ORD_ETC", 
 				        width:120, 
 				        tooltip:true,
@@ -1247,8 +1458,20 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>목적국<br><span class='custom-sort-button' data-sort-field='FDS_NM'></span></div>", 
+				        title:"목적국", 
 				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>목적국</div>
+				                        <span class='custom-sort-button' data-sort-field='FDS_NM'>▼</span>
+				                    </div>`;
+				        },
 				        field:"FDS_NM", 
 				        width:70, 
 				        tooltip:true,
@@ -1257,8 +1480,20 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>하차지<br><span class='custom-sort-button' data-sort-field='UNLOAD_NM'></span></div>", 
+				        title:"하차지", 
 				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>하차지</div>
+				                        <span class='custom-sort-button' data-sort-field='UNLOAD_NM'>▼</span>
+				                    </div>`;
+				        },	
 				        field:"UNLOAD_NM", 
 				        width:100, 
 				        tooltip:true,
@@ -1267,8 +1502,20 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>하차지전화<br><span class='custom-sort-button' data-sort-field='UNLOAD_TEL'></span></div>", 
+				        title:"하차지전화", 
 				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>하차지전화</div>
+				                        <span class='custom-sort-button' data-sort-field='UNLOAD_TEL'>▼</span>
+				                    </div>`;
+				        },	
 				        field:"UNLOAD_TEL", 
 				        width:90,
 				        tooltip:true,
@@ -1277,8 +1524,20 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>하차담당<br><span class='custom-sort-button' data-sort-field='UNLOAD_PIC_NM'></span></div>", 
+				        title:"하차담당", 
 				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>하차담당</div>
+				                        <span class='custom-sort-button' data-sort-field='UNLOAD_PIC_NM'>▼</span>
+				                    </div>`;
+				        },
 				        field:"UNLOAD_PIC_NM", 
 				        width:70,
 				        tooltip:true,
@@ -1287,7 +1546,13 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>하차요청일<br><span class='custom-sort-button' data-sort-field='UNLOAD_REQ_DT'></span></div>", 
+				        title:"하차요청일", 
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>하차요청일<br><span class='custom-sort-button' data-sort-field='UNLOAD_REQ_DT'>▼</span></div>
+				                        
+				                    </div>`;
+				        },	
 				        field:"UNLOAD_REQ_DT", 
 				        width:80, 
 				        hozAlign:"center", 
@@ -1397,8 +1662,20 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>청구처<br><span class='custom-sort-button' data-sort-field='BILL_NM'></span></div>",
+				        title:"청구처",
 				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>청구처</div>
+				                        <span class='custom-sort-button' data-sort-field='BILL_NM'>▼</span>
+				                    </div>`;
+				        },	
 				        field:"BILL_NM", 
 				        width:100, 
 				        tooltip: function(cell){
@@ -1409,8 +1686,20 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>BL_NO<br><span class='custom-sort-button' data-sort-field='HBL_NO'></span></div>", 
+				        title:"HBL_NO", 
 				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>청구처</div>
+				                        <span class='custom-sort-button' data-sort-field='HBL_NO'>▼</span>
+				                    </div>`;
+				        },	
 				        field:"HBL_NO", 
 				        width:90, 
 				        tooltip:true,
@@ -1420,7 +1709,20 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>픽업CY<br><span class='custom-sort-button' data-sort-field='LOAD_CY'></span></div>", 
+				        title:"픽업CY", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>픽업CY</div>
+				                        <span class='custom-sort-button' data-sort-field='LOAD_CY'>▼</span>
+				                    </div>`;
+				        },	 
 				        field:"LOAD_CY", 
 				        width:100,
 				        tooltip:true,
@@ -1429,7 +1731,20 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>픽업CY담당<br><span class='custom-sort-button' data-sort-field='LOAD_CY_PIC_NM'></span></div>", 
+					        title:"픽업CY담당", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>픽업CY담당</div>
+				                        <span class='custom-sort-button' data-sort-field='LOAD_CY_PIC_NM'>▼</span>
+				                    </div>`;
+				        },
 				        field:"LOAD_CY_PIC_NM", 
 				        width:80, 
 				        tooltip:true,
@@ -1438,7 +1753,20 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>픽업CY전화<br><span class='custom-sort-button' data-sort-field='LOAD_CY_TEL'></span></div>", 
+				        title:"픽업CY전화", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>픽업CY전화</div>
+				                        <span class='custom-sort-button' data-sort-field='LOAD_CY_TEL'>▼</span>
+				                    </div>`;
+				        },	 
 				        field:"LOAD_CY_TEL", 
 				        width:80,
 				        tooltip:true,
@@ -1447,7 +1775,20 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>하차CY담당<br><span class='custom-sort-button' data-sort-field='UNLOAD_CY_PIC_NM'></span></div>", 
+				        title:"하차CY담당", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>하차CY담당</div>
+				                        <span class='custom-sort-button' data-sort-field='UNLOAD_CY_PIC_NM'>▼</span>
+				                    </div>`;
+				        },	
 				        field:"UNLOAD_CY_PIC_NM", 
 				        width:80,
 				        tooltip:true,
@@ -1456,7 +1797,20 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>하차CY<br><span class='custom-sort-button' data-sort-field='UNLOAD_CY'></span></div>", 
+				        title:"하차CY", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>하차CY</div>
+				                        <span class='custom-sort-button' data-sort-field='UNLOAD_CY'>▼</span>
+				                    </div>`;
+				        },	
 				        field:"UNLOAD_CY", 
 				        width:100,
 				        tooltip:true,
@@ -1465,7 +1819,20 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>하차CY담당<br><span class='custom-sort-button' data-sort-field='UNLOAD_CY_TEL'></span></div>", 
+				        title:"하차CY전화", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>하차CY담당</div>
+				                        <span class='custom-sort-button' data-sort-field='UNLOAD_CY_TEL'>▼</span>
+				                    </div>`;
+				        },
 				        field:"UNLOAD_CY_TEL", 
 				        width:80,
 				        tooltip:true,
@@ -1474,7 +1841,20 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>아이템<br><span class='custom-sort-button' data-sort-field='ITEM_NM'></span></div>", 
+				        title:"아이템", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>아이템</div>
+				                        <span class='custom-sort-button' data-sort-field='ITEM_NM'>▼</span>
+				                    </div>`;
+				        },	
 				        field:"ITEM_NM", 
 				        width:80,
 				        tooltip:true,
@@ -1483,7 +1863,20 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>품목<br><span class='custom-sort-button' data-sort-field='GOOD_NM'></span></div>", 
+				        title:"품목", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>품목</div>
+				                        <span class='custom-sort-button' data-sort-field='GOOD_NM'>▼</span>
+				                    </div>`;
+				        },	 
 				        field:"GOOD_NM", 
 				        width:60,
 				        tooltip:true,
@@ -1492,7 +1885,20 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>CNTR_NO<br><span class='custom-sort-button' data-sort-field='CNTR_NO'></span></div>", 
+				        title:"CNTR_NO", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>CNTR_NO</div>
+				                        <span class='custom-sort-button' data-sort-field='CNTR_NO'>▼</span>
+				                    </div>`;
+				        },		 
 				        field:"CNTR_NO", 
 				        width:80,
 				        tooltip:true,
@@ -1501,7 +1907,20 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        visible: true
 				    },
 				    {
-				        title:"<div class='custom-header'>SEAL_NO<br><span class='custom-sort-button' data-sort-field='SEAL_NO'></span></div>", 
+				        title:"SEAL_NO", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>SEAL_NO</div>
+				                        <span class='custom-sort-button' data-sort-field='SEAL_NO'>▼</span>
+				                    </div>`;
+				        },	
 				        field:"SEAL_NO",
 				        tooltip:true,
 				        width:80, 
@@ -1757,7 +2176,51 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				    }
 				});
 				
+				// ========== 테이블 이벤트 설정 ==========
+				// // 헤더필터를 사용하기 위한 초기화				
+				let filterEventRegistered = false;
+				let initialLoadComplete = false;	
+
 				table.on("tableBuilt", function() {
+
+				    updateHeaderCheckboxState();				    
+				    sortableColumns.forEach(field => {
+				        let sortButton = document.querySelector(`[data-sort-field="${field}"]`);
+				        if (sortButton) {
+				            sortButton.style.cursor = 'pointer';
+				            sortButton.addEventListener('click', function(e) {
+				                e.stopPropagation();
+				                handleSortClick(field);
+				            });
+				        }
+				    });				    
+				    setTimeout(() => {
+				        initializeSortState();
+				    }, 100);
+
+					//필터 검색 후 로컬 스토리지 저장 
+				    // 필터 복원 후 약간의 지연을 두고 이벤트 등록				
+					let $Form_Id='';
+					$Form_Id=document.querySelector('#Form_Id').value;
+				    loadFilterState($Form_Id);			    
+				    setTimeout(function() {
+				        if (!filterEventRegistered) {
+				            table.on("dataFiltered", function(filters, rows) {
+				                // 초기 로딩 시에는 저장하지 않음
+				                if (initialLoadComplete) {
+				                    saveFilterState($Form_Id);
+				                }
+				                updateFilterHighlight();
+				            });
+				            filterEventRegistered = true;
+				        }
+				        // 초기 로딩 완료 표시
+				        setTimeout(function() {
+				            initialLoadComplete = true;
+				        }, 500);
+				    }, 100);
+					//필터 검색 후 로컬 스토리지 저장 	
+
 				    // 데이터가 없으면 모든 빈 행과 빈 셀 숨김
 				    if (!tabledata || tabledata.length === 0) {
 				        setTimeout(function() {
@@ -1862,6 +2325,11 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				            console.warn('updateOrderCounter 함수가 아직 정의되지 않았습니다.');
 				        }
 				    }, 800);
+
+
+
+
+
 				});
 				
 				table.on("cellClick", function(e, cell) {
@@ -2031,7 +2499,7 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				        
 				        table.redraw(true);
 				        console.log('=== 테이블 렌더링 완료 ===');
-				        
+						updateFilterHighlight();					        
 				        // 테이블 렌더링 완료 후 통계 카운터 실행
 				        setTimeout(function() {
 				            if (typeof updateOrderCounter === 'function') {

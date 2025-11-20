@@ -407,15 +407,15 @@ if (!document.getElementById('custom-header-style')) {
         .custom-header-wrapper {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
             width: 100%;
             height: 100%;
             padding: 0 2px;
+            gap: 4px;
         }
         
         /* 헤더 타이틀 */
         .header-title {
-            flex: 1;
             text-align: center;
             line-height: 1.2;
             font-size: 12px;
@@ -426,7 +426,7 @@ if (!document.getElementById('custom-header-style')) {
             cursor: pointer;
             display: inline-block;
             padding: 2px 4px;
-            margin-left: 2px;
+            margin-left: 0;
             user-select: none;
             font-size: 10px;
             color: #666;
@@ -439,7 +439,7 @@ if (!document.getElementById('custom-header-style')) {
             color: #000;
         }
         
-        /* 헤더 필터 입력란 스타일 개선 */
+        /* 헤더 필터 입력란 기본 스타일 */
         .tabulator-col .tabulator-header-filter input {
             width: 100% !important;
             box-sizing: border-box !important;
@@ -447,6 +447,14 @@ if (!document.getElementById('custom-header-style')) {
             font-size: 11px !important;
             height: 25px !important;
             margin-top: 2px !important;
+            border: 1px solid #837777 !important;
+            transition: border-color 0.2s ease;
+        }
+        
+        /* 필터가 활성화된 input 강조 - 오렌지색 */
+        .tabulator-col .tabulator-header-filter input.filter-active {
+            border: 2px solid #FF9800 !important;
+            background-color: #FFF3E0 !important;
         }
         
         /* 헤더 높이 증가 */
