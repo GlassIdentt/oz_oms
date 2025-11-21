@@ -341,17 +341,17 @@ try {
 			    const savedOrderStr = localStorage.getItem('Jelogis_OrderList_Column_Header_Ch1');
 			    if (savedOrderStr) {
 			        savedOrder = JSON.parse(savedOrderStr);
-			        console.log('저장된 컬럼 순서:', savedOrder);
+			       // console.log('저장된 컬럼 순서:', savedOrder);
 			    }
 			} catch (e) {
-			    console.error('컬럼 순서 로딩 실패:', e);
+			  //  console.error('컬럼 순서 로딩 실패:', e);
 			    savedOrder = [];
 			}
 			
 			// ========== 정렬 함수들 ==========
 			function applySorting() {
-			    console.log('========== applySorting 시작 ==========');
-			    console.log('적용할 sortState:', JSON.parse(JSON.stringify(sortState)));
+			   //  console.log('========== applySorting 시작 ==========');
+			   //  console.log('적용할 sortState:', JSON.parse(JSON.stringify(sortState)));
 			    
 			    var tableHolder = document.querySelector('#Order_status_list .tabulator-tableholder');
 			    var scrollLeft = tableHolder ? tableHolder.scrollLeft : 0;
@@ -360,11 +360,11 @@ try {
 			    const normalData = allData.filter(d => !d.isEmpty);
 			    const emptyData = allData.filter(d => d.isEmpty);
 			    
-			    console.log(`정렬 전 - 일반 데이터: ${normalData.length}개, 빈 행: ${emptyData.length}개`);
+			    //console.log(`정렬 전 - 일반 데이터: ${normalData.length}개, 빈 행: ${emptyData.length}개`);
 			    
 			    if (sortState.length === 0) {
 			        table.setData([...normalData, ...emptyData]);
-			        console.log('? 정렬 초기화 (원본 순서)');
+			        //console.log('? 정렬 초기화 (원본 순서)');
 			        
 			        setTimeout(function() {
 			            if (tableHolder) {
@@ -401,7 +401,7 @@ try {
 			    
 			    console.log('정렬 완료 - 순서 (처음 5개):');
 			    sortedData.slice(0, 5).forEach((data, idx) => {
-			        console.log(`  ${idx + 1}. 발주처: ${data.ACT_SHIP_A_NM || '(빈값)'}, 발주담당: ${data.ACT_SHIP_PIC_NM || '(빈값)'}`);
+			        //console.log(`  ${idx + 1}. 발주처: ${data.ACT_SHIP_A_NM || '(빈값)'}, 발주담당: ${data.ACT_SHIP_PIC_NM || '(빈값)'}`);
 			    });
 			    
 			    table.setData([...sortedData, ...emptyData]);
@@ -414,7 +414,7 @@ try {
 			}
 			
 			function handleSortClick(field) {
-			    console.log(`========== 정렬 클릭: ${field} ==========`);
+			    //console.log(`========== 정렬 클릭: ${field} ==========`);
 			    
 			    let sortIndex = sortState.findIndex(s => s.field === field);
 			    
@@ -424,17 +424,17 @@ try {
 			            dir: 'asc',
 			            clickCount: 1
 			        });
-			        console.log(`? ${field} 오름차순 정렬 추가`);
+			        //console.log(`? ${field} 오름차순 정렬 추가`);
 			    } else {
 			        let currentSort = sortState[sortIndex];
 			        currentSort.clickCount++;
 			        
 			        if (currentSort.clickCount === 2) {
 			            currentSort.dir = 'desc';
-			            console.log(`? ${field} 내림차순으로 변경`);
+			            //console.log(`? ${field} 내림차순으로 변경`);
 			        } else if (currentSort.clickCount >= MAX_CLICK_COUNT) {
 			            sortState.splice(sortIndex, 1);
-			            console.log(`? ${field} 정렬 제거`);
+			            //console.log(`? ${field} 정렬 제거`);
 			        }
 			    }
 			    
@@ -485,7 +485,7 @@ try {
 			    if (savedSortState) {
 			        try {
 			            sortState = JSON.parse(savedSortState);
-			            console.log('정렬 상태 복원:', sortState);
+			           // console.log('정렬 상태 복원:', sortState);
 			        } catch (e) {
 			            sortState = [];
 			        }
@@ -504,7 +504,7 @@ try {
 			
 			// ========== 컬럼 데이터 설정 (헤더 구조 개선) ==========
 			const columnData = [
-			    {
+			     {
 			        title:"담당자", 
 			        field:"OP_NM", 
 			        width:45, 
@@ -513,10 +513,10 @@ try {
 			        headerFilter:false,
 			        headerFilter: "input",
 			        headerFilterPlaceholder: "검색",
-					headerFilterParams: {
-						elementAttributes: {
-					   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
-						}
+					  headerFilterParams: {
+					  elementAttributes: {
+					   style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+					}
 					},						
 			        titleFormatter: function(cell) {
 			            return `<div class='custom-header-wrapper'>
@@ -794,8 +794,8 @@ try {
 			        headerFilter:false,
 			        titleFormatter: function(cell) {
 			            return `<div class='custom-header-wrapper'>
-			                        <div class='header-title'>총수량</div>
-			                        <span class='custom-sort-button' data-sort-field='PKG'>▼</span>
+			                        <div class='header-title'>총수량<br><span class='custom-sort-button' data-sort-field='PKG'>▼</span></div>
+			                        
 			                    </div>`;
 			        },
 			        formatter: function(cell) {
@@ -824,8 +824,7 @@ try {
 			        headerFilter:false,
 			        titleFormatter: function(cell) {
 			            return `<div class='custom-header-wrapper'>
-			                        <div class='header-title'>총부피</div>
-			                        <span class='custom-sort-button' data-sort-field='CBM'>▼</span>
+			                        <div class='header-title'>총부피<br><span class='custom-sort-button' data-sort-field='CBM'>▼</span></div>
 			                    </div>`;
 			        },
 			        formatter: function(cell) {
@@ -854,8 +853,7 @@ try {
 			        headerFilter:false,
 			        titleFormatter: function(cell) {
 			            return `<div class='custom-header-wrapper'>
-			                        <div class='header-title'>총무게</div>
-			                        <span class='custom-sort-button' data-sort-field='WGT'>▼</span>
+			                        <div class='header-title'>총무게<br><span class='custom-sort-button' data-sort-field='WGT'>▼</span></div>
 			                    </div>`;
 			        },
 			        formatter: function(cell) {
@@ -1027,15 +1025,14 @@ try {
 			        headerFilter:false,
 			        titleFormatter: function(cell) {
 			            return `<div class='custom-header-wrapper'>
-			                        <div class='header-title'>도착<br>보고</div>
-			                        <span class='custom-sort-button' data-sort-field='ARRIVAL'>▼</span>
+			                        <div class='header-title'>도착<br>보고<br><span class='custom-sort-button' data-sort-field='ARRIVAL'>▼</span></div>
 			                    </div>`;
 			        },
 			        visible: true,
-			        minWidth: 35,
-			        maxWidth: 35
+					  minWidth: 35,
+			        maxWidth: 35					  
 			    },
-			    {title:"서류", field:"DOC", width:30,hozAlign:"center",headerSort: false,minWidth: 30,maxWidth: 30,visible: true},
+			    {title:"서류", field:"DOC", width:35,hozAlign:"center",headerSort: false,minWidth: 35,maxWidth: 35,visible: true},
 			    {
 			        title:"비고",
 			        field:"ORD_ETC",
@@ -1045,10 +1042,10 @@ try {
 			        headerSort: false,
 			        headerFilter: "input",
 			        headerFilterPlaceholder: "검색",
-					headerFilterParams: {
-						elementAttributes: {
-					   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
-						}
+					  headerFilterParams: {
+					  elementAttributes: {
+					  style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+					}
 					},						
 			        titleFormatter: function(cell) {
 			            return `<div class='custom-header-wrapper'>
