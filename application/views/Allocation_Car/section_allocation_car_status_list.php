@@ -602,10 +602,10 @@
 				        headerSort:false,
 				        visible: true
 				    },
-				    {title:" ", field:"ORDER_VIEW",formatter: OrderViewFormatter, width:25,headerSort: false,minWidth: 25,maxWidth: 25,visible: true},
-				    {title:" ", field:"LMS_VIEW",formatter: LmsViewFormatter,  width:25,headerSort: false,minWidth: 25,maxWidth: 25,visible: true},
-				    {title:" ", field:"CAR_OPERATE",formatter: CarOperateViewFormatter,  width:25,headerSort: false,minWidth: 25,maxWidth: 25,visible: true},
-				    {title:" ", field:"SO_PT",formatter: SoPtFormatter, width:25, headerSort: false,minWidth: 25,maxWidth: 25,visible: true},
+				    {title:"-", field:"ORDER_VIEW",formatter: OrderViewFormatter, width:25,headerSort: false,minWidth: 25,maxWidth: 25,visible: true},
+				    {title:"-", field:"LMS_VIEW",formatter: LmsViewFormatter,  width:25,headerSort: false,minWidth: 25,maxWidth: 25,visible: true},
+				    {title:"-", field:"CAR_OPERATE",formatter: CarOperateViewFormatter,  width:25,headerSort: false,minWidth: 25,maxWidth: 25,visible: true},
+				    {title:"-", field:"SO_PT",formatter: SoPtFormatter, width:25, headerSort: false,minWidth: 25,maxWidth: 25,visible: true},
 				    {title:"M", field:"S_ORDER",hozAlign:"center",  width:25,headerSort: false,minWidth: 25,maxWidth: 25,visible: true},
 				    {
 				        title:"상품", 

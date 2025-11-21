@@ -1,7 +1,7 @@
 <!-- 배경 오버레이 -->
 <div id="title_item_overlay" class="title-select-overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,0.5);z-index:9998;transition:opacity 0.3s ease-in-out;"></div>
 
-<div id="title_item" class="title-select-layer" style="display:none;width:1000px;max-height:80vh;overflow-y:auto;position:fixed;top:50%;left:50%;transform:translate(-50%, -50%);z-index:9999;border-radius:5px;border: 5px solid #58ACFA; box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);background-color:#ffffff;transition:opacity 0.3s ease-in-out;">
+<div id="title_item" class="title-select-layer" style="display:none;width:1200px;max-height:80vh;overflow-y:auto;position:fixed;top:50%;left:50%;transform:translate(-50%, -50%);z-index:9999;border-radius:5px;border: 5px solid #58ACFA; box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);background-color:#ffffff;transition:opacity 0.3s ease-in-out;">
     <style>
         .title-select-layer {
             padding: 20px;
@@ -22,22 +22,69 @@
             border-collapse: collapse;
             margin: 10px 0;
         }
-        .title-select-layer .ths, .title-select-layer tds {
-            padding: 10px;
+        .title-select-layer .ths, .title-select-layer td {
+            padding: 5px 10px;
             text-align: left;
             border: 1px solid #ccc;
-            width: 100px;
-            height: 30px;
+            width: auto;
+            height: 35px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            vertical-align: middle;
+            box-sizing: border-box;
         }
-        .title-select-layer .product-checkbox-label {
+        .title-select-layer .title-checkbox-label {
             white-space: nowrap;
-            font-size: 12px !important;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            margin: 0;
+            height: 100%;
+            width: auto;
+            padding-left: 0;
+            position: relative;
+            cursor: pointer;
         }
-        .title-select-layer .product-checkbox-label span {
-            font-size: 12px !important;
+        .title-select-layer .title-checkbox-label input[type="checkbox"] {
+            margin-right: 5px;
+            margin-top: 0;
+            margin-bottom: 0;
+            vertical-align: middle;
+            position: relative;
+            opacity: 1;
+            width: 18px;
+            height: 18px;
+            left: auto;
+            top: auto;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .title-select-layer .title-checkbox-label input[type="checkbox"]:checked {
+            background-color:rgb(22, 138, 247);
+            border-color:rgb(71, 70, 69);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M10 3L4.5 8.5L2 6l1.5-1.5L4.5 6L8.5 2z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 20px 20px;
+        }
+        .title-select-layer .title-checkbox-label input[type="checkbox"]:hover {
+            border-color: #FF9800;
+        }
+        .title-select-layer .title-checkbox-label input[type="checkbox"]:checked:hover {
+            background-color: #FFB84D;
+            border-color: #FF9800;
+        }
+        .title-select-layer .title-checkbox-label span {
+            font-size: 12px;
+            line-height: 1.2;
+            vertical-align: middle;
+            color: #1d1d1d;
         }
         .title-select-layer-buttons {
             text-align: center;
@@ -91,13 +138,19 @@
                     if (column.field) {
                         // 공백을 제외하고 title이 정확히 "-"일 때만 field를 사용
                         const titleValue = column.title ? stripHtmlTags(column.title).trim() : "";
+                        
+                        // title이 공백만 있거나 빈 값이면 출력하지 않음
+                        if (titleValue === "") {
+                            return;
+                        }
+                        
                         const displayTitle = (titleValue === "-") 
                             ? column.field 
-                            : (titleValue !== "" ? titleValue : column.field);
+                            : titleValue;
                         
-                        // product-checkbox-label과 product-checkbox 클래스 사용
-                        const checkboxHtml = `<label class="product-checkbox-label">
-                            <input type="checkbox" id="${column.field}" class="product-checkbox" ${column.visible ? 'checked' : ''} onchange="toggleColumn('${column.field}', this)">
+                        // title-checkbox-label과 title-checkbox 클래스 사용
+                        const checkboxHtml = `<label class="title-checkbox-label">
+                            <input type="checkbox" id="${column.field}" class="title-checkbox" ${column.visible ? 'checked' : ''} onchange="toggleColumn('${column.field}', this)">
                             <span>${displayTitle}</span>
                         </label>`;
                         const $cell = $('<td></td>').html(checkboxHtml);
