@@ -703,3 +703,86 @@ if (!function_exists('com_cust_exchange')) {
         return $html;
     }
 }
+
+/**
+ * 구간배차 작업 오더 선택 박스 생성
+ * @param string $work_value 선택된 작업 값
+ * @param string $t_date 날짜 (YYYYMMDD 형식)
+ * @param string $aloc_type 배차유형
+ * @return string HTML
+ */
+if (!function_exists('com_section_work_order')) {
+    function com_section_work_order($work_value = '', $t_date = '', $aloc_type = '')
+    {
+        $CI =& get_instance();
+        $CI->load->model('Common_model');
+
+        // T_DATE가 비어있으면 오늘 날짜 사용
+        if (empty($t_date)) {
+            $t_date = date('Ymd');
+        } else {
+            // YYYY-MM-DD 형식이면 YYYYMMDD로 변환
+            if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $t_date)) {
+                $t_date = str_replace('-', '', $t_date);
+            }
+        }
+
+        // Proc_So_Aloc_Section_Work_Order 프로시저 호출
+        $work_list = array();
+        try {
+            $sql = "EXEC [dbo].[Proc_So_Aloc_Section_Work_Order] @T_DATE = ?, @ALOC_TYPE = ?";
+            $query = $CI->db->query($sql, array($t_date, $aloc_type));
+
+            if ($query) {
+                $result = $query->result();
+
+                if (!empty($result)) {
+                    foreach ($result as $row) {
+                        // 가능한 모든 컬럼명 시도
+                        $cd = '';
+                        $nm = '';
+
+                        // CD 값 찾기
+                        if (isset($row->WORK_VALUE)) $cd = trim($row->WORK_VALUE);
+                        elseif (isset($row->CD)) $cd = trim($row->CD);
+                        elseif (isset($row->COMN_CD)) $cd = trim($row->COMN_CD);
+                        elseif (isset($row->COM_CD)) $cd = trim($row->COM_CD);
+
+                        // NM 값 찾기
+                        if (isset($row->WORK_NM)) $nm = trim($row->WORK_NM);
+                        elseif (isset($row->CD_NM)) $nm = trim($row->CD_NM);
+                        elseif (isset($row->COM_NM)) $nm = trim($row->COM_NM);
+                        elseif (isset($row->NM)) $nm = trim($row->NM);
+
+                        // 빈 값인 경우 건너뛰기
+                        if (empty($cd)) continue;
+
+                        $work_list[] = array(
+                            'cd' => $cd,
+                            'nm' => $nm
+                        );
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            log_message('error', 'Failed to load section work order list: ' . $e->getMessage());
+        }
+        
+        $html = '<select name="WORK_VALUE" id="WORK_VALUE" style="width:100px;" class="custom-select">' . "\n";
+        $html .= '<option value="">선택</option>' . "\n";
+        
+        if (!empty($work_list)) {
+            foreach ($work_list as $item) {
+                $work_cd = $item['cd'];
+                $work_nm = $item['nm'];
+                // 빈 값인 경우 옵션 출력하지 않음
+                if (empty($work_cd)) continue;
+                $selected = (!empty($work_value) && $work_value == $work_cd) ? ' selected' : '';
+                $html .= '<option value="' . htmlspecialchars($work_cd) . '"' . $selected . '>' . htmlspecialchars($work_nm) . '</option>' . "\n";
+            }
+        }
+
+        $html .= '</select>' . "\n";
+        return $html;
+    }
+}

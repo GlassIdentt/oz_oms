@@ -7,161 +7,6 @@
 		'current_file' => isset($current_file) ? $current_file : 'section_allocation_car_status_list'
 	);
 	$this->load->view('common/submenu', $submenu_data);
-	
-	// Helper 함수 로드
-	$CI =& get_instance();
-	$CI->load->helper('common_form');
-	
-	// ASP Request 파라미터를 PHP로 변환
-	// POST 우선, 없으면 GET에서 가져오기
-	$s_code = $CI->input->post('S_CODE') ?: $CI->input->get('S_CODE');
-	$s_code = !empty($s_code) ? $s_code : '';
-	
-	$s_code2 = $CI->input->post('S_CODE2') ?: $CI->input->get('S_CODE2');
-	$s_code2 = !empty($s_code2) ? $s_code2 : '';
-	
-	$s_date = $CI->input->post('S_DATE') ?: $CI->input->get('S_DATE');
-	$s_date = !empty($s_date) ? $s_date : '';
-	
-	$seardate = $CI->input->post('SEARDATE') ?: $CI->input->get('SEARDATE');
-	if (empty($seardate) || is_null($seardate)) {
-		$seardate = 'LOAD_REQ_DT';
-	}
-	
-	if (empty($s_date)) {
-		$t_date = str_replace('-', '', date('Y-m-d'));
-		$s_date = date('Y-m-d');
-	} else {
-		$t_date = str_replace('-', '', $s_date);
-	}
-	
-	$so_mode = $CI->input->post('SO_MODE') ?: $CI->input->get('SO_MODE');
-	$so_mode = !empty($so_mode) ? $so_mode : '';
-	
-	$io_type = $CI->input->post('IO_TYPE') ?: $CI->input->get('IO_TYPE');
-	$io_type = !empty($io_type) ? $io_type : '';
-	
-	$aloc_type = $CI->input->post('ALOC_TYPE') ?: $CI->input->get('ALOC_TYPE');
-	$aloc_type = !empty($aloc_type) ? $aloc_type : '';
-	
-	$aloc_type_t = $aloc_type;
-	
-	$aloc_type_value = '';
-	switch ($aloc_type) {
-		case 'C01':
-			$aloc_type_value = '직송배차';
-			break;
-		case 'C02':
-			$aloc_type_value = '일산집하';
-			break;
-		case 'C03':
-			$aloc_type_value = '안성집하';
-			break;
-		case 'C04':
-			$aloc_type_value = '익일콘솔';
-			break;
-		case 'C05':
-			$aloc_type_value = '당일콘솔';
-			break;
-	}
-	
-	$aloc_stat = $CI->input->post('ALOC_STAT') ?: $CI->input->get('ALOC_STAT');
-	$aloc_stat = !empty($aloc_stat) ? $aloc_stat : '';
-	
-	$aloc_stat_c01 = '';
-	$aloc_stat_c02 = '';
-	$aloc_stat_c03 = '';
-	$aloc_stat_c04 = '';
-	$aloc_stat_c05 = '';
-	
-	switch ($aloc_stat) {
-		case 'C01':
-			$aloc_stat_c01 = 'selected';
-			break;
-		case 'C02':
-			$aloc_stat_c02 = 'selected';
-			break;
-		case 'C03':
-			$aloc_stat_c03 = 'selected';
-			break;
-		case 'C04':
-			$aloc_stat_c04 = 'selected';
-			break;
-		case 'C05':
-			$aloc_stat_c05 = 'selected';
-			break;
-	}
-	
-	$n_field = $CI->input->post('N_Field') ?: $CI->input->get('N_Field');
-	$n_field = !empty($n_field) ? $n_field : '';
-	
-	$s_text = $CI->input->post('S_TEXT') ?: $CI->input->get('S_TEXT');
-	$s_text = !empty($s_text) ? $s_text : '';
-	
-	$sort_sql = $CI->input->post('SORT_SQL') ?: $CI->input->get('SORT_SQL');
-	$sort_sql = !empty($sort_sql) ? $sort_sql : '';
-	
-	$office_cd = $CI->input->post('OFFICE_CD') ?: $CI->input->get('OFFICE_CD');
-	if (empty($office_cd) || is_null($office_cd)) {
-		$office_cd = '01';
-	}
-	
-	$query = '';
-	$query .= 'S_CODE=' . urlencode($s_code) . '&';
-	$query .= 'S_CODE2=' . urlencode($s_code2) . '&';
-	$query .= 'SEARDATE=' . urlencode($seardate) . '&';
-	$query .= 'S_DATE=' . urlencode($s_date) . '&';
-	$query .= 'IO_TYPE=' . urlencode($io_type) . '&';
-	$query .= 'SO_MODE=' . urlencode($so_mode) . '&';
-	$query .= 'PAGE_KEY=' . urlencode(isset($page_key) ? $page_key : '') . '&';
-	$query .= 'N_Field=' . urlencode($n_field) . '&';
-	$query .= 'OFFICE_CD=' . urlencode($office_cd) . '&';
-	$query .= 'ALOC_TYPE=' . urlencode($aloc_type) . '&';
-	$query .= 'S_TEXT=' . urlencode($s_text);
-	
-	$s_car_no = $CI->input->post('S_CAR_NO') ?: $CI->input->get('S_CAR_NO');
-	$s_car_no = !empty($s_car_no) ? $s_car_no : '';
-	
-	$lisence_no = $CI->input->post('LISENCE_NO') ?: $CI->input->get('LISENCE_NO');
-	$lisence_no = !empty($lisence_no) ? $lisence_no : '';
-	
-	$car_posion = $CI->input->post('CAR_POSION') ?: $CI->input->get('CAR_POSION');
-	$car_posion = !empty($car_posion) ? $car_posion : '';
-	
-	$tran_nm = $CI->input->post('TRAN_NM') ?: $CI->input->get('TRAN_NM');
-	$tran_nm = !empty($tran_nm) ? $tran_nm : '';
-	
-	$drv_nm = $CI->input->post('DRV_NM') ?: $CI->input->get('DRV_NM');
-	$drv_nm = !empty($drv_nm) ? $drv_nm : '';
-	
-	$car_tel = $CI->input->post('CAR_TEL') ?: $CI->input->get('CAR_TEL');
-	$car_tel = !empty($car_tel) ? $car_tel : '';
-	
-	$car_type = $CI->input->post('CAR_TYPE') ?: $CI->input->get('CAR_TYPE');
-	$car_type = !empty($car_type) ? $car_type : '';
-	
-	$car_ton = $CI->input->post('CAR_TON') ?: $CI->input->get('CAR_TON');
-	$car_ton = !empty($car_ton) ? $car_ton : '';
-	
-	$aloc_gb = $CI->input->post('ALOC_GB') ?: $CI->input->get('ALOC_GB');
-	$aloc_gb = !empty($aloc_gb) ? $aloc_gb : '';
-	
-	$cust_cd = $CI->input->post('CUST_CD') ?: $CI->input->get('CUST_CD');
-	$cust_cd = !empty($cust_cd) ? $cust_cd : '';
-	
-	$drv_cd = $CI->input->post('DRV_CD') ?: $CI->input->get('DRV_CD');
-	$drv_cd = !empty($drv_cd) ? $drv_cd : '';
-	
-	$car_hor_add = $CI->input->post('CAR_HOR_ADD') ?: $CI->input->get('CAR_HOR_ADD');
-	$car_hor_add = !empty($car_hor_add) ? $car_hor_add : '';
-	
-	// 기타 변수 초기화
-	$opt_item1 = isset($opt_item1) ? $opt_item1 : '';
-	$menu_allocation_page = isset($menu_allocation_page) ? $menu_allocation_page : '';
-	$query_string = isset($query_string) ? $query_string : $query;
-	$car_no = isset($car_no) ? $car_no : '';
-	$allocate_dv = isset($allocate_dv) ? $allocate_dv : '';
-	$work_value = isset($work_value) ? $work_value : '';
 ?>
 
 <?php $this->load->view('common/footer'); ?>
@@ -195,29 +40,24 @@
 				<?php echo com_aloc_type($aloc_type); ?>
 				<span class="font_bold">업체</span>
 				<?php echo com_search_type($n_field, $opt_item1); ?>
-				<input type="search" name="S_TEXT" class="Reg_Box" style="width:180px;ime-mode:active;" value="<?php echo htmlspecialchars($s_text); ?>" onkeydown="if (window.event.keyCode==13) { search_form('Y','S') }">
+				<input type="search" name="S_TEXT" class="Reg_Box" style="width:250px;ime-mode:active;" value="<?php echo htmlspecialchars($s_text); ?>" onkeydown="if (window.event.keyCode==13) { search_form('Y','S') }">
 				<button class="event-btn select-btn" data-name="검색" onclick="search_form();">
 					<span class="event-btn-icon icon-search"></span>
 					<span>배차현황검색</span>
 				</button>
 				<div style="width: 100px;"></div>
-				<?php
-				echo com_section_work_order($work_value, $t_date, $aloc_type);
-				?>
-				<button id="excelButton" class="event-btn print-btn" data-name="작업지시서출력" onclick="">
-					<span class="event-btn-icon icon-print"></span>
-					<span>작업지시서출력</span>
+				<button id="excelButton" class="event-btn excel-btn" data-name="엑셀출력" onclick="excelDown();">
+					<span class="event-btn-icon icon-excel"></span>
+					<span>엑셀출력</span>
 				</button>
-
-				<button type="button" class="event-btn select-btn" data-name="타이틀항목 추가삭제" onclick="showTitleSelectLayer(event);">
-					<span class="event-btn-icon icon-check"></span>
-					<span>타이틀항목 추가삭제</span>
+				<button class="event-btn select-btn" data-name="배차차량 문자발송">
+					<span class="event-btn-icon icon-envelope"></span>
+					<span>배차차량 문자발송</span>
 				</button>
-				<button class="event-btn cancel-btn" data-name="타이틀항목 초기화">
-					<span class="event-btn-icon icon-reset"></span>
-					<span>타이틀항목 초기화</span>
-				</button>				
-									
+				<button class="event-btn select-btn" data-name="일반 문자발송">
+					<span class="event-btn-icon icon-envelope"></span>
+					<span>일반 문자발송</span>
+				</button>									
 			</nav>
 		</div>
        	<div id="step_2" style="height: 30px; width: 100%; border: 0px solid #000; overflow: hidden;">
@@ -273,7 +113,14 @@
 					<span class="event-btn-icon icon-cancel"></span>
 					<span>오더전달취소</span>
 				</button>
-
+				<button type="button" class="event-btn select-btn" data-name="타이틀항목 추가삭제" onclick="showTitleSelectLayer(event);">
+					<span class="event-btn-icon icon-check"></span>
+					<span>타이틀항목 추가삭제</span>
+				</button>
+				<button class="event-btn cancel-btn" data-name="타이틀항목 초기화">
+					<span class="event-btn-icon icon-reset"></span>
+					<span>타이틀항목 초기화</span>
+				</button>
 			</nav>
 		</div>
 		<div id="step_3" style="height: 40px; width: 100%; border: 0px solid #000;">
