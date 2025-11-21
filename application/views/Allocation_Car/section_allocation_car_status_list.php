@@ -196,10 +196,10 @@
 	$grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT | JSON_HEX_APOS);
 	
 	// ============================================
-	// Proc_So_Aloc_Section_T_List_Json 프로시저 호출 예제
+	// Proc_So_Aloc_Section_T_List_Json 프로시저 호출
 	// ============================================
-	// $section_t_list_data = get_section_allocation_t_list_data($t_date, $aloc_type, $so_mode, true);
-	// $section_t_list_json = json_encode($section_t_list_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT | JSON_HEX_APOS);
+	$section_t_list_data = get_section_allocation_t_list_data($t_date, $aloc_type, $so_mode, false);
+	$section_t_list_json = json_encode($section_t_list_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT | JSON_HEX_APOS);
 ?>
 
 <?php $this->load->view('common/footer'); ?>
@@ -2217,8 +2217,203 @@
 				    document.head.appendChild(style);
 				}
         </script>
+</div>
+		<div id="csetp_2" class="csetp_2">
+		<script>
+			// ========== csetp_2 Tabulator 데이터 및 변수 선언 ==========
+			let section_t_list_data = <?php echo $section_t_list_json; ?>;
+			// section_t_list_data가 undefined이거나 null이거나 배열이 아닌 경우 빈 배열로 초기화
+			if (typeof section_t_list_data === 'undefined' || section_t_list_data === null || !Array.isArray(section_t_list_data)) {
+			    section_t_list_data = [];
+			}
+			// undefined나 null 값을 가진 항목 제거
+			section_t_list_data = section_t_list_data.filter(function(item) {
+			    return item !== null && item !== undefined && typeof item === 'object';
+			});
+
+			// ========== csetp_2 포맷터 함수 정의 ==========
+			function DetailInfoFormatter(cell) {
+				const SO_NO = cell.getRow().getData().SO_NO;
+				const SO_MODE_H = cell.getRow().getData().SO_MODE_H;
+				const DETAIL_INFO = cell.getValue() || '';
+				return `<div class='OrderView' style='position: relative;top: -2px;' onclick="ord_view('${SO_NO}','${SO_MODE_H}','car');"><img src='https://www.wonderlogis.com/ozoms_v14/web_order/images/img_open.gif' onclick=''  border='0' width='25' height='25'></a></div>`;
+			}
+
+			// ========== csetp_2 컬럼 정의 ==========
+			const section_t_columns = [
+				{
+					title: "상세",
+					field: "DETAIL_INFO",
+					width: 20,
+					hozAlign: "left",
+					headerSort: false,
+					formatter: DetailInfoFormatter,
+					visible: true
+				},
+				{
+					title: "배차차량",
+					field: "LISENCE_NO",
+					width: 80,
+					hozAlign: "left",
+					headerFilter: "input",
+					headerFilterPlaceholder: "검색",
+					headerFilterParams: {
+						elementAttributes: {
+							style: "text-align: center;"
+						}
+					},
+					headerSort: true,
+					visible: true
+				},
+				{
+					title: "수량",
+					field: "PKG",
+					width: 40,
+					hozAlign: "right",
+					headerSort: false,
+					formatter: function(cell) {
+						const value = cell.getValue();
+						if (value === null || value === undefined || value === '') {
+							return '';
+						}
+						const pkg = parseFloat(value);
+						return pkg % 1 === 0 ? pkg.toString() : pkg.toFixed(0);
+					},
+					visible: true
+				},
+				{
+					title: "부피",
+					field: "CBM",
+					width: 45,
+					hozAlign: "right",
+					headerSort: false,
+					formatter: function(cell) {
+						const value = cell.getValue();
+						if (value === null || value === undefined || value === '') {
+							return '';
+						}
+						const cbm = parseFloat(value);
+						return cbm % 1 === 0 ? cbm.toString() : cbm.toFixed(2);
+					},
+					visible: true
+				},
+				{
+					title: "무게",
+					field: "WGT",
+					width: 55,
+					hozAlign: "right",
+					headerSort: false,
+					formatter: function(cell) {
+						const value = cell.getValue();
+						if (value === null || value === undefined || value === '') {
+							return '';
+						}
+						const wgt = parseFloat(value);
+						return wgt % 1 === 0 ? wgt.toString() : wgt.toFixed(2);
+					},
+					visible: true
+				},
+				{
+					title: "배차<br>오더",
+					field: "ORDER_COUNT",
+					width: 40,
+					hozAlign: "right",
+					headerSort: false,
+					formatter: function(cell) {
+						const value = cell.getValue();
+						return value !== null && value !== undefined && value !== '' ? addComma(parseFloat(value).toFixed(0)) : '';
+					},
+					visible: true
+				},
+				{
+					title: "구간<br>비용",
+					field: "SHT_AMT",
+					width: 75,
+					hozAlign: "right",
+					headerSort: false,
+					formatter: function(cell) {
+						const value = cell.getValue();
+						return value !== null && value !== undefined && value !== '' ? addComma(parseFloat(value).toFixed(0)) : '';
+					},
+					visible: true
+				}
+			];
+
+			// ========== csetp_2 Tabulator 테이블 생성 ==========
+			var section_t_table = new Tabulator("#csetp_2", {
+				height: "600px",
+				maxHeight: "600px",
+				rowHeight: 26,
+				layout: "fitDataStretch",
+				virtualDom: true,
+				virtualDomBuffer: 50,
+				columns: section_t_columns,
+				data: (section_t_list_data && section_t_list_data.length > 0) ? section_t_list_data : [],
+				placeholder: (section_t_list_data && section_t_list_data.length > 0) ? undefined : "데이터가 없습니다.",
+				minHeight: (section_t_list_data && section_t_list_data.length > 0) ? undefined : 0,
+				headerFilter: true,
+				movableColumns: false
+			});
+
+			// ========== csetp_2 테이블 이벤트 리스너 ==========
+			section_t_table.on("tableBuilt", function() {
+				console.log('csetp_2 테이블 빌드 완료');
+				
+				// csetp_1과 csetp_2의 헤더 높이를 동일하게 맞춤
+				setTimeout(function() {
+					const csetp1Header = document.querySelector('#section_allocation_car_list_<?php echo $section_allocation_page; ?> .tabulator-header');
+					const csetp2Header = document.querySelector('#csetp_2 .tabulator-header');
+					
+					if (csetp1Header && csetp2Header) {
+						const csetp1Height = csetp1Header.offsetHeight;
+						csetp2Header.style.height = csetp1Height + 'px';
+						csetp2Header.style.minHeight = csetp1Height + 'px';
+						
+						// 헤더 셀 높이도 동일하게 맞춤
+						const csetp1Cells = csetp1Header.querySelectorAll('.tabulator-col');
+						const csetp2Cells = csetp2Header.querySelectorAll('.tabulator-col');
+						
+						if (csetp1Cells.length > 0 && csetp2Cells.length > 0) {
+							const csetp1CellHeight = csetp1Cells[0].offsetHeight;
+							csetp2Cells.forEach(function(cell) {
+								cell.style.height = csetp1CellHeight + 'px';
+								cell.style.minHeight = csetp1CellHeight + 'px';
+							});
+						}
+						
+						// 헤더 컬럼의 세로 구분선이 잘리지 않도록 border-right 추가
+						csetp2Cells.forEach(function(cell, index) {
+							// 마지막 컬럼이 아닌 경우에만 border-right 추가
+							if (index < csetp2Cells.length - 1) {
+								cell.style.borderRight = '1px solid #ccc';
+								cell.style.boxSizing = 'border-box';
+							}
+						});
+					}
+				}, 100);
+			});
+			
+			// ========== csetp_2 헤더 컬럼 스타일 CSS 추가 ==========
+			if (!document.getElementById('csetp2-header-style')) {
+				let style = document.createElement('style');
+				style.id = 'csetp2-header-style';
+				style.textContent = `
+					#csetp_2 .tabulator-header .tabulator-col {
+						border-right: 1px solid #ccc !important;
+						box-sizing: border-box !important;
+					}
+					#csetp_2 .tabulator-header .tabulator-col:last-child {
+						border-right: none !important;
+					}
+					#csetp_2 .tabulator-col-content {
+						padding: 2px 4px !important;
+						box-sizing: border-box !important;
+					}
+				`;
+				document.head.appendChild(style);
+			}
+		</script>
 		</div>
-		<div id="csetp_2" class="csetp_2"></div>
 		<div id="csetp_3" class="csetp_3"></div>
 	</div>
 	<div id="dropdown" class="dropdown"></div>
