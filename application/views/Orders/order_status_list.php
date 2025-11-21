@@ -920,10 +920,11 @@ try {
 			        headerSort: false,
 			        headerFilter: "input",
 			        headerFilterPlaceholder: "검색",
-					headerFilterParams: {
-						elementAttributes: {
+					  headerFilterParams: {
+					  elementAttributes: {
 					   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
-						}
+					  },
+					backgroundColor: "#ffffff"
 					},						
 			        titleFormatter: function(cell) {
 			            return `<div class='custom-header-wrapper'>
@@ -1296,6 +1297,65 @@ try {
 			    localStorage.setItem('Jelogis_OrderList_Column_Header_Ch1', JSON.stringify(order));
 			}
 			
+			// ========== 필터 관련 변수 ==========
+			let filterEventRegistered = false;
+			let initialLoadComplete = false;
+			let formId = 'Order_Page_<?php echo htmlspecialchars($order_page, ENT_QUOTES); ?>';
+			
+			// ========== 필터 저장/복원 함수 ==========
+			function saveFilterState(formId) {
+				const filters = {};
+				const headerFilters = table.getHeaderFilters();
+				
+				headerFilters.forEach((filter) => {
+					if (filter.value && filter.value.trim() !== "") {
+						filters[filter.field] = filter.value;
+					}
+				});
+				
+				if (Object.keys(filters).length > 0) {
+					localStorage.setItem("tabulatorFilters_" + formId, JSON.stringify(filters));
+				} else {
+					localStorage.removeItem("tabulatorFilters_" + formId);
+				}
+			}
+			
+			function loadFilterState(formId) {
+				const savedFilters = localStorage.getItem("tabulatorFilters_" + formId);
+				
+				if (savedFilters) {
+					const filters = JSON.parse(savedFilters);
+					Object.keys(filters).forEach((field) => {
+						table.setHeaderFilterValue(field, filters[field]);
+					});
+					setTimeout(function() {
+						updateFilterHighlight();
+					}, 300);
+				}
+			}
+			
+			function updateFilterHighlight() {
+				// 모든 헤더 필터 input에서 filter-active 클래스 제거
+				document.querySelectorAll(".tabulator-header-filter input").forEach((input) => {
+					input.classList.remove("filter-active");
+				});
+				
+				const headerFilters = table.getHeaderFilters();
+				
+				// 값이 있는 필터만 강조
+				headerFilters.forEach((filter) => {
+					if (filter.value && filter.value.trim() !== "") {
+						const column = table.getColumn(filter.field);
+						if (column) {
+							const filterInput = column.getElement().querySelector(".tabulator-header-filter input");
+							if (filterInput) {
+								filterInput.classList.add("filter-active");
+							}
+						}
+					}
+				});
+			}
+			
 			// ========== 테이블 빌드 완료 후 처리 ==========
 			table.on("tableBuilt", function() {
 			    var checkbox = document.createElement("input");
@@ -1329,6 +1389,104 @@ try {
 			        });
 			        
 			        initializeSortState();
+			    }, 100);
+			    
+			    // 필터 복원 및 이벤트 등록
+			    loadFilterState(formId);
+			    
+			    // 필터 입력 필드에 이벤트 바인딩 함수
+			    function bindFilterEvents() {
+			        document.querySelectorAll(".tabulator-header-filter input").forEach(function(input) {
+			            // 이미 바인딩된 경우 스킵
+			            if (input.dataset.filterBound === 'true') {
+			                return;
+			            }
+			            
+			            input.dataset.filterBound = 'true';
+			            
+			            // 입력 시 실시간 저장
+			            input.addEventListener("input", function() {
+			                setTimeout(function() {
+			                    saveFilterState(formId);
+			                    updateFilterHighlight();
+			                }, 100);
+			            });
+			            
+			            // 값 변경 시 저장 (clear 버튼 클릭 시에도 감지)
+			            input.addEventListener("change", function() {
+			                setTimeout(function() {
+			                    saveFilterState(formId);
+			                    updateFilterHighlight();
+			                }, 100);
+			            });
+			            
+			            // 포커스 해제 시 저장 (필터 값이 비워진 경우 감지)
+			            input.addEventListener("blur", function() {
+			                setTimeout(function() {
+			                    saveFilterState(formId);
+			                    updateFilterHighlight();
+			                }, 100);
+			            });
+			            
+			            // X 버튼 클릭 시 (clear 버튼) - 여러 선택자 시도
+			            setTimeout(function() {
+			                const filterContainer = input.closest('.tabulator-header-filter');
+			                if (filterContainer) {
+			                    // Tabulator의 clear 버튼 선택자들
+			                    const clearSelectors = [
+			                        '.tabulator-header-filter-clear',
+			                        '.tabulator-col-filter-clear',
+			                        'button[type="button"]',
+			                        '.tabulator-header-filter button'
+			                    ];
+			                    
+			                    clearSelectors.forEach(function(selector) {
+			                        const clearBtn = filterContainer.querySelector(selector);
+			                        if (clearBtn && !clearBtn.dataset.clearBound) {
+			                            clearBtn.dataset.clearBound = 'true';
+			                            clearBtn.addEventListener("click", function(e) {
+			                                e.stopPropagation();
+			                                setTimeout(function() {
+			                                    saveFilterState(formId);
+			                                    updateFilterHighlight();
+			                                }, 200);
+			                            });
+			                        }
+			                    });
+			                }
+			            }, 300);
+			        });
+			    }
+			    
+			    setTimeout(function() {
+			        if (!filterEventRegistered) {
+			            // 필터 변경 시 저장
+			            table.on("dataFiltered", function(filters, rows) {
+			                if (initialLoadComplete) {
+			                    saveFilterState(formId);
+			                }
+			                updateFilterHighlight();
+			            });
+			            
+			            // 초기 필터 입력 필드에 이벤트 바인딩
+			            setTimeout(function() {
+			                bindFilterEvents();
+			                
+			                // 동적으로 추가되는 필터 입력 필드를 감지하기 위한 MutationObserver
+			                const tableElement = document.querySelector("#Order_status_list");
+			                if (tableElement) {
+			                    const filterObserver = new MutationObserver(function(mutations) {
+			                        bindFilterEvents();
+			                    });
+			                    filterObserver.observe(tableElement, { childList: true, subtree: true });
+			                }
+			            }, 500);
+			            
+			            filterEventRegistered = true;
+			        }
+			        setTimeout(function() {
+			            initialLoadComplete = true;
+			        }, 500);
 			    }, 100);
 			});
 			

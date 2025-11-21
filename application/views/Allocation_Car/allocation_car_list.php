@@ -1643,7 +1643,7 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 						},						
 				        titleFormatter: function(cell) {
 				            return `<div class='custom-header-wrapper'>
-				                        <div class='header-title'>청구처</div>
+				                        <div class='header-title'>HBL_NO</div>
 				                        <span class='custom-sort-button' data-sort-field='HBL_NO'>▼</span>
 				                    </div>`;
 				        },	
@@ -2149,9 +2149,75 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				    // 필터 복원 후 약간의 지연을 두고 이벤트 등록				
 					let $Form_Id='';
 					$Form_Id=document.querySelector('#Form_Id').value;
-				    loadFilterState($Form_Id);			    
+				    loadFilterState($Form_Id);
+				    
+				    // 필터 입력 필드에 이벤트 바인딩 함수
+				    function bindFilterEvents() {
+				        document.querySelectorAll(".tabulator-header-filter input").forEach(function(input) {
+				            // 이미 바인딩된 경우 스킵
+				            if (input.dataset.filterBound === 'true') {
+				                return;
+				            }
+				            
+				            input.dataset.filterBound = 'true';
+				            
+				            // 입력 시 실시간 저장
+				            input.addEventListener("input", function() {
+				                setTimeout(function() {
+				                    saveFilterState($Form_Id);
+				                    updateFilterHighlight();
+				                }, 100);
+				            });
+				            
+				            // 값 변경 시 저장 (clear 버튼 클릭 시에도 감지)
+				            input.addEventListener("change", function() {
+				                setTimeout(function() {
+				                    saveFilterState($Form_Id);
+				                    updateFilterHighlight();
+				                }, 100);
+				            });
+				            
+				            // 포커스 해제 시 저장 (필터 값이 비워진 경우 감지)
+				            input.addEventListener("blur", function() {
+				                setTimeout(function() {
+				                    saveFilterState($Form_Id);
+				                    updateFilterHighlight();
+				                }, 100);
+				            });
+				            
+				            // X 버튼 클릭 시 (clear 버튼) - 여러 선택자 시도
+				            setTimeout(function() {
+				                const filterContainer = input.closest('.tabulator-header-filter');
+				                if (filterContainer) {
+				                    // Tabulator의 clear 버튼 선택자들
+				                    const clearSelectors = [
+				                        '.tabulator-header-filter-clear',
+				                        '.tabulator-col-filter-clear',
+				                        'button[type="button"]',
+				                        '.tabulator-header-filter button'
+				                    ];
+				                    
+				                    clearSelectors.forEach(function(selector) {
+				                        const clearBtn = filterContainer.querySelector(selector);
+				                        if (clearBtn && !clearBtn.dataset.clearBound) {
+				                            clearBtn.dataset.clearBound = 'true';
+				                            clearBtn.addEventListener("click", function(e) {
+				                                e.stopPropagation();
+				                                setTimeout(function() {
+				                                    saveFilterState($Form_Id);
+				                                    updateFilterHighlight();
+				                                }, 200);
+				                            });
+				                        }
+				                    });
+				                }
+				            }, 300);
+				        });
+				    }
+				    
 				    setTimeout(function() {
 				        if (!filterEventRegistered) {
+				            // 필터 변경 시 저장
 				            table.on("dataFiltered", function(filters, rows) {
 				                // 초기 로딩 시에는 저장하지 않음
 				                if (initialLoadComplete) {
@@ -2159,6 +2225,21 @@ $grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT
 				                }
 				                updateFilterHighlight();
 				            });
+				            
+				            // 초기 필터 입력 필드에 이벤트 바인딩
+				            setTimeout(function() {
+				                bindFilterEvents();
+				                
+				                // 동적으로 추가되는 필터 입력 필드를 감지하기 위한 MutationObserver
+				                const tableElement = document.querySelector("#allocation_car_list_<?php echo $menu_allocation_page; ?>");
+				                if (tableElement) {
+				                    const filterObserver = new MutationObserver(function(mutations) {
+				                        bindFilterEvents();
+				                    });
+				                    filterObserver.observe(tableElement, { childList: true, subtree: true });
+				                }
+				            }, 500);
+				            
 				            filterEventRegistered = true;
 				        }
 				        // 초기 로딩 완료 표시

@@ -1,1286 +1,1365 @@
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
 
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #FFFFFF;
-            display: flex;
-            align-items: flex-start;
-            justify-content: flex-start;
-        }
+body {
+	margin: 0;
+	padding: 0;
+	background-color: #ffffff;
+	display: flex;
+	align-items: flex-start;
+	justify-content: flex-start;
+}
 
-        .layout-container {
-            width: 1900px;
-            height: 910px;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            justify-content: flex-start;
-        }
+.layout-container {
+	width: 1900px;
+	height: 910px;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: flex-start;
+}
 
-        .top_area{
-            width: 1900px;
-            height: 150px;
-            background-image: url('../images/oms_layout_01.png');
-            background-size: 1900px 155px;
-            background-position: left top;
-            background-repeat: no-repeat;
-            border: 0px solid red;
-            display: flex;
-            flex-direction: row;
-            align-items: start;
-            justify-content: start;
-        }
+.top_area {
+	width: 1900px;
+	height: 150px;
+	background-image: url("../images/oms_layout_01.png");
+	background-size: 1900px 155px;
+	background-position: left top;
+	background-repeat: no-repeat;
+	border: 0px solid red;
+	display: flex;
+	flex-direction: row;
+	align-items: start;
+	justify-content: start;
+}
 
-        .empty {
-            width: 27px;
-            height: 150px;
-			border: 0px solid rgb(112, 29, 221);
-        }
+.empty {
+	width: 27px;
+	height: 150px;
+	border: 0px solid rgb(112, 29, 221);
+}
 
-        .logo {
-            width: 318px;
-            height: 150px;
-            border: 0px solid rgb(112, 29, 221);
-            display: flex;
-            flex-direction: column;
-        }
+.logo {
+	width: 318px;
+	height: 150px;
+	border: 0px solid rgb(112, 29, 221);
+	display: flex;
+	flex-direction: column;
+}
 
-        .logo_top {
-            height: 8px;
-			border: 0px solid rgb(112, 29, 221);
-        }
+.logo_top {
+	height: 8px;
+	border: 0px solid rgb(112, 29, 221);
+}
 
-        .logo_middle {
-            flex-grow: 1;
-			border: 0px solid rgb(112, 29, 221);
-        }
+.logo_middle {
+	flex-grow: 1;
+	border: 0px solid rgb(112, 29, 221);
+}
 
-        .logo_bottom {
-            height: 15px;
-			border: 0px solid rgb(112, 29, 221);
-        }
+.logo_bottom {
+	height: 15px;
+	border: 0px solid rgb(112, 29, 221);
+}
 
-        .TopMenu {
-            width: 1552px;
-            height: 300px;
-            border: 0px solid rgb(112, 29, 221);
-            display: flex;
-            flex-direction: column;
-        }
+.TopMenu {
+	width: 1552px;
+	height: 300px;
+	border: 0px solid rgb(112, 29, 221);
+	display: flex;
+	flex-direction: column;
+}
 
-        .TopMenu_Empty {
-            width: 100%;
-            height: 35px;
-            border: 0px solid red;
+.TopMenu_Empty {
+	width: 100%;
+	height: 35px;
+	border: 0px solid red;
+}
 
-        }
+.TopMenu_menu {
+	width: 100%;
+	height: 65px;
+	border: 0px solid blue;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
 
-        .TopMenu_menu {
-            width: 100%;
-            height: 65px;
-            border: 0px solid blue;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-        }
+.TopMenu_bottom_Section_Menu {
+	width: 100%;
+	height: 47px;
+	border: 0px solid green;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: flex-stretch;
+}
 
-        .TopMenu_bottom_Section_Menu {
-            width: 100%;
-            height: 47px;
-            border: 0px solid green;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: flex-stretch;
-        }
+#buttonContainer {
+	display: flex;
+	flex-wrap: nowrap;
+	justify-content: flex-start;
+	align-items: center;
+	gap: 3px 6px;
+	width: 100%;
+	height: 100%;
+	padding-bottom: 0;
+	z-index: 20;
+	overflow-x: auto;
+}
 
-        #buttonContainer {
-            display: flex;
-            flex-wrap: nowrap;
-            justify-content: flex-start;
-            align-items: center;
-            gap: 3px 6px;
-            width: 100%;
-            height: 100%;
-            padding-bottom: 0;
-            z-index: 20;
-            overflow-x: auto;
-        }
+.link {
+	display: none;
+}
 
-        .link {
-            display: none;
-        }
+.contents_area {
+	width: 1900px;
+	height: 766px;
+	background-image: url("../images/oms_layout_02.png");
+	background-size: 1900px 816px;
+	background-position: left top;
+	background-repeat: no-repeat;
+	border: 0px solid rgb(112, 29, 221);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
 
-        .contents_area  {
-            width: 1900px;
-            height: 766px;
-            background-image: url('../images/oms_layout_02.png');
-            background-size: 1900px 816px;
-            background-position: left top;
-            background-repeat: no-repeat;
-            border: 0px solid rgb(112, 29, 221);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+.bottom_area {
+	width: 1900px;
+	height: 59px;
+	background-image: url("../images/oms_layout_03.png");
+	background-size: 1900px 59px;
+	background-position: left top;
+	background-repeat: no-repeat;
+	border: 0px solid red;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
 
-        .bottom_area {
-            width: 1900px;
-            height: 59px;
-            background-image: url('../images/oms_layout_03.png');
-            background-size: 1900px 59px;
-            background-position: left top;
-            background-repeat: no-repeat;
-            border: 0px solid red;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-        }
+/* 하단 통계 컨테이너 */
+.bottom_stats_container {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 15px;
+	margin-top: 20px;
+}
 
-        /* 하단 통계 컨테이너 */
-        .bottom_stats_container {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            gap: 15px;
-            margin-top: 20px;
-        }
+/* 통계 항목 */
+.stats_item {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 5px;
+}
 
-        /* 통계 항목 */
-        .stats_item {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            gap: 5px;
-        }
+/* 통계 레이블 */
+.stats_label {
+	font-size: 12px;
+	font-weight: bold;
+	color: #000000;
+}
 
-        /* 통계 레이블 */
-        .stats_label {
-            font-size: 12px;
-            font-weight: bold;
-            color: #000000;
-        }
+/* 통계 값 (자동 너비) */
+.stats_value {
+	min-width: 100px;
+	width: auto;
+	height: 25px;
+	background-color: #ffffff;
+	text-align: right;
+	padding: 2px 5px;
+	font-size: 12px;
+	color: #000000 !important;
+	border: 1px solid #ccc;
+	border-radius: 3px;
+	display: block;
+	line-height: 25px;
+	vertical-align: middle;
+	font-weight: normal;
+}
 
-        /* 통계 값 (자동 너비) */
-        .stats_value {
-            min-width: 100px;
-            width: auto;
-            height: 25px;
-            background-color: #ffffff;
-            text-align: right;
-            padding: 2px 5px;
-            font-size: 12px;
-            color: #000000 !important;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-            display: block;
-            line-height: 25px;
-            vertical-align: middle;
-            font-weight: normal;
-        }
-
-        /* 작은 통계 값 */
-        .stats_value_small {
-            min-width: 50px;
-        }
-
-
+/* 작은 통계 값 */
+.stats_value_small {
+	min-width: 50px;
+}
 
 /* 메뉴 컨테이너 스타일 */
 #menuContainer {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            width: calc(100% - 377px);
-            height: 100%;
-            margin: 0;
-            padding: 0 10px;
-        }
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	gap: 20px;
+	width: calc(100% - 377px);
+	height: 100%;
+	margin: 0;
+	padding: 0 10px;
+}
 
 /* 우측 영역 스타일 */
 .TopMenu_menu_right {
-            width: 377px;
-            height: 100%;
-            border: 0px solid orange;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+	width: 377px;
+	height: 100%;
+	border: 0px solid orange;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
 
 /* 우측 영역 내부 박스 스타일 */
 .TopMenu_menu_right_inner {
-            width: 300px;
-            height: 100%;
-            background-color: white;
-            border-radius: 10px;
-        }
+	width: 300px;
+	height: 100%;
+	background-color: white;
+	border-radius: 10px;
+}
 
 /* 메뉴 버튼 래퍼 스타일 */
 .menu-item-wrapper {
-            position: relative;
-            width: 90px;
-            height: 35px;
-            flex-shrink: 0;
-        }
+	position: relative;
+	width: 90px;
+	height: 35px;
+	flex-shrink: 0;
+}
 
-        /* 메뉴 버튼 배경 스타일 */
-        .menu-item-bg {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: calc(100% + 10px);
-            height: calc(100% + 10px);
-            transform: translate(-50%, -50%);
-            border-radius: 6px;
-            background: linear-gradient(to bottom, #dddddd, #bbbbbb);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            z-index: 5;
-        }
+/* 메뉴 버튼 배경 스타일 */
+.menu-item-bg {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: calc(100% + 10px);
+	height: calc(100% + 10px);
+	transform: translate(-50%, -50%);
+	border-radius: 6px;
+	background: linear-gradient(to bottom, #dddddd, #bbbbbb);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+	z-index: 5;
+}
 
-        /* 메뉴 버튼 스타일 (기본/비선택 상태) */
-        .menu-item-btn {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            height: 100%;
-            border: 1px solid;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.05s ease-in-out;
-            white-space: nowrap;
-            color: #333;
-            text-decoration: none;
+/* 메뉴 버튼 스타일 (기본/비선택 상태) */
+.menu-item-btn {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	height: 100%;
+	border: 1px solid;
+	border-radius: 6px;
+	font-size: 16px;
+	font-weight: bold;
+	cursor: pointer;
+	transition: all 0.05s ease-in-out;
+	white-space: nowrap;
+	color: #333;
+	text-decoration: none;
 
-            /* Raised (튀어나온) 스타일 */
-            background: linear-gradient(to bottom, #f0f0f0, #dcdcdc);
-            border-color: #fcfcfc #b0b0b0 #b0b0b0 #fcfcfc;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.7);
-            position: relative;
-            z-index: 10;
-        }
+	/* Raised (튀어나온) 스타일 */
+	background: linear-gradient(to bottom, #f0f0f0, #dcdcdc);
+	border-color: #fcfcfc #b0b0b0 #b0b0b0 #fcfcfc;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15),
+		inset 0 1px 0 rgba(255, 255, 255, 0.7);
+	position: relative;
+	z-index: 10;
+}
 
-        /* 선택된 메뉴 버튼 스타일 (Sunken / 눌린 상태 유지) */
-        .menu-item-selected {
-            border-color: #b0b0b0 #fcfcfc #fcfcfc #b0b0b0;
-            background: linear-gradient(to bottom, #dcdcdc, #f0f0f0);
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 0 rgba(0, 0, 0, 0) !important;
-        }
+/* 선택된 메뉴 버튼 스타일 (Sunken / 눌린 상태 유지) */
+.menu-item-selected {
+	border-color: #b0b0b0 #fcfcfc #fcfcfc #b0b0b0;
+	background: linear-gradient(to bottom, #dcdcdc, #f0f0f0);
+	box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 0 rgba(0, 0, 0, 0) !important;
+}
 
-        /* Active (눌림) 상태: 선택 상태와 동일하게 설정 */
-        .menu-item-btn:active {
-            border-color: #b0b0b0 #fcfcfc #fcfcfc #b0b0b0;
-            background: linear-gradient(to bottom, #dcdcdc, #f0f0f0);
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 0 rgba(0, 0, 0, 0);
-        }
+/* Active (눌림) 상태: 선택 상태와 동일하게 설정 */
+.menu-item-btn:active {
+	border-color: #b0b0b0 #fcfcfc #fcfcfc #b0b0b0;
+	background: linear-gradient(to bottom, #dcdcdc, #f0f0f0);
+	box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 0 rgba(0, 0, 0, 0);
+}
 
+/* ======================================================================= */
+/* 이벤트 버튼 래퍼 및 공통 스타일 */
+/* ======================================================================= */
 
-        /* ======================================================================= */
-        /* 이벤트 버튼 래퍼 및 공통 스타일 */
-        /* ======================================================================= */
+.event-btn-wrapper {
+	position: relative;
+	/* 버튼들을 중앙에 배치하고 사이에 간격(gap) 추가 */
+	display: flex;
+	justify-content: center;
+	gap: 10px; /* 버튼 간 간격 */
+	margin-top: 10px;
+	margin-bottom: 20px;
+	width: 100%;
+	max-width: 800px; /* 최대 폭 확장 */
+}
 
-        .event-btn-wrapper {
-            position: relative;
-            /* 버튼들을 중앙에 배치하고 사이에 간격(gap) 추가 */
-            display: flex;
-            justify-content: center;
-            gap: 10px; /* 버튼 간 간격 */
-            margin-top: 10px;
-            margin-bottom: 20px;
-            width: 100%;
-            max-width: 800px; /* 최대 폭 확장 */
-        }
+.event-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
 
-        .event-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+	/* 공통 크기 */
+	min-width: 80px;
+	height: 22px;
+	border-radius: 5px;
 
-            /* 공통 크기 */
-            min-width: 80px;
-            height: 22px;
-            border-radius: 5px;
+	border: 1px solid;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2),
+		inset 0 1px 0 rgba(255, 255, 255, 0.4);
 
-            border: 1px solid;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+	color: #fff;
+	font-size: 11px;
+	font-weight: bold;
+	cursor: pointer;
+	transition: all 0.1s ease-in-out;
+	padding: 0 10px;
+	white-space: nowrap;
 
-            color: #fff;
-            font-size: 11px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.1s ease-in-out;
-            padding: 0 10px;
-            white-space: nowrap;
+	/* [수정] 네이비색 글자 외곽선 효과 */
+	text-shadow: 1px 1px #1c2a4f, /* 우하단 네이비 */ -1px -1px #1c2a4f,
+		/* 좌상단 네이비 */ 1px -1px #1c2a4f, /* 우상단 네이비 */ -1px 1px #1c2a4f,
+		/* 좌하단 네이비 */ 0 0 3px rgba(0, 0, 0, 0.8); /* 중앙 검은 그림자 */
+}
 
-            /* [수정] 네이비색 글자 외곽선 효과 */
-            text-shadow:
-                1px 1px #1c2a4f,    /* 우하단 네이비 */
-                -1px -1px #1c2a4f,  /* 좌상단 네이비 */
-                1px -1px #1c2a4f,   /* 우상단 네이비 */
-                -1px 1px #1c2a4f,   /* 좌하단 네이비 */
-                0 0 3px rgba(0,0,0,0.8); /* 중앙 검은 그림자 */
-        }
+/* 이벤트 버튼 눌림 효과 (공통) */
+.event-btn:active,
+.event-btn.event-btn-selected {
+	box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4), 0 0 0 rgba(0, 0, 0, 0);
+	text-shadow: 1px 1px #1c2a4f, -1px -1px #1c2a4f, 1px -1px #1c2a4f,
+		-1px 1px #1c2a4f, 0 0 3px rgba(0, 0, 0, 0.8);
+}
 
-        /* 이벤트 버튼 눌림 효과 (공통) */
-        .event-btn:active, .event-btn.event-btn-selected {
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4), 0 0 0 rgba(0, 0, 0, 0);
-            text-shadow:
-                1px 1px #1c2a4f,
-                -1px -1px #1c2a4f,
-                1px -1px #1c2a4f,
-                -1px 1px #1c2a4f,
-                0 0 3px rgba(0,0,0,0.8);
-        }
+/* 이벤트 버튼 아이콘 스타일 (공통) */
+.event-btn-icon {
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	margin-right: 6px;
+	position: relative;
+	background-color: #fff;
+	border-radius: 3px;
+	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(0, 0, 0, 0.1);
+	flex-shrink: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
 
-        /* 이벤트 버튼 아이콘 스타일 (공통) */
-        .event-btn-icon {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            margin-right: 6px;
-            position: relative;
-            background-color: #fff;
-            border-radius: 3px;
-            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(0,0,0,0.1);
-            flex-shrink: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+/* ---------------------------------------------------------------------- */
+/* 파란색 버튼 (배차차량선택) 스타일 */
+/* ---------------------------------------------------------------------- */
 
-        /* ---------------------------------------------------------------------- */
-        /* 파란색 버튼 (배차차량선택) 스타일 */
-        /* ---------------------------------------------------------------------- */
+.select-btn,
+.event-btn.select-btn {
+	background: linear-gradient(
+		to bottom,
+		#7bc5f0,
+		#4da0e0 50%,
+		#3a8bc0
+	) !important;
+	border-color: #b8e2ff #3d8fc7 #3d8fc7 #b8e2ff !important;
+	height: 22px !important;
+}
 
-        .select-btn,
-        .event-btn.select-btn {
-            background: linear-gradient(to bottom, #7bc5f0, #4da0e0 50%, #3a8bc0) !important;
-            border-color: #b8e2ff #3d8fc7 #3d8fc7 #b8e2ff !important;
-            height: 22px !important;
-        }
+.select-btn:active,
+.select-btn.event-btn-selected,
+.event-btn.select-btn:active,
+.event-btn.select-btn.event-btn-selected {
+	background: linear-gradient(
+		to bottom,
+		#3a8bc0,
+		#4da0e0 50%,
+		#7bc5f0
+	) !important;
+	border-color: #3d8fc7 #b8e2ff #b8e2ff #3d8fc7 !important;
+}
 
-        .select-btn:active, 
-        .select-btn.event-btn-selected,
-        .event-btn.select-btn:active,
-        .event-btn.select-btn.event-btn-selected {
-            background: linear-gradient(to bottom, #3a8bc0, #4da0e0 50%, #7bc5f0) !important;
-            border-color: #3d8fc7 #b8e2ff #b8e2ff #3d8fc7 !important;
-        }
+/* 파란색 버튼 - 체크마크 아이콘 */
+.select-btn .event-btn-icon::after {
+	content: "";
+	position: absolute;
+	display: block;
+	width: 5px;
+	height: 8px;
+	border: solid #000;
+	border-width: 0 2px 2px 0;
+	transform: translate(-50%, -50%) rotate(45deg);
+	top: 50%;
+	left: 50%;
+}
 
-        /* 파란색 버튼 - 체크마크 아이콘 */
-        .select-btn .event-btn-icon::after {
-            content: '';
-            position: absolute;
-            display: block;
-            width: 5px;
-            height: 8px;
-            border: solid #000;
-            border-width: 0 2px 2px 0;
-            transform: translate(-50%, -50%) rotate(45deg);
-            top: 50%;
-            left: 50%;
-        }
+/* ---------------------------------------------------------------------- */
+/* 빨간색 버튼 (배차취소) 스타일 */
+/* ---------------------------------------------------------------------- */
 
-        /* ---------------------------------------------------------------------- */
-        /* 빨간색 버튼 (배차취소) 스타일 */
-        /* ---------------------------------------------------------------------- */
+.cancel-btn {
+	background: linear-gradient(to bottom, #ff7b7b, #c43c3c 50%, #a02020);
+	border-color: #ffbaba #9c3030 #9c3030 #ffbaba;
+	height: 21px;
+}
 
-        .cancel-btn {
-            background: linear-gradient(to bottom, #ff7b7b, #c43c3c 50%, #a02020);
-            border-color: #ffbaba #9c3030 #9c3030 #ffbaba;
-            height: 21px;
-        }
+.cancel-btn:active,
+.cancel-btn.event-btn-selected {
+	background: linear-gradient(to bottom, #a02020, #c43c3c 50%, #ff7b7b);
+	border-color: #9c3030 #ffbaba #ffbaba #9c3030;
+}
 
-        .cancel-btn:active, .cancel-btn.event-btn-selected {
-            background: linear-gradient(to bottom, #a02020, #c43c3c 50%, #ff7b7b);
-            border-color: #9c3030 #ffbaba #ffbaba #9c3030;
-        }
+/* 빨간색 버튼 - X 아이콘 */
+.cancel-btn .event-btn-icon {
+	background-color: #ffefc2;
+}
 
-        /* 빨간색 버튼 - X 아이콘 */
-        .cancel-btn .event-btn-icon {
-            background-color: #ffefc2;
-        }
+/* X 아이콘 구현: 첫 번째 선 (\) */
+.cancel-btn .event-btn-icon::before {
+	content: "";
+	position: absolute;
+	display: block;
+	width: 2px;
+	height: 12px;
+	background-color: #a02020;
+	transform: translate(-50%, -50%) rotate(45deg);
+	top: 50%;
+	left: 50%;
+	border-radius: 1px;
+}
 
-        /* X 아이콘 구현: 첫 번째 선 (\) */
-        .cancel-btn .event-btn-icon::before {
-            content: '';
-            position: absolute;
-            display: block;
-            width: 2px;
-            height: 12px;
-            background-color: #a02020;
-            transform: translate(-50%, -50%) rotate(45deg);
-            top: 50%;
-            left: 50%;
-            border-radius: 1px;
-        }
+/* X 아이콘 구현: 두 번째 선 (/) */
+.cancel-btn .event-btn-icon::after {
+	content: "";
+	position: absolute;
+	display: block;
+	width: 2px;
+	height: 12px;
+	background-color: #a02020;
+	transform: translate(-50%, -50%) rotate(-45deg);
+	top: 50%;
+	left: 50%;
+	border-radius: 1px;
+}
 
-        /* X 아이콘 구현: 두 번째 선 (/) */
-        .cancel-btn .event-btn-icon::after {
-            content: '';
-            position: absolute;
-            display: block;
-            width: 2px;
-            height: 12px;
-            background-color: #a02020;
-            transform: translate(-50%, -50%) rotate(-45deg);
-            top: 50%;
-            left: 50%;
-            border-radius: 1px;
-        }
+/* ---------------------------------------------------------------------- */
+/* 파란색 버튼 (인수증출력) 스타일 */
+/* ---------------------------------------------------------------------- */
 
-        /* ---------------------------------------------------------------------- */
-        /* 파란색 버튼 (인수증출력) 스타일 */
-        /* ---------------------------------------------------------------------- */
+.print-btn {
+	/* 배차차량선택 버튼과 동일한 파란색 그라데이션 (밝게 조정) */
+	background: linear-gradient(to bottom, #7bc5f0, #4da0e0 50%, #3a8bc0);
+	border-color: #b8e2ff #3d8fc7 #3d8fc7 #b8e2ff;
+}
 
-        .print-btn {
-            /* 배차차량선택 버튼과 동일한 파란색 그라데이션 (밝게 조정) */
-            background: linear-gradient(to bottom, #7bc5f0, #4da0e0 50%, #3a8bc0);
-            border-color: #b8e2ff #3d8fc7 #3d8fc7 #b8e2ff;
-        }
+.print-btn:active,
+.print-btn.event-btn-selected {
+	background: linear-gradient(to bottom, #3a8bc0, #4da0e0 50%, #7bc5f0);
+	border-color: #3d8fc7 #b8e2ff #b8e2ff #3d8fc7;
+}
 
-        .print-btn:active, .print-btn.event-btn-selected {
-            background: linear-gradient(to bottom, #3a8bc0, #4da0e0 50%, #7bc5f0);
-            border-color: #3d8fc7 #b8e2ff #b8e2ff #3d8fc7;
-        }
+/* 프린터 아이콘 구현 */
+.print-btn .event-btn-icon {
+	background-color: #fff;
+}
 
-        /* 프린터 아이콘 구현 */
-        .print-btn .event-btn-icon {
-            background-color: #fff;
-        }
+/* 프린터 몸체 (body) */
+.print-btn .event-btn-icon::before {
+	content: "";
+	position: absolute;
+	display: block;
+	width: 10px;
+	height: 8px;
+	background-color: #1c2a4f;
+	border: 1px solid #1c2a4f;
+	border-bottom: 2px solid #1c2a4f;
+	border-radius: 1px;
+	bottom: 2px;
+}
 
-        /* 프린터 몸체 (body) */
-        .print-btn .event-btn-icon::before {
-            content: '';
-            position: absolute;
-            display: block;
-            width: 10px;
-            height: 8px;
-            background-color: #1c2a4f;
-            border: 1px solid #1c2a4f;
-            border-bottom: 2px solid #1c2a4f;
-            border-radius: 1px;
-            bottom: 2px;
-        }
-
-        /* 프린터 용지/배출구 (paper/tray) */
-        .print-btn .event-btn-icon::after {
-            content: '';
-            position: absolute;
-            display: block;
-            width: 8px;
-            height: 3px;
-            background-color: #f0f0f0; /* 용지 */
-            border: 1px solid #1c2a4f;
-            border-bottom: none;
-            border-radius: 1px 1px 0 0;
-            top: 2px;
-        }
-        /* ---------------------------------------------------------------------- */
-        /* 2-6. 오더전달 (forward-btn) - 화살표 아이콘 스타일 적용 */
-        /* ---------------------------------------------------------------------- */
-        .forward-btn {
-            background: linear-gradient(to bottom, #ff9800, #e68a00 50%, #cc7a00); 
-            border-color: #ffc14d #b36b00 #b36b00 #ffc14d; 
-        }
-        .forward-btn:active, .forward-btn.event-btn-selected {
-            background: linear-gradient(to bottom, #cc7a00, #e68a00 50%, #ff9800); 
-            border-color: #b36b00 #ffc14d #ffc14d #b36b00; 
-        }
-        /* 화살표 아이콘 스타일 */
-        .forward-btn .event-btn-icon { background-color: #ffc107; border-color: #ff9800; }
-        .forward-btn .event-btn-icon::before { /* 화살표 몸체 */
-            content: ''; width: 8px; height: 2px; background-color: #333; 
-            position: absolute; display: block;
-            top: 50%; left: 50%; transform: translate(-50%, -50%);
-        }
-        .forward-btn .event-btn-icon::after { /* 화살표 머리 (삼각형) */
-            content: ''; width: 0; height: 0;
-            border-top: 3px solid transparent;
-            border-bottom: 3px solid transparent;
-            border-left: 5px solid #333;
-            position: absolute; display: block;
-            top: 50%; left: calc(50% + 2px); transform: translateY(-50%);
-        }
-        /* ---------------------------------------------------------------------- */
-        /* 녹색 버튼 (엑셀출력) 스타일 */
-        /* ---------------------------------------------------------------------- */
+/* 프린터 용지/배출구 (paper/tray) */
+.print-btn .event-btn-icon::after {
+	content: "";
+	position: absolute;
+	display: block;
+	width: 8px;
+	height: 3px;
+	background-color: #f0f0f0; /* 용지 */
+	border: 1px solid #1c2a4f;
+	border-bottom: none;
+	border-radius: 1px 1px 0 0;
+	top: 2px;
+}
+/* ---------------------------------------------------------------------- */
+/* 2-6. 오더전달 (forward-btn) - 화살표 아이콘 스타일 적용 */
+/* ---------------------------------------------------------------------- */
+.forward-btn {
+	background: linear-gradient(to bottom, #ff9800, #e68a00 50%, #cc7a00);
+	border-color: #ffc14d #b36b00 #b36b00 #ffc14d;
+}
+.forward-btn:active,
+.forward-btn.event-btn-selected {
+	background: linear-gradient(to bottom, #cc7a00, #e68a00 50%, #ff9800);
+	border-color: #b36b00 #ffc14d #ffc14d #b36b00;
+}
+/* 화살표 아이콘 스타일 */
+.forward-btn .event-btn-icon {
+	background-color: #ffc107;
+	border-color: #ff9800;
+}
+.forward-btn .event-btn-icon::before {
+	/* 화살표 몸체 */
+	content: "";
+	width: 8px;
+	height: 2px;
+	background-color: #333;
+	position: absolute;
+	display: block;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+.forward-btn .event-btn-icon::after {
+	/* 화살표 머리 (삼각형) */
+	content: "";
+	width: 0;
+	height: 0;
+	border-top: 3px solid transparent;
+	border-bottom: 3px solid transparent;
+	border-left: 5px solid #333;
+	position: absolute;
+	display: block;
+	top: 50%;
+	left: calc(50% + 2px);
+	transform: translateY(-50%);
+}
+/* ---------------------------------------------------------------------- */
+/* 녹색 버튼 (엑셀출력) 스타일 */
+/* ---------------------------------------------------------------------- */
 
 /* 2-4. 녹색 버튼 (엑셀출력) - 'X' 아이콘 */
-        .excel-btn {
-            background: linear-gradient(to bottom, #7fc87f, #4a9f4a 50%, #3a7c3a); 
-            border-color: #c1e1c1 #336b33 #336b33 #c1e1c1; 
-        }
-        .excel-btn:active, .excel-btn.event-btn-selected {
-            background: linear-gradient(to bottom, #3a7c3a, #4a9f4a 50%, #7fc87f); 
-            border-color: #336b33 #c1e1c1 #c1e1c1 #336b33; 
-        }
-        .excel-btn .event-btn-icon { border: 1px solid #3a7c3a; }
-        .excel-btn .event-btn-icon::before { /* 파일 모양 */
-            content: ''; width: 10px; height: 12px; background-color: #fff; 
-            border: 1px solid #3a7c3a; border-radius: 1px;
-            position: absolute; display: block;
-            top: 50%; left: 50%; transform: translate(-50%, -50%);
-            box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
-        }
-        .excel-btn .event-btn-icon::after { /* 엑셀 시그니처 'X' */
-            content: 'X'; color: #3a7c3a; font-family: Arial, sans-serif;
-            font-size: 11px; font-weight: 900; line-height: 15px; 
-            text-align: center; width: 100%; height: 100%;
-            position: absolute; top: 0; left: 0; text-shadow: none; z-index: 10;
-        }
+.excel-btn {
+	background: linear-gradient(to bottom, #7fc87f, #4a9f4a 50%, #3a7c3a);
+	border-color: #c1e1c1 #336b33 #336b33 #c1e1c1;
+}
+.excel-btn:active,
+.excel-btn.event-btn-selected {
+	background: linear-gradient(to bottom, #3a7c3a, #4a9f4a 50%, #7fc87f);
+	border-color: #336b33 #c1e1c1 #c1e1c1 #336b33;
+}
+.excel-btn .event-btn-icon {
+	border: 1px solid #3a7c3a;
+}
+.excel-btn .event-btn-icon::before {
+	/* 파일 모양 */
+	content: "";
+	width: 10px;
+	height: 12px;
+	background-color: #fff;
+	border: 1px solid #3a7c3a;
+	border-radius: 1px;
+	position: absolute;
+	display: block;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+}
+.excel-btn .event-btn-icon::after {
+	/* 엑셀 시그니처 'X' */
+	content: "X";
+	color: #3a7c3a;
+	font-family: Arial, sans-serif;
+	font-size: 11px;
+	font-weight: 900;
+	line-height: 15px;
+	text-align: center;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	text-shadow: none;
+	z-index: 10;
+}
 
-        /* ---------------------------------------------------------------------- */
-        /* 아이콘 종류별 스타일 (독립적으로 사용 가능) */
-        /* ---------------------------------------------------------------------- */
-        
-        /* 체크마크 아이콘 */
-        .event-btn-icon.icon-check::after {
-            content: '';
-            position: absolute;
-            display: block;
-            width: 5px;
-            height: 8px;
-            border: solid #000;
-            border-width: 0 2px 2px 0;
-            transform: translate(-50%, -50%) rotate(45deg);
-            top: 50%;
-            left: 50%;
-        }
-        
-        /* 검색(돋보기) 아이콘 */
-        .event-btn-icon.icon-search {
-            background-color: #fff;
-            border-color: #ff9800;
-        }
-        .event-btn-icon.icon-search::before { /* 렌즈 (원) */
-            content: '';
-            width: 8px;
-            height: 8px;
-            background-color: #fff;
-            border: 2px solid #333;
-            border-radius: 50%;
-            position: absolute;
-            display: block;
-            top: 3px;
-            left: 3px;
-        }
-        .event-btn-icon.icon-search::after { /* 손잡이 */
-            content: '';
-            width: 2px;
-            height: 6px;
-            background-color: #333;
-            position: absolute;
-            display: block;
-            bottom: 3px;
-            right: 3px;
-            transform: rotate(45deg);
-            border-radius: 1px;
-        }
-        
-        /* 프린터 아이콘 */
-        .event-btn-icon.icon-print {
-            background-color: #fff;
-        }
-        .event-btn-icon.icon-print::before { /* 프린터 몸체 */
-            content: '';
-            position: absolute;
-            display: block;
-            width: 10px;
-            height: 8px;
-            background-color: #1c2a4f;
-            border: 1px solid #1c2a4f;
-            border-bottom: 2px solid #1c2a4f;
-            border-radius: 1px;
-            bottom: 2px;
-        }
-        .event-btn-icon.icon-print::after { /* 프린터 용지/배출구 */
-            content: '';
-            position: absolute;
-            display: block;
-            width: 8px;
-            height: 3px;
-            background-color: #f0f0f0;
-            border: 1px solid #1c2a4f;
-            border-bottom: none;
-            border-radius: 1px 1px 0 0;
-            top: 2px;
-        }
-        
-        /* X(취소) 아이콘 */
-        .event-btn-icon.icon-cancel {
-            background-color: #fff;
-        }
-        .event-btn-icon.icon-cancel::before { /* 첫 번째 선 (\) */
-            content: '';
-            position: absolute;
-            display: block;
-            width: 2px;
-            height: 12px;
-            background-color: #a02020;
-            transform: translate(-50%, -50%) rotate(45deg);
-            top: 50%;
-            left: 50%;
-            border-radius: 1px;
-        }
-        .event-btn-icon.icon-cancel::after { /* 두 번째 선 (/) */
-            content: '';
-            position: absolute;
-            display: block;
-            width: 2px;
-            height: 12px;
-            background-color: #a02020;
-            transform: translate(-50%, -50%) rotate(-45deg);
-            top: 50%;
-            left: 50%;
-            border-radius: 1px;
-        }
-        
-        /* 엑셀 아이콘 */
-        .event-btn-icon.icon-excel {
-            background-color: #fff;
-            border: 1px solid #3a7c3a;
-        }
-        .event-btn-icon.icon-excel::before { /* 엑셀 시트 몸체 */
-            content: '';
-            position: absolute;
-            display: block;
-            width: 8px;
-            height: 10px;
-            background-color: transparent;
-            border: 1px solid #3a7c3a;
-            border-radius: 1px;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
-            z-index: 1;
-        }
-        .event-btn-icon.icon-excel::after { /* 엑셀 시그니처 'X' */
-            content: 'X';
-            color: #217346;
-            font-family: Arial, sans-serif;
-            font-size: 12px;
-            font-weight: 900;
-            line-height: 1;
-            text-align: center;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-shadow: none;
-            z-index: 2;
-        }
-        
-        /* 디스켓(저장) 아이콘 */
-        .event-btn-icon.icon-save {
-            background-color: #fff;
-        }
-        .event-btn-icon.icon-save::before { /* 디스켓 몸체 */
-            content: '';
-            position: absolute;
-            display: block;
-            width: 10px;
-            height: 10px;
-            background-color: #4a90e2;
-            border: 1px solid #2e5c8a;
-            border-radius: 1px;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-        .event-btn-icon.icon-save::after { /* 디스켓 라벨 */
-            content: '';
-            position: absolute;
-            display: block;
-            width: 6px;
-            height: 2px;
-            background-color: #2e5c8a;
-            top: 3px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        
-        /* 돋보기(검색) 아이콘 - icon-search와 동일하지만 별도 클래스로 제공 */
-        .event-btn-icon.icon-magnifier {
-            background-color: #fff;
-            border-color: #ff9800;
-        }
-        .event-btn-icon.icon-magnifier::before { /* 렌즈 (원) */
-            content: '';
-            width: 8px;
-            height: 8px;
-            background-color: #fff;
-            border: 2px solid #333;
-            border-radius: 50%;
-            position: absolute;
-            display: block;
-            top: 3px;
-            left: 3px;
-        }
-        .event-btn-icon.icon-magnifier::after { /* 손잡이 */
-            content: '';
-            width: 2px;
-            height: 6px;
-            background-color: #333;
-            position: absolute;
-            display: block;
-            bottom: 3px;
-            right: 3px;
-            transform: rotate(45deg);
-            border-radius: 1px;
-        }
-        
-        /* 연필(편집) 아이콘 */
-        .event-btn-icon.icon-edit {
-            background-color: #fff;
-        }
-        .event-btn-icon.icon-edit::before { /* 연필 몸체 */
-            content: '';
-            position: absolute;
-            display: block;
-            width: 2px;
-            height: 10px;
-            background-color: #333;
-            transform: translate(-50%, -50%) rotate(45deg);
-            top: 50%;
-            left: 50%;
-            border-radius: 1px;
-        }
-        .event-btn-icon.icon-edit::after { /* 연필 끝 (다이아몬드 모양) */
-            content: '';
-            position: absolute;
-            display: block;
-            width: 4px;
-            height: 4px;
-            background-color: #ff9800;
-            transform: translate(-50%, -50%) rotate(45deg);
-            top: calc(50% + 4px);
-            left: calc(50% + 4px);
-            border-radius: 0 0 1px 0;
-        }
-        
-        /* 휴지통(삭제) 아이콘 */
-        .event-btn-icon.icon-trash {
-            background-color: #fff;
-        }
-        .event-btn-icon.icon-trash::before { /* 휴지통 몸체 */
-            content: '';
-            position: absolute;
-            display: block;
-            width: 8px;
-            height: 8px;
-            background-color: #666;
-            border: 1px solid #333;
-            border-top: 2px solid #333;
-            border-radius: 0 0 1px 1px;
-            bottom: 2px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        .event-btn-icon.icon-trash::after { /* 휴지통 뚜껑 */
-            content: '';
-            position: absolute;
-            display: block;
-            width: 10px;
-            height: 2px;
-            background-color: #333;
-            border-radius: 1px;
-            top: 2px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        
-        /* 문자(메시지) 아이콘 */
-        .event-btn-icon.icon-message {
-            background-color: #fff;
-        }
-        .event-btn-icon.icon-message::before { /* 말풍선 몸체 */
-            content: '';
-            position: absolute;
-            display: block;
-            width: 10px;
-            height: 8px;
-            background-color: #4a90e2;
-            border: 1px solid #2e5c8a;
-            border-radius: 2px;
-            top: 2px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        .event-btn-icon.icon-message::after { /* 말풍선 꼬리 */
-            content: '';
-            position: absolute;
-            display: block;
-            width: 0;
-            height: 0;
-            border-left: 3px solid transparent;
-            border-right: 3px solid transparent;
-            border-top: 3px solid #4a90e2;
-            bottom: 1px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        
-        /* 편지봉투(이메일) 아이콘 */
-        .event-btn-icon.icon-envelope {
-            background-color: #fff;
-        }
-        .event-btn-icon.icon-envelope::before { /* 봉투 몸체 */
-            content: '';
-            position: absolute;
-            display: block;
-            width: 10px;
-            height: 8px;
-            background-color: #fff;
-            border: 1px solid #333;
-            border-radius: 1px;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-        .event-btn-icon.icon-envelope::after { /* 봉투 뚜껑 (삼각형) */
-            content: '';
-            position: absolute;
-            display: block;
-            width: 0;
-            height: 0;
-            border-left: 5px solid transparent;
-            border-right: 5px solid transparent;
-            border-bottom: 4px solid #333;
-            top: calc(50% - 4px);
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        
-        /* 화살표 아이콘 (오른쪽 화살표 →) */
-        .event-btn-icon.icon-arrow {
-            background-color: #fff;
-        }
-        .event-btn-icon.icon-arrow::before { /* 화살표 몸체 */
-            content: '';
-            position: absolute;
-            display: block;
-            width: 8px;
-            height: 2px;
-            background-color: #333;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-        .event-btn-icon.icon-arrow::after { /* 화살표 머리 (삼각형) */
-            content: '';
-            position: absolute;
-            display: block;
-            width: 0;
-            height: 0;
-            border-top: 3px solid transparent;
-            border-bottom: 3px solid transparent;
-            border-left: 5px solid #333;
-            top: 50%;
-            left: calc(50% + 2px);
-            transform: translateY(-50%);
-        }
-        
-        /* 리셋/초기화 아이콘 (원형 화살표 ↻) */
-        .event-btn-icon.icon-reset {
-            background-color: #fff;
-        }
-        .event-btn-icon.icon-reset::before { /* 원형 외곽선 */
-            content: '';
-            position: absolute;
-            display: block;
-            width: 10px;
-            height: 10px;
-            border: 2px solid #333;
-            border-radius: 50%;
-            border-top-color: transparent;
-            border-right-color: transparent;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-45deg);
-        }
-        .event-btn-icon.icon-reset::after { /* 화살표 머리 */
-            content: '';
-            position: absolute;
-            display: block;
-            width: 0;
-            height: 0;
-            border-top: 3px solid transparent;
-            border-bottom: 3px solid transparent;
-            border-left: 4px solid #333;
-            top: calc(50% - 3px);
-            left: calc(50% + 1px);
-            transform: rotate(45deg);
-        }
+/* ---------------------------------------------------------------------- */
+/* 아이콘 종류별 스타일 (독립적으로 사용 가능) */
+/* ---------------------------------------------------------------------- */
 
-        /* ---------------------------------------------------------------------- */
-        /* SELECT BOX 공통 스타일 (3D/Sunken 스타일) */
-        /* ---------------------------------------------------------------------- */
-        .select-wrapper {
-            position: relative;
-            display: inline-block;
-        }
+/* 체크마크 아이콘 */
+.event-btn-icon.icon-check::after {
+	content: "";
+	position: absolute;
+	display: block;
+	width: 5px;
+	height: 8px;
+	border: solid #000;
+	border-width: 0 2px 2px 0;
+	transform: translate(-50%, -50%) rotate(45deg);
+	top: 50%;
+	left: 50%;
+}
 
-        .custom-select {
-            /* text-input-style와 동일한 스타일 */
-            border: 1px solid #7f9db9;
-            padding: 2px;
-            font-size: 11px;
-            font-family: Dotum, 돋움, sans-serif;
-            color: #666666;
-            min-width: 50px;
-            width: auto;
-            height: 25px;
-            background-color: #fff;
-            line-height: normal;
-            box-sizing: border-box;
-            
-            /* select 요소 특성 유지 */
-            cursor: pointer;
-            white-space: nowrap;
-            -webkit-appearance: menulist;
-            -moz-appearance: menulist;
-            appearance: menulist;
-            font-weight: normal;
-        }
+/* 검색(돋보기) 아이콘 */
+.event-btn-icon.icon-search {
+	background-color: #fff;
+	border-color: #ff9800;
+}
+.event-btn-icon.icon-search::before {
+	/* 렌즈 (원) */
+	content: "";
+	width: 8px;
+	height: 8px;
+	background-color: #fff;
+	border: 2px solid #333;
+	border-radius: 50%;
+	position: absolute;
+	display: block;
+	top: 3px;
+	left: 3px;
+}
+.event-btn-icon.icon-search::after {
+	/* 손잡이 */
+	content: "";
+	width: 2px;
+	height: 6px;
+	background-color: #333;
+	position: absolute;
+	display: block;
+	bottom: 3px;
+	right: 3px;
+	transform: rotate(45deg);
+	border-radius: 1px;
+}
 
-        /* [NEW] 넓은 SELECT BOX (150px) - 스타일은 custom-select를 따름 (revert 완료) */
-        .wide-select {
-            min-width: 150px;
-        }
+/* 프린터 아이콘 */
+.event-btn-icon.icon-print {
+	background-color: #fff;
+}
+.event-btn-icon.icon-print::before {
+	/* 프린터 몸체 */
+	content: "";
+	position: absolute;
+	display: block;
+	width: 10px;
+	height: 8px;
+	background-color: #1c2a4f;
+	border: 1px solid #1c2a4f;
+	border-bottom: 2px solid #1c2a4f;
+	border-radius: 1px;
+	bottom: 2px;
+}
+.event-btn-icon.icon-print::after {
+	/* 프린터 용지/배출구 */
+	content: "";
+	position: absolute;
+	display: block;
+	width: 8px;
+	height: 3px;
+	background-color: #f0f0f0;
+	border: 1px solid #1c2a4f;
+	border-bottom: none;
+	border-radius: 1px 1px 0 0;
+	top: 2px;
+}
 
-        /* ---------------------------------------------------------------------- */
-        /* INPUT TYPE=TEXT 스타일 (요청된 plain border 스타일) */
-        /* ---------------------------------------------------------------------- */
-        .text-input-style {
-            /* BORDER: #7f9db9 1px solid; */
-            border: 1px solid #7f9db9;
+/* X(취소) 아이콘 */
+.event-btn-icon.icon-cancel {
+	background-color: #fff;
+}
+.event-btn-icon.icon-cancel::before {
+	/* 첫 번째 선 (\) */
+	content: "";
+	position: absolute;
+	display: block;
+	width: 2px;
+	height: 12px;
+	background-color: #a02020;
+	transform: translate(-50%, -50%) rotate(45deg);
+	top: 50%;
+	left: 50%;
+	border-radius: 1px;
+}
+.event-btn-icon.icon-cancel::after {
+	/* 두 번째 선 (/) */
+	content: "";
+	position: absolute;
+	display: block;
+	width: 2px;
+	height: 12px;
+	background-color: #a02020;
+	transform: translate(-50%, -50%) rotate(-45deg);
+	top: 50%;
+	left: 50%;
+	border-radius: 1px;
+}
 
-            /* PADDING */
-            padding: 2px;
+/* 엑셀 아이콘 */
+.event-btn-icon.icon-excel {
+	background-color: #fff;
+	border: 1px solid #3a7c3a;
+}
+.event-btn-icon.icon-excel::before {
+	/* 엑셀 시트 몸체 */
+	content: "";
+	position: absolute;
+	display: block;
+	width: 8px;
+	height: 10px;
+	background-color: transparent;
+	border: 1px solid #3a7c3a;
+	border-radius: 1px;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+	z-index: 1;
+}
+.event-btn-icon.icon-excel::after {
+	/* 엑셀 시그니처 'X' */
+	content: "X";
+	color: #217346;
+	font-family: Arial, sans-serif;
+	font-size: 12px;
+	font-weight: 900;
+	line-height: 1;
+	text-align: center;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	text-shadow: none;
+	z-index: 2;
+}
 
-            /* FONT-SIZE: 11px; */
-            font-size: 11px;
-            
-            /* FONT-FAMILY: 돋움체 */
-            font-family: Dotum, 돋움, sans-serif;
+/* 디스켓(저장) 아이콘 */
+.event-btn-icon.icon-save {
+	background-color: #fff;
+}
+.event-btn-icon.icon-save::before {
+	/* 디스켓 몸체 */
+	content: "";
+	position: absolute;
+	display: block;
+	width: 10px;
+	height: 10px;
+	background-color: #4a90e2;
+	border: 1px solid #2e5c8a;
+	border-radius: 1px;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+.event-btn-icon.icon-save::after {
+	/* 디스켓 라벨 */
+	content: "";
+	position: absolute;
+	display: block;
+	width: 6px;
+	height: 2px;
+	background-color: #2e5c8a;
+	top: 3px;
+	left: 50%;
+	transform: translateX(-50%);
+}
 
-            /* COLOR: #666666; */
-            color: #666666;
+/* 돋보기(검색) 아이콘 - icon-search와 동일하지만 별도 클래스로 제공 */
+.event-btn-icon.icon-magnifier {
+	background-color: #fff;
+	border-color: #ff9800;
+}
+.event-btn-icon.icon-magnifier::before {
+	/* 렌즈 (원) */
+	content: "";
+	width: 8px;
+	height: 8px;
+	background-color: #fff;
+	border: 2px solid #333;
+	border-radius: 50%;
+	position: absolute;
+	display: block;
+	top: 3px;
+	left: 3px;
+}
+.event-btn-icon.icon-magnifier::after {
+	/* 손잡이 */
+	content: "";
+	width: 2px;
+	height: 6px;
+	background-color: #333;
+	position: absolute;
+	display: block;
+	bottom: 3px;
+	right: 3px;
+	transform: rotate(45deg);
+	border-radius: 1px;
+}
 
-            /* 최소 너비 50px 및 높이 설정
+/* 연필(편집) 아이콘 */
+.event-btn-icon.icon-edit {
+	background-color: #fff;
+}
+.event-btn-icon.icon-edit::before {
+	/* 연필 몸체 */
+	content: "";
+	position: absolute;
+	display: block;
+	width: 2px;
+	height: 10px;
+	background-color: #333;
+	transform: translate(-50%, -50%) rotate(45deg);
+	top: 50%;
+	left: 50%;
+	border-radius: 1px;
+}
+.event-btn-icon.icon-edit::after {
+	/* 연필 끝 (다이아몬드 모양) */
+	content: "";
+	position: absolute;
+	display: block;
+	width: 4px;
+	height: 4px;
+	background-color: #ff9800;
+	transform: translate(-50%, -50%) rotate(45deg);
+	top: calc(50% + 4px);
+	left: calc(50% + 4px);
+	border-radius: 0 0 1px 0;
+}
+
+/* 휴지통(삭제) 아이콘 */
+.event-btn-icon.icon-trash {
+	background-color: #fff;
+}
+.event-btn-icon.icon-trash::before {
+	/* 휴지통 몸체 */
+	content: "";
+	position: absolute;
+	display: block;
+	width: 8px;
+	height: 8px;
+	background-color: #666;
+	border: 1px solid #333;
+	border-top: 2px solid #333;
+	border-radius: 0 0 1px 1px;
+	bottom: 2px;
+	left: 50%;
+	transform: translateX(-50%);
+}
+.event-btn-icon.icon-trash::after {
+	/* 휴지통 뚜껑 */
+	content: "";
+	position: absolute;
+	display: block;
+	width: 10px;
+	height: 2px;
+	background-color: #333;
+	border-radius: 1px;
+	top: 2px;
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+/* 문자(메시지) 아이콘 */
+.event-btn-icon.icon-message {
+	background-color: #fff;
+}
+.event-btn-icon.icon-message::before {
+	/* 말풍선 몸체 */
+	content: "";
+	position: absolute;
+	display: block;
+	width: 10px;
+	height: 8px;
+	background-color: #4a90e2;
+	border: 1px solid #2e5c8a;
+	border-radius: 2px;
+	top: 2px;
+	left: 50%;
+	transform: translateX(-50%);
+}
+.event-btn-icon.icon-message::after {
+	/* 말풍선 꼬리 */
+	content: "";
+	position: absolute;
+	display: block;
+	width: 0;
+	height: 0;
+	border-left: 3px solid transparent;
+	border-right: 3px solid transparent;
+	border-top: 3px solid #4a90e2;
+	bottom: 1px;
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+/* 편지봉투(이메일) 아이콘 */
+.event-btn-icon.icon-envelope {
+	background-color: #fff;
+}
+.event-btn-icon.icon-envelope::before {
+	/* 봉투 몸체 */
+	content: "";
+	position: absolute;
+	display: block;
+	width: 10px;
+	height: 8px;
+	background-color: #fff;
+	border: 1px solid #333;
+	border-radius: 1px;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+.event-btn-icon.icon-envelope::after {
+	/* 봉투 뚜껑 (삼각형) */
+	content: "";
+	position: absolute;
+	display: block;
+	width: 0;
+	height: 0;
+	border-left: 5px solid transparent;
+	border-right: 5px solid transparent;
+	border-bottom: 4px solid #333;
+	top: calc(50% - 4px);
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+/* 화살표 아이콘 (오른쪽 화살표 →) */
+.event-btn-icon.icon-arrow {
+	background-color: #fff;
+}
+.event-btn-icon.icon-arrow::before {
+	/* 화살표 몸체 */
+	content: "";
+	position: absolute;
+	display: block;
+	width: 8px;
+	height: 2px;
+	background-color: #333;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+.event-btn-icon.icon-arrow::after {
+	/* 화살표 머리 (삼각형) */
+	content: "";
+	position: absolute;
+	display: block;
+	width: 0;
+	height: 0;
+	border-top: 3px solid transparent;
+	border-bottom: 3px solid transparent;
+	border-left: 5px solid #333;
+	top: 50%;
+	left: calc(50% + 2px);
+	transform: translateY(-50%);
+}
+
+/* 리셋/초기화 아이콘 (원형 화살표 ↻) */
+.event-btn-icon.icon-reset {
+	background-color: #fff;
+}
+.event-btn-icon.icon-reset::before {
+	/* 원형 외곽선 */
+	content: "";
+	position: absolute;
+	display: block;
+	width: 10px;
+	height: 10px;
+	border: 2px solid #333;
+	border-radius: 50%;
+	border-top-color: transparent;
+	border-right-color: transparent;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%) rotate(-45deg);
+}
+.event-btn-icon.icon-reset::after {
+	/* 화살표 머리 */
+	content: "";
+	position: absolute;
+	display: block;
+	width: 0;
+	height: 0;
+	border-top: 3px solid transparent;
+	border-bottom: 3px solid transparent;
+	border-left: 4px solid #333;
+	top: calc(50% - 3px);
+	left: calc(50% + 1px);
+	transform: rotate(45deg);
+}
+
+/* ---------------------------------------------------------------------- */
+/* SELECT BOX 공통 스타일 (3D/Sunken 스타일) */
+/* ---------------------------------------------------------------------- */
+.select-wrapper {
+	position: relative;
+	display: inline-block;
+}
+
+.custom-select {
+	/* text-input-style와 동일한 스타일 */
+	border: 1px solid #7f9db9;
+	padding: 2px;
+	font-size: 11px;
+	font-family: Dotum, 돋움, sans-serif;
+	color: #666666;
+	min-width: 50px;
+	width: auto;
+	height: 25px;
+	background-color: #fff;
+	line-height: normal;
+	box-sizing: border-box;
+
+	/* select 요소 특성 유지 */
+	cursor: pointer;
+	white-space: nowrap;
+	-webkit-appearance: menulist;
+	-moz-appearance: menulist;
+	appearance: menulist;
+	font-weight: normal;
+}
+
+/* [NEW] 넓은 SELECT BOX (150px) - 스타일은 custom-select를 따름 (revert 완료) */
+.wide-select {
+	min-width: 150px;
+}
+
+/* ---------------------------------------------------------------------- */
+/* INPUT TYPE=TEXT 스타일 (요청된 plain border 스타일) */
+/* ---------------------------------------------------------------------- */
+.text-input-style {
+	/* BORDER: #7f9db9 1px solid; */
+	border: 1px solid #7f9db9;
+
+	/* PADDING */
+	padding: 2px;
+
+	/* FONT-SIZE: 11px; */
+	font-size: 11px;
+
+	/* FONT-FAMILY: 돋움체 */
+	font-family: Dotum, 돋움, sans-serif;
+
+	/* COLOR: #666666; */
+	color: #666666;
+
+	/* 최소 너비 50px 및 높이 설정
             min-width: 50px;
             width: auto; */
-            height: 25px; /* SELECT BOX와 높이 일치 */
+	height: 25px; /* SELECT BOX와 높이 일치 */
 
-            /* 기타 설정 */
-            background-color: #fff;
-            line-height: normal;
-            box-sizing: border-box; /* 패딩 포함하여 높이 25px 유지 */
-        }
+	/* 기타 설정 */
+	background-color: #fff;
+	line-height: normal;
+	box-sizing: border-box; /* 패딩 포함하여 높이 25px 유지 */
+}
 
+.Reg_Box {
+	font-family: 돋움;
+	border-right: #7f9db9 1px solid;
+	padding-right: 2px;
+	border-top: #7f9db9 1px solid;
+	padding-left: 2px;
+	font-size: 11px;
+	padding-bottom: 2px;
+	border-left: #7f9db9 1px solid;
+	color: #666666;
+	padding-top: 2px;
+	border-bottom: #7f9db9 1px solid;
+	height: 25px;
+}
+/* 커스텀 화살표 삭제 (네이티브 화살표 사용) */
+.select-wrapper::after {
+	content: none;
+}
 
-        .Reg_Box
-        {
-            font-family: 돋움;
-            border-right: #7f9db9 1px solid;
-            padding-right: 2px;
-            border-top: #7f9db9 1px solid;
-            padding-left: 2px;
-            font-size: 11px;
-            padding-bottom: 2px;
-            border-left: #7f9db9 1px solid;
-            color: #666666;
-            padding-top: 2px;
-            border-bottom: #7f9db9 1px solid;
-            height: 25px
-        }        
-        /* 커스텀 화살표 삭제 (네이티브 화살표 사용) */
-        .select-wrapper::after {
-            content: none;
-        }
+/* ---------------------------------------------------------------------- */
+/* [NEW] 필드 타이틀 DIV/SPAN 스타일 */
+/* ---------------------------------------------------------------------- */
+.field-title-style {
+	color: #231f20;
+	font-family: 돋움, Dotum, sans-serif; /* Fallback 추가 */
+	letter-spacing: 0px;
+	height: 24px;
+	background-color: #5fb0e0;
+	text-align: center;
+	font-size: 12px;
+	font-weight: bold; /* 가독성을 위해 bold 추가 */
+	line-height: 24px; /* 높이와 일치시켜 세로 중앙 정렬 */
+	width: 100%; /* 컨테이너 전체 너비 사용 */
+	/* 상하단 경계선을 얇게 조정 */
+	border-top: 1px solid #559ec8;
+	border-bottom: 1px solid #559ec8;
+}
 
-        /* ---------------------------------------------------------------------- */
-        /* [NEW] 필드 타이틀 DIV/SPAN 스타일 */
-        /* ---------------------------------------------------------------------- */
-        .field-title-style {
-            color: #231f20;
-            font-family: 돋움, Dotum, sans-serif; /* Fallback 추가 */
-            letter-spacing: 0px;
-            height: 24px;
-            background-color: #5FB0E0;
-            text-align: center;
-            font-size: 12px;
-            font-weight: bold; /* 가독성을 위해 bold 추가 */
-            line-height: 24px; /* 높이와 일치시켜 세로 중앙 정렬 */
-            width: 100%; /* 컨테이너 전체 너비 사용 */
-            /* 상하단 경계선을 얇게 조정 */
-            border-top: 1px solid #559ec8;
-            border-bottom: 1px solid #559ec8;
-        }
+/* ---------------------------------------------------------------------- */
+/* 하단 탭 버튼 스타일 (기존 유지) */
+/* ---------------------------------------------------------------------- */
 
-        /* ---------------------------------------------------------------------- */
-        /* 하단 탭 버튼 스타일 (기존 유지) */
-        /* ---------------------------------------------------------------------- */
+.btn {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
 
-        .btn {
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
+	min-width: 80px;
+	height: 26px;
 
-            min-width: 80px;
-            height: 26px;
+	padding: 0 6px;
+	border: 1px solid;
+	border-radius: 5px 5px 0 0;
+	white-space: nowrap;
+	flex-shrink: 0;
 
-            padding: 0 6px;
-            border: 1px solid;
-            border-radius: 5px 5px 0 0;
-            white-space: nowrap;
-            flex-shrink: 0;
+	font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui,
+		Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR",
+		"Malgun Gothic", sans-serif;
+	font-size: 12px;
+	font-weight: 400;
+	/* font-weight: bold; */
+	cursor: pointer;
+	transition: all 0.05s ease-in-out;
+	color: #333;
+	background: linear-gradient(to bottom, #f0f0f0, #dcdcdc);
+	position: relative;
+	z-index: 10;
+}
 
-            font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
-            font-size: 12px;
-            font-weight: 400;
-            /* font-weight: bold; */
-            cursor: pointer;
-            transition: all 0.05s ease-in-out;
-            color: #333;
-            background: linear-gradient(to bottom, #f0f0f0, #dcdcdc);
-            position: relative;
-            z-index: 10;
-        }
+a.btn {
+	text-decoration: none;
+	color: inherit;
+}
 
-        a.btn {
-            text-decoration: none;
-            color: inherit;
-        }
+a.btn span {
+	white-space: nowrap;
+}
 
-        a.btn span {
-            white-space: nowrap;
-        }
+/* 버튼 3D 효과: 볼록하게 튀어나온(Raised) 기본 상태 */
+.state-active,
+.state-inactive {
+	border-color: #fcfcfc #b0b0b0 #b0b0b0 #fcfcfc;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15),
+		inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
 
-        /* 버튼 3D 효과: 볼록하게 튀어나온(Raised) 기본 상태 */
-        .state-active,
-        .state-inactive {
-            border-color: #fcfcfc #b0b0b0 #b0b0b0 #fcfcfc;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.7);
-        }
+/* 버튼 눌림(Pressed) 효과 */
+.btn:active {
+	border-color: #b0b0b0 #fcfcfc #fcfcfc #b0b0b0;
+	background: linear-gradient(to bottom, #dcdcdc, #f0f0f0);
+	box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 0 rgba(0, 0, 0, 0);
+}
 
-        /* 버튼 눌림(Pressed) 효과 */
-        .btn:active {
-            border-color: #b0b0b0 #fcfcfc #fcfcfc #b0b0b0;
-            background: linear-gradient(to bottom, #dcdcdc, #f0f0f0);
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 0 rgba(0, 0, 0, 0);
-        }
+/* 활성화된 버튼은 배경보다 약간 더 튀어나오도록 조정 */
+.state-active {
+	margin-bottom: -1px;
+	border-bottom: 1px solid #fcfcfc;
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
 
-        /* 활성화된 버튼은 배경보다 약간 더 튀어나오도록 조정 */
-        .state-active {
-            margin-bottom: -1px;
-            border-bottom: 1px solid #fcfcfc;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-        }
+/* 아이콘 래퍼 공통 스타일 */
+.btn-icon {
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	margin-left: 0;
+	margin-right: 4px;
+	position: relative;
+	border-radius: 3px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	transform-style: preserve-3d;
+	flex-shrink: 0;
+}
 
-        /* 아이콘 래퍼 공통 스타일 */
-        .btn-icon {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            margin-left: 0;
-            margin-right: 4px;
-            position: relative;
-            border-radius: 3px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transform-style: preserve-3d;
-            flex-shrink: 0;
-        }
+/* 아이콘 내용을 CSS ::before와 ::after로 구현 */
+.btn-icon::before,
+.btn-icon::after {
+	content: "";
+	position: absolute;
+	display: block;
+}
 
-        /* 아이콘 내용을 CSS ::before와 ::after로 구현 */
-        .btn-icon::before,
-        .btn-icon::after {
-            content: '';
-            position: absolute;
-            display: block;
-        }
+/* 🟢 활성 상태 (Active State) - 녹색 체크 */
+.state-active .btn-icon {
+	background-color: #3cb81a;
+	box-shadow: 0 0 0 1.5px #fff, inset 0 0 0 1.5px #3cb81a;
+}
 
-        /* 🟢 활성 상태 (Active State) - 녹색 체크 */
-        .state-active .btn-icon {
-            background-color: #3cb81a;
-            box-shadow: 0 0 0 1.5px #fff, inset 0 0 0 1.5px #3cb81a;
-        }
+.state-active .btn-icon::before {
+	content: none;
+}
 
-        .state-active .btn-icon::before {
-            content: none;
-        }
+.state-active .btn-icon::after {
+	content: "";
+	position: absolute;
+	display: block;
+	width: 5px;
+	height: 10px;
+	border: solid #fff;
+	border-width: 0 2.5px 2.5px 0;
+	transform: translate(-50%, -50%) rotate(45deg) translate(0, 1px);
+	top: 50%;
+	left: 50%;
+}
 
-        .state-active .btn-icon::after {
-            content: '';
-            position: absolute;
-            display: block;
-            width: 5px;
-            height: 10px;
-            border: solid #fff;
-            border-width: 0 2.5px 2.5px 0;
-            transform: translate(-50%, -50%) rotate(45deg) translate(0, 1px);
-            top: 50%;
-            left: 50%;
-        }
+/* ❗ 비활성 상태 (Inactive State) - 회색 느낌표 */
+.state-inactive .btn-icon {
+	background-color: #fff;
+	border: 1px solid #c0c0c0;
+}
 
-        /* ❗ 비활성 상태 (Inactive State) - 회색 느낌표 */
-        .state-inactive .btn-icon {
-            background-color: #fff;
-            border: 1px solid #c0c0c0;
-        }
+.state-inactive .btn-icon::before {
+	width: 2.5px;
+	height: 7px;
+	background-color: #444;
+	top: 3px;
+	left: 50%;
+	transform: translateX(-50%);
+	border-radius: 1px;
+}
 
-        .state-inactive .btn-icon::before {
-            width: 2.5px;
-            height: 7px;
-            background-color: #444;
-            top: 3px;
-            left: 50%;
-            transform: translateX(-50%);
-            border-radius: 1px;
-        }
+.state-inactive .btn-icon::after {
+	width: 2.5px;
+	height: 2.5px;
+	background-color: #444;
+	bottom: 3px;
+	left: 50%;
+	transform: translateX(-50%);
+	border-radius: 50%;
+}
 
-        .state-inactive .btn-icon::after {
-            width: 2.5px;
-            height: 2.5px;
-            background-color: #444;
-            bottom: 3px;
-            left: 50%;
-            transform: translateX(-50%);
-            border-radius: 50%;
-        }
+/* 호버 효과 (비활성 버튼에만 적용하여 상호작용 표시) */
+.state-inactive:hover {
+	background: linear-gradient(to bottom, #e0e0e0, #c8c8c8);
+}
 
-        /* 호버 효과 (비활성 버튼에만 적용하여 상호작용 표시) */
-        .state-inactive:hover {
-            background: linear-gradient(to bottom, #e0e0e0, #c8c8c8);
-        }
+.t_menu {
+	color: #231f20;
+	font-family: 돋움;
+	letter-spacing: 0px;
+	height: 24px;
+	background-color: #5fb0e0;
+	text-align: center;
+	font-size: 12px;
+}
 
-        .t_menu
-        {
-            color: #231f20;
-            font-family: 돋움;
-            letter-spacing: 0px;
-            height: 24px;
-            background-color: #5fb0e0;	
-            text-align: center;
-            font-size: 12px;
-        }
+.font_bold {
+	font-weight: bolder;
+	font-size: 12px;
+	color: #1d1d1d;
+}
 
-        .font_bold
-        {
-            font-weight:bolder;
-            font-size: 12px;
-            color: #1d1d1d
-        }
+/* ---------------------------------------------------------------------- */
+/* 상품 선택 레이어 체크박스 스타일 */
+/* ---------------------------------------------------------------------- */
+.product-checkbox-label {
+	display: inline-block;
+	cursor: pointer;
+	position: relative;
+	padding-left: 25px;
+	margin-right: 15px;
+	font-size: 13px;
+	z-index: 0;
+	width: 60px;
+	margin: 0;
+}
 
-        /* ---------------------------------------------------------------------- */
-        /* 상품 선택 레이어 체크박스 스타일 */
-        /* ---------------------------------------------------------------------- */
-        .product-checkbox-label {
-            display: inline-block;
-            cursor: pointer;
-            position: relative;
-            padding-left: 25px;
-            margin-right: 15px;
-            font-size: 13px;
-            z-index: 0;
-            width: 60px;
-            margin: 0;
-        }
+.product-checkbox-label span {
+	font-size: 13px;
+	color: #1d1d1d;
+}
 
-        .product-checkbox-label span {
-            font-size: 13px;
-            color: #1d1d1d;
-        }
+.product-checkbox {
+	position: absolute;
+	opacity: 0;
+	cursor: pointer;
+	z-index: 1;
+	width: 15px;
+	height: 15px;
+	margin: 0;
+	left: 0;
+	top: 3px;
+}
 
-        .product-checkbox {
-            position: absolute;
-            opacity: 0;
-            cursor: pointer;
-            z-index: 1;
-            width: 15px;
-            height: 15px;
-            margin: 0;
-            left: 0;
-            top: 3px;
-        }
+.product-checkbox-label:before {
+	content: "";
+	display: inline-block;
+	width: 15px;
+	height: 15px;
+	margin-right: 10px;
+	position: absolute;
+	top: 3px;
+	left: 0;
+	background-color: #fff;
+	border: 1px solid black;
+	border-radius: 2px;
+	z-index: 0;
+}
 
-        .product-checkbox-label:before {
-            content: "";
-            display: inline-block;
-            width: 15px;
-            height: 15px;
-            margin-right: 10px;
-            position: absolute;
-            top: 3px;
-            left: 0;
-            background-color: #fff;
-            border: 1px solid black;
-            border-radius: 2px;
-            z-index: 0;
-        }
+.product-checkbox-label:has(.product-checkbox:checked):before {
+	content: "\2713"; /* 체크모양 */
+	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+	font-size: 18px;
+	font-weight: 800;
+	color: #fff;
+	background: #fe642e;
+	text-align: center;
+	line-height: 18px;
+	z-index: 0;
+}
 
-        .product-checkbox-label:has(.product-checkbox:checked):before {
-            content: "\2713"; /* 체크모양 */
-            text-shadow: 1px 1px 1px rgba(0, 0, 0, .2);
-            font-size: 18px;
-            font-weight: 800;
-            color: #fff;
-            background: #FE642E;
-            text-align: center;
-            line-height: 18px;
-            z-index: 0;
-        }
+.product-checkbox:focus {
+	outline: none;
+}
 
-        .product-checkbox:focus {
-            outline: none;
-        }       
+.toast {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	height: 50px;
+	transform: translate(-50%, -50%) scale(0.8);
+	background-color: #333;
+	color: white;
+	padding: 12px 24px;
+	border-radius: 8px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	opacity: 0;
+	transition: all 0.3s ease;
+	z-index: 9999;
+	font-size: 16px;
+	font-weight: bolder;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
 
-		.toast {
-			position: fixed;
-			top: 50%;
-			left: 50%;
-			height:50px;
-			transform: translate(-50%, -50%) scale(0.8);
-			background-color: #333;
-			color: white;
-			padding: 12px 24px;
-			border-radius: 8px;
-			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-			opacity: 0;
-			transition: all 0.3s ease;
-			z-index: 9999;
-			font-size: 16px;
-			font-weight:bolder;
-			display: flex;
-			align-items: center;
-			justify-content: center;	
-		}
-		
-		.toast.show {
-			opacity: 1;
-			transform: translate(-50%, -50%) scale(1);
-		}
-		
-		.toast.toast-success {
-			background-color: #FF0055;
-		}
-		
-		.toast.toast-error {
-			background-color: #ef4444;
-		}
+.toast.show {
+	opacity: 1;
+	transform: translate(-50%, -50%) scale(1);
+}
+
+.toast.toast-success {
+	background-color: #ff0055;
+}
+
+.toast.toast-error {
+	background-color: #ef4444;
+}
+
+/* a 링크 밑줄 제거 */
+a {
+	text-decoration: none;
+}
+a:link {
+	color: #666666;
+	text-decoration: none;
+}
+
+a:active {
+	color: #86b43d;
+	text-decoration: none;
+}

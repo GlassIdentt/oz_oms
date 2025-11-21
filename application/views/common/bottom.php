@@ -448,12 +448,14 @@ if (!document.getElementById('custom-header-style')) {
             height: 25px !important;
             margin-top: 2px !important;
             border: 1px solid #837777 !important;
+            background-color: #ffffff !important;
             transition: border-color 0.2s ease;
         }
         
         /* 필터가 활성화된 input 강조 - 오렌지색 보더만 */
         .tabulator-col .tabulator-header-filter input.filter-active {
             border: 2px solid #FF9800 !important;
+            background-color: #ffffff !important;
         }
         
         /* 헤더 높이 증가 */
