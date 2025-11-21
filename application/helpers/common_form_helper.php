@@ -28,40 +28,15 @@ if (!function_exists('com_date_1')) {
 if (!function_exists('com_date_2')) {
     function com_date_2($s_date = '', $s_date2 = '')
     {
-        $html = '<input type="text" id="S_DATE" name="S_DATE" size="10" class="text-input-style" value="' . htmlspecialchars($s_date) . '"> - ';
-        $html .= '<input type="text" id="S_DATE2" name="S_DATE2" size="10" class="text-input-style" value="' . htmlspecialchars($s_date2) . '">';
+        $html = '<input type="text" id="S_DATE" name="S_DATE" style="width:70px;height:25px;" class="text-input-style" value="' . htmlspecialchars($s_date) . '">';
+        $html .= ' ~ ';
+        $html .= '<input type="text" id="S_DATE2" name="S_DATE2" style="width:70px;height:25px;" class="text-input-style" value="' . htmlspecialchars($s_date2) . '">';
         return $html;
     }
 }
 
 /**
- * 정렬 키/아이템 히든 필드 생성
- * @param int $cnt 개수
- * @param array $sort_keys 정렬 키 배열
- * @return string HTML
- */
-if (!function_exists('com_sort')) {
-    function com_sort($cnt, $sort_keys = array())
-    {
-        $html = '';
-        
-        // SORT_KEY 히든 필드
-        for ($k = 1; $k <= $cnt; $k++) {
-            $value = isset($sort_keys[$k - 1]) ? $sort_keys[$k - 1] : '';
-            $html .= '<input type="hidden" name="SORT_KEY_' . $k . '" id="SORT_KEY_' . $k . '" value="' . htmlspecialchars($value) . '">' . "\n";
-        }
-        
-        // SORT_ITEM 히든 필드
-        for ($p = 1; $p <= $cnt; $p++) {
-            $html .= '<input type="hidden" name="SORT_ITEM_' . $p . '" id="SORT_ITEM_' . $p . '">' . "\n";
-        }
-        
-        return $html;
-    }
-}
-
-/**
- * 사업장 코드 선택 박스 생성
+ * 사업장 선택 박스 생성
  * @param string $office_cd 선택된 사업장 코드
  * @param string $opt_item1 옵션 아이템1
  * @return string HTML
@@ -71,37 +46,30 @@ if (!function_exists('com_office_cd')) {
     {
         $CI =& get_instance();
         $CI->load->model('Common_model');
-
-        // T02 그룹 코드 조회
-        $t02_list = array();
+        
+        $office_list = array();
         try {
-            $sql = "EXEC [dbo].[Proc_Com_Code_List] @GRP_CD = ?, @OPT_ITEM1 = ?";
-            $query = $CI->db->query($sql, array('T02', $opt_item1));
-            $result = $query->result();
-
+            $result = $CI->Common_model->get_common_code_list('T01');
             if (!empty($result)) {
                 foreach ($result as $row) {
-                    $t02_list[] = array(
-                        'cd' => trim($row->COMN_CD ?? $row->CD ?? $row->COM_CD ?? ''),
-                        'nm' => trim($row->CD_NM ?? $row->COM_NM ?? '')
+                    $office_list[] = array(
+                        'cd' => trim($row->COMN_CD ?? ''),
+                        'nm' => trim($row->CD_NM ?? '')
                     );
                 }
             }
         } catch (Exception $e) {
-            log_message('error', 'Failed to load office code list: ' . $e->getMessage());
+            log_message('error', 'Failed to load office list: ' . $e->getMessage());
         }
-
-        $html = '<select name="OFFICE_CD" style="height:25px;" class="custom-select">' . "\n";
-        $selected_all = (empty($office_cd)) ? ' selected' : '';
-        $html .= '<option value=""' . $selected_all . '>전체</option>' . "\n";
         
-        if (!empty($t02_list)) {
-            foreach ($t02_list as $item) {
+        $html = '<select name="OFFICE_CD" id="OFFICE_CD" style="width:80px;" class="custom-select">' . "\n";
+        $html .= '<option value="">전체</option>' . "\n";
+        
+        if (!empty($office_list)) {
+            foreach ($office_list as $item) {
                 $com_cd = $item['cd'];
                 $com_nm = $item['nm'];
-                // 빈 값인 경우 옵션 출력하지 않음
                 if (empty($com_cd)) continue;
-                // $office_cd가 빈값이 아닐 때만 selected 체크
                 $selected = (!empty($office_cd) && $office_cd == $com_cd) ? ' selected' : '';
                 $html .= '<option value="' . htmlspecialchars($com_cd) . '"' . $selected . '>' . htmlspecialchars($com_nm) . '</option>' . "\n";
             }
@@ -113,8 +81,8 @@ if (!function_exists('com_office_cd')) {
 }
 
 /**
- * 구분 코드 선택 박스 생성
- * @param string $io_type 선택된 구분 코드
+ * 입출고 구분 선택 박스 생성
+ * @param string $io_type 선택된 입출고 구분
  * @param string $opt_item1 옵션 아이템1
  * @return string HTML
  */
@@ -124,36 +92,29 @@ if (!function_exists('com_io_type')) {
         $CI =& get_instance();
         $CI->load->model('Common_model');
         
-        // T38 그룹 코드 조회
-        $t38_list = array();
+        $io_list = array();
         try {
-            $sql = "EXEC [dbo].[Proc_Com_Code_List] @GRP_CD = ?, @OPT_ITEM1 = ?";
-            $query = $CI->db->query($sql, array('T38', $opt_item1));
-            $result = $query->result();
-            
+            $result = $CI->Common_model->get_common_code_list('T02');
             if (!empty($result)) {
                 foreach ($result as $row) {
-                    $t38_list[] = array(
-                        'cd' => trim($row->COMN_CD ?? $row->CD ?? $row->COM_CD ?? ''),
-                        'nm' => trim($row->CD_NM ?? $row->COM_NM ?? '')
+                    $io_list[] = array(
+                        'cd' => trim($row->COMN_CD ?? ''),
+                        'nm' => trim($row->CD_NM ?? '')
                     );
                 }
             }
         } catch (Exception $e) {
-            log_message('error', 'Failed to load IO type code list: ' . $e->getMessage());
+            log_message('error', 'Failed to load IO type list: ' . $e->getMessage());
         }
         
-        $html = '<select name="IO_TYPE" id="IO_TYPE"  class="custom-select">' . "\n";
-        $selected_all = (empty($io_type)) ? ' selected' : '';
-        $html .= '<option value=""' . $selected_all . '>전체</option>' . "\n";
+        $html = '<select name="IO_TYPE" id="IO_TYPE" style="width:80px;" class="custom-select">' . "\n";
+        $html .= '<option value="">전체</option>' . "\n";
         
-        if (!empty($t38_list)) {
-            foreach ($t38_list as $item) {
+        if (!empty($io_list)) {
+            foreach ($io_list as $item) {
                 $com_cd = $item['cd'];
                 $com_nm = $item['nm'];
-                // 빈 값인 경우 옵션 출력하지 않음
                 if (empty($com_cd)) continue;
-                // $io_type이 빈값이 아닐 때만 selected 체크
                 $selected = (!empty($io_type) && $io_type == $com_cd) ? ' selected' : '';
                 $html .= '<option value="' . htmlspecialchars($com_cd) . '"' . $selected . '>' . htmlspecialchars($com_nm) . '</option>' . "\n";
             }
@@ -165,45 +126,40 @@ if (!function_exists('com_io_type')) {
 }
 
 /**
- * 마감일별 코드 선택 박스 생성
- * @param string $mt_field 선택된 마감일별 코드
+ * 배차 유형 선택 박스 생성
+ * @param string $aloc_type 선택된 배차 유형
  * @return string HTML
  */
-if (!function_exists('com_close_type')) {
-    function com_close_type($mt_field = '')
+if (!function_exists('com_aloc_type')) {
+    function com_aloc_type($aloc_type = '')
     {
         $CI =& get_instance();
         $CI->load->model('Common_model');
         
-        // T21 그룹 코드 조회
-        $t21_list = array();
+        $aloc_list = array();
         try {
-            $sql = "EXEC [dbo].[Proc_Com_Code_List] @GRP_CD = ?, @OPT_ITEM1 = ?";
-            $query = $CI->db->query($sql, array('T21', ''));
-            $result = $query->result();
-            
+            $result = $CI->Common_model->get_common_code_list('T03');
             if (!empty($result)) {
                 foreach ($result as $row) {
-                    $t21_list[] = array(
-                        'cd' => trim($row->COMN_CD ?? $row->CD ?? $row->COM_CD ?? ''),
-                        'nm' => trim($row->CD_NM ?? $row->COM_NM ?? '')
+                    $aloc_list[] = array(
+                        'cd' => trim($row->COMN_CD ?? ''),
+                        'nm' => trim($row->CD_NM ?? '')
                     );
                 }
             }
         } catch (Exception $e) {
-            log_message('error', 'Failed to load close type code list: ' . $e->getMessage());
+            log_message('error', 'Failed to load allocation type list: ' . $e->getMessage());
         }
         
-        $html = '<select name="MT_Field" style="width:50px;" class="Reg_Box">' . "\n";
+        $html = '<select name="ALOC_TYPE" id="ALOC_TYPE" style="width:100px;" class="custom-select">' . "\n";
         $html .= '<option value="">전체</option>' . "\n";
         
-        if (!empty($t21_list)) {
-            foreach ($t21_list as $item) {
+        if (!empty($aloc_list)) {
+            foreach ($aloc_list as $item) {
                 $com_cd = $item['cd'];
                 $com_nm = $item['nm'];
-                // 빈 값인 경우 옵션 출력하지 않음
                 if (empty($com_cd)) continue;
-                $selected = ($mt_field == $com_cd) ? ' selected' : '';
+                $selected = (!empty($aloc_type) && $aloc_type == $com_cd) ? ' selected' : '';
                 $html .= '<option value="' . htmlspecialchars($com_cd) . '"' . $selected . '>' . htmlspecialchars($com_nm) . '</option>' . "\n";
             }
         }
@@ -214,46 +170,40 @@ if (!function_exists('com_close_type')) {
 }
 
 /**
- * 검색항목 코드 선택 박스 생성
- * @param string $n_field 선택된 검색항목 코드
+ * 검색 유형 선택 박스 생성
+ * @param string $n_field 선택된 검색 유형
  * @param string $opt_item1 옵션 아이템1
  * @return string HTML
  */
 if (!function_exists('com_search_type')) {
-    function com_search_type($n_field = '', $opt_item1 = 'A,B,C,')
+    function com_search_type($n_field = '', $opt_item1 = '')
     {
         $CI =& get_instance();
         $CI->load->model('Common_model');
         
-        // T35 그룹 코드 조회
-        $t35_list = array();
+        $search_list = array();
         try {
-            $sql = "EXEC [dbo].[Proc_Com_Code_List] @GRP_CD = ?, @OPT_ITEM1 = ?";
-            $query = $CI->db->query($sql, array('T35', $opt_item1));
-            $result = $query->result();
-            
+            $result = $CI->Common_model->get_common_code_list('T04');
             if (!empty($result)) {
                 foreach ($result as $row) {
-                    $t35_list[] = array(
-                        'cd' => trim($row->COMN_CD ?? $row->CD ?? $row->COM_CD ?? ''),
-                        'nm' => trim($row->CD_NM ?? $row->COM_NM ?? '')
+                    $search_list[] = array(
+                        'cd' => trim($row->COMN_CD ?? ''),
+                        'nm' => trim($row->CD_NM ?? '')
                     );
                 }
             }
         } catch (Exception $e) {
-            log_message('error', 'Failed to load search type code list: ' . $e->getMessage());
+            log_message('error', 'Failed to load search type list: ' . $e->getMessage());
         }
         
-        $html = '<select name="N_Field" style="width:90px;height:25px;" class="custom-select">' . "\n";
+        $html = '<select name="N_Field" id="N_Field" style="width:80px;" class="custom-select">' . "\n";
         $html .= '<option value="">전체</option>' . "\n";
         
-        if (!empty($t35_list)) {
-            foreach ($t35_list as $item) {
+        if (!empty($search_list)) {
+            foreach ($search_list as $item) {
                 $com_cd = $item['cd'];
                 $com_nm = $item['nm'];
-                // 빈 값인 경우 옵션 출력하지 않음
                 if (empty($com_cd)) continue;
-                // $n_field이 빈값이 아닐 때만 selected 체크
                 $selected = (!empty($n_field) && $n_field == $com_cd) ? ' selected' : '';
                 $html .= '<option value="' . htmlspecialchars($com_cd) . '"' . $selected . '>' . htmlspecialchars($com_nm) . '</option>' . "\n";
             }
@@ -265,286 +215,40 @@ if (!function_exists('com_search_type')) {
 }
 
 /**
- * 배차유형 코드 선택 박스 생성
- * @param string $aloc_type 선택된 배차유형 코드
+ * 배차 상태 선택 박스 생성
+ * @param string $aloc_stat 선택된 배차 상태
  * @return string HTML
  */
-if (!function_exists('com_aloc_type')) {
-    function com_aloc_type($aloc_type = '')
-    {
-        $CI =& get_instance();
-        $CI->load->model('Common_model');
-        
-        // T08 그룹 코드 조회
-        $t08_list = array();
-        try {
-            $sql = "EXEC [dbo].[Proc_Com_Code_List] @GRP_CD = ?, @OPT_ITEM1 = ?";
-            $query = $CI->db->query($sql, array('T08', ''));
-            $result = $query->result();
-            
-            if (!empty($result)) {
-                foreach ($result as $row) {
-                    $t08_list[] = array(
-                        'cd' => trim($row->COMN_CD ?? $row->CD ?? $row->FARE_CD ?? $row->COM_CD ?? ''),
-                        'nm' => trim($row->CD_NM ?? $row->FARE_NM ?? $row->COM_NM ?? '')
-                    );
-                }
-            }
-        } catch (Exception $e) {
-            log_message('error', 'Failed to load allocation type code list: ' . $e->getMessage());
-        }
-        
-        $html = '<select name="ALOC_TYPE" id="ALOC_TYPE" style="width:70px;" class="custom-select">' . "\n";
-        $html .= '<option value="">전체</option>' . "\n";
-        
-        if (!empty($t08_list)) {
-            foreach ($t08_list as $item) {
-                $fare_cd = $item['cd'];
-                $fare_nm = $item['nm'];
-                // 빈 값인 경우 옵션 출력하지 않음
-                if (empty($fare_cd)) continue;
-                $selected = (!empty($aloc_type) && $aloc_type == $fare_cd) ? ' selected' : '';
-                $html .= '<option value="' . htmlspecialchars($fare_cd) . '"' . $selected . '>' . htmlspecialchars($fare_nm) . '</option>' . "\n";
-            }
-        }
-
-        $html .= '</select>' . "\n";
-        return $html;
-    }
-}
-
-
 if (!function_exists('com_aloc_stat')) {
     function com_aloc_stat($aloc_stat = '')
     {
         $CI =& get_instance();
         $CI->load->model('Common_model');
-
-        // T08 그룹 코드 조회
-        $t08_list = array();
+        
+        $stat_list = array();
         try {
-            $sql = "EXEC [dbo].[Proc_Com_Code_List] @GRP_CD = ?, @OPT_ITEM1 = ?";
-            $query = $CI->db->query($sql, array('T08', ''));
-            $result = $query->result();
-
+            $result = $CI->Common_model->get_common_code_list('T05');
             if (!empty($result)) {
                 foreach ($result as $row) {
-                    // 가능한 모든 컬럼명 시도
-                    $cd = '';
-                    $nm = '';
-
-                    // CD 값 찾기
-                    if (isset($row->COMN_CD)) $cd = trim($row->COMN_CD);
-                    elseif (isset($row->CD)) $cd = trim($row->CD);
-                    elseif (isset($row->FARE_CD)) $cd = trim($row->FARE_CD);
-                    elseif (isset($row->COM_CD)) $cd = trim($row->COM_CD);
-                    elseif (isset($row->GRP_CD)) $cd = trim($row->GRP_CD);
-
-                    // NM 값 찾기
-                    if (isset($row->CD_NM)) $nm = trim($row->CD_NM);
-                    elseif (isset($row->FARE_NM)) $nm = trim($row->FARE_NM);
-                    elseif (isset($row->COM_NM)) $nm = trim($row->COM_NM);
-                    elseif (isset($row->GRP_NM)) $nm = trim($row->GRP_NM);
-
-                    // 빈 값인 경우 건너뛰기
-                    if (empty($cd)) continue;
-
-                    $t08_list[] = array(
-                        'cd' => $cd,
-                        'nm' => $nm
+                    $stat_list[] = array(
+                        'cd' => trim($row->COMN_CD ?? ''),
+                        'nm' => trim($row->CD_NM ?? '')
                     );
                 }
             }
         } catch (Exception $e) {
-            log_message('error', 'Failed to load allocation type code list: ' . $e->getMessage());
-        }
-
-        $html = '<select name="ALOC_STAT" id="ALOC_STAT" style="width:70px;" class="custom-select">' . "\n";
-        $html .= '<option value="">전체</option>' . "\n";
-
-        if (!empty($t08_list)) {
-            foreach ($t08_list as $item) {
-                $fare_cd = $item['cd'];
-                $fare_nm = $item['nm'];
-                // 빈 값인 경우 옵션 출력하지 않음
-                if (empty($fare_cd)) continue;
-                $selected = (!empty($aloc_stat) && $aloc_stat == $fare_cd) ? ' selected' : '';
-                $html .= '<option value="' . htmlspecialchars($fare_cd) . '"' . $selected . '>' . htmlspecialchars($fare_nm) . '</option>' . "\n";
-            }
-        }
-
-        $html .= '</select>' . "\n";
-        return $html;
-    }
-}
-
-
-
-/**
- * 업체 특이사항 텍스트 영역 생성
- * @param string $cust_cd 업체 코드
- * @return string HTML
- */
-if (!function_exists('com_cust_etc')) {
-    function com_cust_etc($cust_cd = '')
-    {
-        $CI =& get_instance();
-        $task_special = '';
-        
-        if (!empty($cust_cd)) {
-            try {
-                $sql = "SELECT TASK_SPECIAL FROM OMS_MDM_CUST_OTH WHERE CUST_CD = ?";
-                $query = $CI->db->query($sql, array($cust_cd));
-                $result = $query->row();
-                
-                if (!empty($result)) {
-                    $task_special = trim($result->TASK_SPECIAL ?? '');
-                }
-            } catch (Exception $e) {
-                log_message('error', 'Failed to load customer etc: ' . $e->getMessage());
-            }
+            log_message('error', 'Failed to load allocation status list: ' . $e->getMessage());
         }
         
-        $html = '<table border="0" width="430" cellspacing="0" cellpadding="0">' . "\n";
-        $html .= '	<tr><td class="Font_Bold T_menu">업체 특이사항</td></tr>' . "\n";
-        $html .= '	<tr>' . "\n";
-        $html .= '		<td>' . "\n";
-        $html .= '			<textarea rows="4" cols="65" name="TASK_SPECIAL" style="ime-mode:active;">' . htmlspecialchars($task_special) . '</textarea>' . "\n";
-        $html .= '		</td>' . "\n";
-        $html .= '	</tr>' . "\n";
-        $html .= '</table>' . "\n";
-        return $html;
-    }
-}
-
-/**
- * 은행 계좌 정보 생성
- * @param string $cust_cd 업체 코드
- * @return string HTML
- */
-if (!function_exists('com_bank_line')) {
-    function com_bank_line($cust_cd = '')
-    {
-        $CI =& get_instance();
-        $CI->load->model('Common_model');
-        
-        // T19 그룹 코드 조회 (은행명)
-        $code_list_b = array();
-        try {
-            $sql = "EXEC [dbo].[Proc_Com_Code_List] @GRP_CD = ?, @OPT_ITEM1 = ?";
-            $query = $CI->db->query($sql, array('T19', ''));
-            $result = $query->result();
-            
-            if (!empty($result)) {
-                foreach ($result as $row) {
-                    $code_list_b[] = array(
-                        'cd' => trim($row->COMN_CD ?? $row->CD ?? $row->COM_CD ?? ''),
-                        'nm' => trim($row->CD_NM ?? $row->COM_NM ?? '')
-                    );
-                }
-            }
-        } catch (Exception $e) {
-            log_message('error', 'Failed to load bank code list: ' . $e->getMessage());
-        }
-        
-        // 업체 계좌 정보 조회
-        $a_no_idx = '';
-        $a_bank_nm = '';
-        $a_acct_no = '';
-        $a_sav_nm = '';
-        
-        if (!empty($cust_cd)) {
-            try {
-                $sql = "SELECT NO_IDX, BANK_NM, ACCT_NO, SAV_NM FROM OMS_MDM_CUST_BANK WHERE CUST_CD = ? ORDER BY NO_IDX DESC";
-                $query = $CI->db->query($sql, array($cust_cd));
-                $result = $query->row();
-                
-                if (!empty($result)) {
-                    $a_no_idx = $result->NO_IDX ?? '';
-                    $a_bank_nm = $result->BANK_NM ?? '';
-                    $a_acct_no = $result->ACCT_NO ?? '';
-                    $a_sav_nm = $result->SAV_NM ?? '';
-                }
-            } catch (Exception $e) {
-                log_message('error', 'Failed to load bank line: ' . $e->getMessage());
-            }
-        }
-        
-        $html = '<table width="600" border="0">' . "\n";
-        $html .= '	<tr>' . "\n";
-        $html .= '	    <td width="30">&nbsp;</td>' . "\n";
-        $html .= '	    <td width="100" style="font-size:14px;font-color:#f5000f;">' . "\n";
-        
-        if (!empty($cust_cd)) {
-            $html .= '			<b>은행명:</b>' . "\n";
-            $html .= '			<select name="C_BANK_NM" style="width:90px;">' . "\n";
-            $html .= '			<option value="">선택</option>' . "\n";
-            
-            if (!empty($code_list_b)) {
-                foreach ($code_list_b as $item) {
-                    $c_bank_cd = $item['cd'];
-                    $c_bank_nm = $item['nm'];
-                    // 빈 값인 경우 옵션 출력하지 않음
-                    if (empty($c_bank_nm)) continue;
-                    $selected = (!empty($a_bank_nm) && $a_bank_nm == $c_bank_nm) ? ' selected' : '';
-                    $html .= '			<option value="' . htmlspecialchars($c_bank_nm) . '"' . $selected . '>' . htmlspecialchars($c_bank_nm) . '</option>' . "\n";
-                }
-            }
-            
-            $html .= '	</td>' . "\n";
-            $html .= '	<td width="250" style="font-size:14px;font-color:#f5000f;">' . "\n";
-            $html .= '		<input type="text" name="ACCT_NO" value="' . htmlspecialchars($a_acct_no) . '" class="Reg_Box" size="25" style="ime-mode:active;" placeholder="계좌번호">' . "\n";
-            $html .= '		<input type="text" name="SAV_NM" value="' . htmlspecialchars($a_sav_nm) . '" class="Reg_Box" size="15" style="ime-mode:active" placeholder="예금주">' . "\n";
-            $html .= '		<a href="javascript:car_com_bank();"><img src="../../web_order/images/btn_good_edit.gif" border="0" align="absmiddle"></a>' . "\n";
-        }
-        
-        $html .= '		</td>' . "\n";
-        $html .= '	</tr>' . "\n";
-        $html .= '</table>' . "\n";
-        return $html;
-    }
-}
-
-/**
- * 차량소속 코드 선택 박스 생성
- * @param string $car_position 선택된 차량소속 코드
- * @return string HTML
- */
-if (!function_exists('com_car_position')) {
-    function com_car_position($car_position = '')
-    {
-        $CI =& get_instance();
-        $CI->load->model('Common_model');
-        
-        // T09 그룹 코드 조회
-        $t09_list = array();
-        try {
-            $sql = "EXEC [dbo].[Proc_Com_Code_List] @GRP_CD = ?, @OPT_ITEM1 = ?";
-            $query = $CI->db->query($sql, array('T09', ''));
-            $result = $query->result();
-            
-            if (!empty($result)) {
-                foreach ($result as $row) {
-                    $t09_list[] = array(
-                        'cd' => trim($row->COMN_CD ?? $row->CD ?? $row->COM_CD ?? ''),
-                        'nm' => trim($row->CD_NM ?? $row->COM_NM ?? '')
-                    );
-                }
-            }
-        } catch (Exception $e) {
-            log_message('error', 'Failed to load car position code list: ' . $e->getMessage());
-        }
-        
-        $html = '<select name="CAR_POSITION" style="width:70px;" class="Reg_Box">' . "\n";
+        $html = '<select name="ALOC_STAT" id="ALOC_STAT" style="width:100px;" class="custom-select">' . "\n";
         $html .= '<option value="">전체</option>' . "\n";
         
-        if (!empty($t09_list)) {
-            foreach ($t09_list as $item) {
+        if (!empty($stat_list)) {
+            foreach ($stat_list as $item) {
                 $com_cd = $item['cd'];
                 $com_nm = $item['nm'];
-                // 빈 값인 경우 옵션 출력하지 않음
                 if (empty($com_cd)) continue;
-                $selected = (!empty($car_position) && $car_position == $com_cd) ? ' selected' : '';
+                $selected = (!empty($aloc_stat) && $aloc_stat == $com_cd) ? ' selected' : '';
                 $html .= '<option value="' . htmlspecialchars($com_cd) . '"' . $selected . '>' . htmlspecialchars($com_nm) . '</option>' . "\n";
             }
         }
@@ -555,150 +259,44 @@ if (!function_exists('com_car_position')) {
 }
 
 /**
- * 비용항목 코드 선택 박스 생성
- * @param string $fare_cd 선택된 비용항목 코드
- * @return string HTML
- */
-if (!function_exists('com_cost_item')) {
-    function com_cost_item($fare_cd = '')
-    {
-        $CI =& get_instance();
-        $CI->load->model('Common_model');
-        
-        // T06 그룹 코드 조회
-        $t06_list = array();
-        try {
-            $sql = "EXEC [dbo].[Proc_Com_Code_List] @GRP_CD = ?, @OPT_ITEM1 = ?";
-            $query = $CI->db->query($sql, array('T06', ''));
-            $result = $query->result();
-            
-            if (!empty($result)) {
-                foreach ($result as $row) {
-                    $t06_list[] = array(
-                        'cd' => trim($row->COMN_CD ?? $row->CD ?? $row->COM_CD ?? ''),
-                        'nm' => trim($row->CD_NM ?? $row->COM_NM ?? '')
-                    );
-                }
-            }
-        } catch (Exception $e) {
-            log_message('error', 'Failed to load cost item code list: ' . $e->getMessage());
-        }
-        
-        $html = '<select name="FARE_CD" style="width:70px;" class="Reg_Box">' . "\n";
-        $html .= '<option value="">전체</option>' . "\n";
-        
-        if (!empty($t06_list)) {
-            foreach ($t06_list as $item) {
-                $com_cd = $item['cd'];
-                $com_nm = $item['nm'];
-                // 빈 값인 경우 옵션 출력하지 않음
-                if (empty($com_cd)) continue;
-                $selected = (!empty($fare_cd) && $fare_cd == $com_cd) ? ' selected' : '';
-                $html .= '<option value="' . htmlspecialchars($com_cd) . '"' . $selected . '>' . htmlspecialchars($com_nm) . '</option>' . "\n";
-            }
-        }
-        
-        $html .= '</select>' . "\n";
-        return $html;
-    }
-}
-
-/**
- * 고객 검색 필드 코드 선택 박스 생성
- * @param string $st_filed 선택된 검색 필드 코드
- * @return string HTML
- */
-if (!function_exists('com_cust_st_filed')) {
-    function com_cust_st_filed($st_filed = '')
-    {
-        $CI =& get_instance();
-        $CI->load->model('Common_model');
-        
-        // T35 그룹 코드 조회
-        $t35_list = array();
-        try {
-            $sql = "EXEC [dbo].[Proc_Com_Code_List] @GRP_CD = ?, @OPT_ITEM1 = ?";
-            $query = $CI->db->query($sql, array('T35', ''));
-            $result = $query->result();
-            
-            if (!empty($result)) {
-                foreach ($result as $row) {
-                    $t35_list[] = array(
-                        'cd' => trim($row->COMN_CD ?? $row->CD ?? $row->FARE_CD ?? $row->COM_CD ?? ''),
-                        'nm' => trim($row->CD_NM ?? $row->FARE_NM ?? $row->COM_NM ?? '')
-                    );
-                }
-            }
-        } catch (Exception $e) {
-            log_message('error', 'Failed to load cust st filed code list: ' . $e->getMessage());
-        }
-        
-        $html = '<select name="FARE_CD" style="width:70px;" class="Reg_Box">' . "\n";
-        $html .= '<option value="">전체</option>' . "\n";
-        
-        if (!empty($t35_list)) {
-            foreach ($t35_list as $item) {
-                $fare_cd = $item['cd'] ?? '';
-                $fare_nm = $item['nm'] ?? '';
-                // 빈 값인 경우 옵션 출력하지 않음
-                if (empty($fare_cd)) continue;
-                $selected = (!empty($st_filed) && $st_filed == $fare_cd) ? ' selected' : '';
-                $html .= '<option value="' . htmlspecialchars($fare_cd) . '"' . $selected . '>' . htmlspecialchars($fare_nm) . '</option>' . "\n";
-            }
-        }
-        
-        $html .= '</select>' . "\n";
-        return $html;
-    }
-}
-
-/**
- * 오더더 교환 리스트 선택 박스 생성
- * @param string $R_CUST_CD 선택된 고객 코드
- * @param string $A_CRN CRN 값
+ * 고객 교환 선택 박스 생성
+ * @param string $cust_exchange 선택된 고객 교환
  * @return string HTML
  */
 if (!function_exists('com_cust_exchange')) {
-    function com_cust_exchange($A_CRN = '')
+    function com_cust_exchange($cust_exchange = '')
     {
         $CI =& get_instance();
         $CI->load->model('Common_model');
-
-        // com_cust_exchange 그룹 코드 조회
-        $Ex_Cust_list = array();
+        
+        $exchange_list = array();
         try {
-            $sql = "EXEC [dbo].[Proc_Oms_Cust_Exchange_List] ?";
-            $query = $CI->db->query($sql, array($A_CRN));
-
-            if ($query) {
-                $result = $query->result();
-
-                if (!empty($result)) {
-                    foreach ($result as $row) {
-                        $Ex_Cust_list[] = array(
-                            'cd' => trim($row->CUST_CD ?? ''),
-                            'nm' => trim($row->CUST_NM ?? '')
-                        );
-                    }
+            $result = $CI->Common_model->get_common_code_list('T06');
+            if (!empty($result)) {
+                foreach ($result as $row) {
+                    $exchange_list[] = array(
+                        'cd' => trim($row->COMN_CD ?? ''),
+                        'nm' => trim($row->CD_NM ?? '')
+                    );
                 }
             }
         } catch (Exception $e) {
             log_message('error', 'Failed to load customer exchange list: ' . $e->getMessage());
         }
         
-        $html = '<select name="R_CUST_CD" id="R_CUST_CD" style="width:70px;" class="custom-select">' . "\n";
+        $html = '<select name="CUST_EXCHANGE" id="CUST_EXCHANGE" style="width:100px;" class="custom-select">' . "\n";
         $html .= '<option value="">선택</option>' . "\n";
         
-        if (!empty($Ex_Cust_list)) {
-            foreach ($Ex_Cust_list as $item) {
-                $CUST_CD = $item['cd'];
-                $CUST_NM = $item['nm'];
-                // 빈 값인 경우 옵션 출력하지 않음
-                if (empty($CUST_CD)) continue;
-                $html .= '<option value="' . htmlspecialchars($CUST_CD) . '">' . htmlspecialchars($CUST_NM) . '</option>' . "\n";
+        if (!empty($exchange_list)) {
+            foreach ($exchange_list as $item) {
+                $com_cd = $item['cd'];
+                $com_nm = $item['nm'];
+                if (empty($com_cd)) continue;
+                $selected = (!empty($cust_exchange) && $cust_exchange == $com_cd) ? ' selected' : '';
+                $html .= '<option value="' . htmlspecialchars($com_cd) . '"' . $selected . '>' . htmlspecialchars($com_nm) . '</option>' . "\n";
             }
         }
-
+        
         $html .= '</select>' . "\n";
         return $html;
     }
@@ -784,5 +382,180 @@ if (!function_exists('com_section_work_order')) {
 
         $html .= '</select>' . "\n";
         return $html;
+    }
+}
+
+/**
+ * 배차관리 Grid 데이터 가져오기
+ * @param string $t_date 날짜 (YYYYMMDD)
+ * @param string $office_cd 사업장 코드
+ * @param string $io_type 입출고 구분
+ * @param string $so_mode 상품 모드
+ * @param string $aloc_type 배차 유형
+ * @param string $s_code 검색 코드
+ * @param string $s_text 검색 텍스트
+ * @param string $sort_sql 정렬 SQL
+ * @param array $Grid_Data 이미 설정된 Grid 데이터 (선택적)
+ * @param bool $debug 디버그 출력 여부
+ * @return array Grid 데이터 배열
+ */
+if (!function_exists('get_allocation_car_grid_data')) {
+    function get_allocation_car_grid_data($t_date = '', $office_cd = '', $io_type = '', $so_mode = '', $aloc_type = '', $s_code = '', $s_text = '', $sort_sql = '', $Grid_Data = null, $debug = true)
+    {
+        $CI =& get_instance();
+        $grid_data = array();
+        $query_result = null; // 디버깅용
+
+        // Grid_Data가 이미 설정되어 있으면 사용, 없으면 프로시저 실행
+        if (isset($Grid_Data) && !empty($Grid_Data)) {
+            $grid_data = $Grid_Data;
+        } else {
+            try {
+                // 프로시저 실행
+                $sql = "EXEC [dbo].[Proc_So_Aloc_List_7_Json] @T_DATE = ?, @OFFICE_CD = ?, @IO_TYPE = ?, @SO_MODE = ?, @ALOC_TYPE = ?, @S_CODE = ?, @S_TEXT = ?, @SORT_SQL = ?";
+                
+                $query = $CI->db->query($sql, array(
+                    $t_date,        // @T_DATE VARCHAR(10)
+                    $office_cd,     // @OFFICE_CD VARCHAR(2)
+                    $io_type,       // @IO_TYPE VARCHAR(10)
+                    $so_mode,       // @SO_MODE VARCHAR(50)
+                    $aloc_type,     // @ALOC_TYPE VARCHAR(10)
+                    $s_code,        // @S_CODE VARCHAR(2)
+                    $s_text,        // @S_TEXT VARCHAR(50)
+                    $sort_sql       // @SORT_SQL VARCHAR(100)
+                ));
+                
+                if ($query) {
+                    // 프로시저가 JSON 문자열을 반환하는 경우 처리
+                    $result = $query->result();
+                    $query_result = $result; // 디버깅용 저장
+                    
+                    if (!empty($result)) {
+                        // 첫 번째 행 확인
+                        $first_row = $result[0];
+                        $row_vars = null;
+                        
+                        if (is_object($first_row)) {
+                            $row_vars = get_object_vars($first_row);
+                        } elseif (is_array($first_row)) {
+                            $row_vars = $first_row;
+                        }
+                        
+                        if ($row_vars !== null) {
+                            // JsonData 컬럼이 있는지 확인
+                            if (isset($row_vars['JsonData'])) {
+                                $json_string = $row_vars['JsonData'];
+                                
+                                // NULL 체크
+                                if (is_null($json_string)) {
+                                    log_message('error', 'JsonData가 NULL입니다.');
+                                    $grid_data = array();
+                                } 
+                                // 빈 문자열 체크 (NULL이 아닌 빈 문자열도 체크)
+                                elseif ($json_string === '' || $json_string === false || empty($json_string)) {
+                                    log_message('error', 'JsonData가 빈 문자열입니다.');
+                                    $grid_data = array();
+                                } 
+                                // JSON 문자열 디코딩
+                                else {
+                                    $decoded = json_decode($json_string, true);
+                                    if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                                        $grid_data = $decoded;
+                                    } else {
+                                        // JSON 디코딩 실패 시 빈 배열
+                                        log_message('error', 'JSON 디코딩 실패: ' . json_last_error_msg() . ' | JsonData 값: ' . substr($json_string, 0, 200));
+                                        $grid_data = array();
+                                    }
+                                }
+                            } 
+                            // JsonData가 없으면 첫 번째 컬럼 확인
+                            else if (!empty($row_vars)) {
+                                $first_value = reset($row_vars);
+                                // JSON 문자열인지 확인
+                                $decoded = json_decode($first_value, true);
+                                if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                                    $grid_data = $decoded;
+                                } else {
+                                    // 일반 결과셋인 경우 - 하지만 JsonData 컬럼이 없으면 빈 배열로 설정
+                                    // (프로시저가 JsonData를 반환해야 하는데 없으면 데이터가 없는 것으로 간주)
+                                    $grid_data = array();
+                                }
+                            } else {
+                                $grid_data = array();
+                            }
+                        } else {
+                            // 첫 번째 행을 파싱할 수 없으면 빈 배열로 설정
+                            $grid_data = array();
+                        }
+                    }
+                }
+            } catch (Exception $e) {
+                // 에러 발생 시 로그 기록 및 빈 배열 반환
+                log_message('error', '프로시저 실행 실패: ' . $e->getMessage());
+                $grid_data = array();
+            }
+        }
+
+        // Grid 데이터를 JSON으로 인코딩 (빈값이거나 null일 경우 빈 배열 "[]"로 설정)
+        // JsonData가 NULL이거나 빈 값인 경우 빈 배열로 설정
+        if (empty($grid_data) || is_null($grid_data)) {
+            $grid_data = array();
+        } else {
+            // grid_data가 프로시저 결과 객체를 포함하고 있는지 확인
+            if (is_array($grid_data) && count($grid_data) > 0) {
+                $first_item = $grid_data[0];
+                if (is_array($first_item) && isset($first_item['JsonData'])) {
+                    // JsonData가 NULL이거나 빈 값이면 빈 배열로 설정
+                    $json_data_val = $first_item['JsonData'];
+                    if (is_null($json_data_val) || $json_data_val === '' || $json_data_val === false || empty($json_data_val)) {
+                        $grid_data = array();
+                    }
+                } elseif (is_object($first_item)) {
+                    $first_item_vars = get_object_vars($first_item);
+                    if (isset($first_item_vars['JsonData'])) {
+                        $json_data_val = $first_item_vars['JsonData'];
+                        if (is_null($json_data_val) || $json_data_val === '' || $json_data_val === false || empty($json_data_val)) {
+                            $grid_data = array();
+                        }
+                    }
+                }
+            }
+        }
+
+        // 디버깅 출력
+        if ($debug) {
+            echo "<!-- DEBUG: grid_data 출력 시작 -->\n";
+            echo "<!-- grid_data 타입: " . gettype($grid_data) . " -->\n";
+            echo "<!-- grid_data 개수: " . (is_array($grid_data) ? count($grid_data) : 'N/A') . " -->\n";
+            if (is_array($grid_data) && count($grid_data) > 0) {
+                echo "<!-- grid_data 첫 번째 항목: " . htmlspecialchars(print_r($grid_data[0], true)) . " -->\n";
+            } else {
+                echo "<!-- grid_data: 빈 배열 또는 데이터 없음 -->\n";
+                // 프로시저 결과 확인
+                if (!empty($query_result)) {
+                    echo "<!-- 프로시저 결과 첫 번째 행: " . htmlspecialchars(print_r($query_result[0], true)) . " -->\n";
+                    $row_vars = get_object_vars($query_result[0]);
+                    if (isset($row_vars['JsonData'])) {
+                        $json_data_value = $row_vars['JsonData'];
+                        echo "<!-- JsonData 존재 여부: 있음 -->\n";
+                        echo "<!-- JsonData 타입: " . gettype($json_data_value) . " -->\n";
+                        echo "<!-- JsonData 값 (처음 1000자): " . htmlspecialchars(substr($json_data_value, 0, 1000)) . " -->\n";
+                        if (is_null($json_data_value)) {
+                            echo "<!-- JsonData가 NULL입니다 -->\n";
+                        } elseif (empty($json_data_value)) {
+                            echo "<!-- JsonData가 빈 값입니다 -->\n";
+                        } else {
+                            $test_decode = json_decode($json_data_value, true);
+                            echo "<!-- JSON 디코딩 테스트 결과: " . (json_last_error() === JSON_ERROR_NONE ? '성공' : '실패 - ' . json_last_error_msg()) . " -->\n";
+                        }
+                    } else {
+                        echo "<!-- JsonData 컬럼이 없습니다. 사용 가능한 컬럼: " . htmlspecialchars(implode(', ', array_keys($row_vars))) . " -->\n";
+                    }
+                }
+            }
+            echo "<!-- DEBUG: grid_data 출력 끝 -->\n";
+        }
+
+        return $grid_data;
     }
 }

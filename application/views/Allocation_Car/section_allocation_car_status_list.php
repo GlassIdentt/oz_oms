@@ -35,8 +35,34 @@
 		$t_date = str_replace('-', '', $s_date);
 	}
 	
+	// Section_Allocation_page 파라미터 처리
+	$section_allocation_page_post = $CI->input->post('Section_Allocation_page');
+	$section_allocation_page_get = $CI->input->get('Section_Allocation_page');
+	$section_allocation_page = !empty($section_allocation_page_post) ? $section_allocation_page_post : (!empty($section_allocation_page_get) ? $section_allocation_page_get : '');
+	// Section_Allocation_page가 빈 문자열이면 기본값으로 Ch_1 설정
+	if (empty($section_allocation_page)) {
+		$section_allocation_page = 'Ch_1';
+	}
+	
 	$so_mode = $CI->input->post('SO_MODE') ?: $CI->input->get('SO_MODE');
-	$so_mode = !empty($so_mode) ? $so_mode : '';
+	
+	// Section_Allocation_page에 따른 SO_MODE 기본값 설정
+	if (empty($so_mode)) {
+		switch ($section_allocation_page) {
+			case 'Ch_1':
+				$so_mode = 'LCL,';
+				break;
+			case 'Ch_2':
+				$so_mode = 'AIR,';
+				break;
+			case 'Ch_3':
+				$so_mode = 'FCL,';
+				break;
+			default:
+				$so_mode = 'LCL,';
+				break;
+		}
+	}
 	
 	$io_type = $CI->input->post('IO_TYPE') ?: $CI->input->get('IO_TYPE');
 	$io_type = !empty($io_type) ? $io_type : '';
@@ -157,11 +183,12 @@
 	
 	// 기타 변수 초기화
 	$opt_item1 = isset($opt_item1) ? $opt_item1 : '';
-	$menu_allocation_page = isset($menu_allocation_page) ? $menu_allocation_page : '';
 	$query_string = isset($query_string) ? $query_string : $query;
 	$car_no = isset($car_no) ? $car_no : '';
 	$allocate_dv = isset($allocate_dv) ? $allocate_dv : '';
 	$work_value = isset($work_value) ? $work_value : '';
+
+
 ?>
 
 <?php $this->load->view('common/footer'); ?>
@@ -170,9 +197,9 @@
 <div class="contents_area" id="contentsArea" style="padding: 0 20px; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start;">
      <div class="container_top_aloc_list" style="height: 100px; border: 0px solid #000; width: 100%;">
 		<form name="Allocation_Car" id="Allocation_Car" method="post" style="display: flex; flex-direction: column; width: 100%; height: 100%;">
-		<input type="hidden" name="Form_Id" id="Form_Id" value="Allocation_page_<?php echo htmlspecialchars(is_string($menu_allocation_page) ? $menu_allocation_page : ''); ?>">	
+		<input type="hidden" name="Form_Id" id="Form_Id" value="Section_Allocation_page_<?php echo htmlspecialchars($section_allocation_page); ?>">	
 		<input type="hidden" name="Query" id="Query" value="<?php echo htmlspecialchars($query_string); ?>">
-		<input type="hidden" name="Allocation_page" id="Allocation_page" value="<?php echo htmlspecialchars(is_string($menu_allocation_page) ? $menu_allocation_page : ''); ?>">
+		<input type="hidden" name="Section_Allocation_page" id="Section_Allocation_page" value="<?php echo htmlspecialchars($section_allocation_page); ?>">
 		<input type="hidden" name="GridData" id="GridData">
 		<input type="hidden" name="CNT_NO" id="CNT_NO">
 		<input type="hidden" name="A_CAR_KEY" id="A_CAR_KEY">  				
@@ -198,7 +225,7 @@
 				<input type="search" name="S_TEXT" class="Reg_Box" style="width:180px;ime-mode:active;" value="<?php echo htmlspecialchars($s_text); ?>" onkeydown="if (window.event.keyCode==13) { search_form('Y','S') }">
 				<button class="event-btn select-btn" data-name="검색" onclick="search_form();">
 					<span class="event-btn-icon icon-search"></span>
-					<span>배차현황검색</span>
+					<span>검색</span>
 				</button>
 				<div style="width: 100px;"></div>
 				<?php
@@ -305,8 +332,13 @@
 		</div>
 		</form>					
 	</div>
-	<div id="allocation_car_list_<?php echo $menu_allocation_page; ?>" style="height: 600px; max-height: 600px; flex: 1; border: 1px solid #CCC2C2; width: 100%; overflow: hidden;"></div>
+	<div id="section_allocation_car_list_<?php echo $section_allocation_page; ?>" style="height: 600px; max-height: 600px; flex: 1; border: 0px solid #CCC2C2; width: 100%; overflow: hidden; display: flex; flex-direction: row;">
+		<div id="csetp_1" class="csetp_1"></div>
+		<div id="csetp_2" class="csetp_2"></div>
+		<div id="csetp_3" class="csetp_3"></div>
+	</div>
 	<div id="dropdown" class="dropdown"></div>
 </div>
 
+<?php $this->load->view('common/product_select_layer'); ?>
 <?php $this->load->view('common/bottom'); ?>

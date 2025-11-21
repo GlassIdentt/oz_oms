@@ -1363,3 +1363,22 @@ a:active {
 	color: #86b43d;
 	text-decoration: none;
 }
+
+/* 구간배차 리스트 영역 스타일 */
+.csetp_1 {
+	width: 1200px;
+	height: 600px;
+	border: 1px solid #000000;
+}
+
+.csetp_2 {
+	width: 350px;
+	height: 600px;
+	border: 1px solid #000000;
+}
+
+.csetp_3 {
+	width: 300px;
+	height: 600px;
+	border: 1px solid #000000;
+}

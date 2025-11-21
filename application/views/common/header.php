@@ -69,11 +69,11 @@ if (isset($folder_name) && !empty($folder_name)) {
             }
             // 구간배차 시리즈
             elseif ($menu->CD_NM == 'LCL구간배차') {
-                $menu_section_allocation_page = 'ch_1';
+                $menu_section_allocation_page = 'Ch_1';
             } elseif ($menu->CD_NM == 'AIR구간배차') {
-                $menu_section_allocation_page = 'ch_2';
+                $menu_section_allocation_page = 'Ch_2';
             } elseif ($menu->CD_NM == 'FCL구간배차') {
-                $menu_section_allocation_page = 'ch_3';
+                $menu_section_allocation_page = 'Ch_3';
             }
             
             // 활성화 상태 판단

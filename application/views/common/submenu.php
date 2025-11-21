@@ -76,14 +76,14 @@ if (empty($submenu_list)) {
     }
     // 구간배차 시리즈 (Section_Allocation_page 사용)
     elseif ($menu->CD_NM == 'LCL구간배차') {
-        $query_params = '?Section_Allocation_page=ch_1';
-        $menu_section_allocation_page = 'ch_1';
+        $query_params = '?Section_Allocation_page=Ch_1';
+        $menu_section_allocation_page = 'Ch_1';
     } elseif ($menu->CD_NM == 'AIR구간배차') {
-        $query_params = '?Section_Allocation_page=ch_2';
-        $menu_section_allocation_page = 'ch_2';
+        $query_params = '?Section_Allocation_page=Ch_2';
+        $menu_section_allocation_page = 'Ch_2';
     } elseif ($menu->CD_NM == 'FCL구간배차') {
-        $query_params = '?Section_Allocation_page=ch_3';
-        $menu_section_allocation_page = 'ch_3';
+        $query_params = '?Section_Allocation_page=Ch_3';
+        $menu_section_allocation_page = 'Ch_3';
     }
 
     // 활성화 상태 판단
