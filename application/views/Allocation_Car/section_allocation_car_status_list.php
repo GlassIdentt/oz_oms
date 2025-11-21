@@ -194,6 +194,12 @@
 	// $n_field를 $s_code로 사용 (검색 유형)
 	$grid_data = get_allocation_car_grid_data($t_date, $office_cd, $io_type, $so_mode, $aloc_type, $n_field, $s_text, $sort_sql, isset($Grid_Data) ? $Grid_Data : null, true);
 	$grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT | JSON_HEX_APOS);
+	
+	// ============================================
+	// Proc_So_Aloc_Section_T_List_Json 프로시저 호출 예제
+	// ============================================
+	// $section_t_list_data = get_section_allocation_t_list_data($t_date, $aloc_type, $so_mode, true);
+	// $section_t_list_json = json_encode($section_t_list_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT | JSON_HEX_APOS);
 ?>
 
 <?php $this->load->view('common/footer'); ?>
