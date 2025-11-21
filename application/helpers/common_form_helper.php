@@ -49,7 +49,7 @@ if (!function_exists('com_office_cd')) {
         
         $office_list = array();
         try {
-            $result = $CI->Common_model->get_common_code_list('T01');
+            $result = $CI->Common_model->get_code_list_by_category('T01', '');
             if (!empty($result)) {
                 foreach ($result as $row) {
                     $office_list[] = array(
@@ -94,7 +94,7 @@ if (!function_exists('com_io_type')) {
         
         $io_list = array();
         try {
-            $result = $CI->Common_model->get_common_code_list('T02');
+            $result = $CI->Common_model->get_code_list_by_category('T02', '');
             if (!empty($result)) {
                 foreach ($result as $row) {
                     $io_list[] = array(
@@ -138,7 +138,7 @@ if (!function_exists('com_aloc_type')) {
         
         $aloc_list = array();
         try {
-            $result = $CI->Common_model->get_common_code_list('T03');
+            $result = $CI->Common_model->get_code_list_by_category('T03', '');
             if (!empty($result)) {
                 foreach ($result as $row) {
                     $aloc_list[] = array(
@@ -183,7 +183,7 @@ if (!function_exists('com_search_type')) {
         
         $search_list = array();
         try {
-            $result = $CI->Common_model->get_common_code_list('T04');
+            $result = $CI->Common_model->get_code_list_by_category('T04', '');
             if (!empty($result)) {
                 foreach ($result as $row) {
                     $search_list[] = array(
@@ -227,7 +227,7 @@ if (!function_exists('com_aloc_stat')) {
         
         $stat_list = array();
         try {
-            $result = $CI->Common_model->get_common_code_list('T05');
+            $result = $CI->Common_model->get_code_list_by_category('T05', '');
             if (!empty($result)) {
                 foreach ($result as $row) {
                     $stat_list[] = array(
@@ -271,7 +271,7 @@ if (!function_exists('com_cust_exchange')) {
         
         $exchange_list = array();
         try {
-            $result = $CI->Common_model->get_common_code_list('T06');
+            $result = $CI->Common_model->get_code_list_by_category('T06', '');
             if (!empty($result)) {
                 foreach ($result as $row) {
                     $exchange_list[] = array(

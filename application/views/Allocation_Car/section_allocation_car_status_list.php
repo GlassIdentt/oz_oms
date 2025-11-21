@@ -188,7 +188,12 @@
 	$allocate_dv = isset($allocate_dv) ? $allocate_dv : '';
 	$work_value = isset($work_value) ? $work_value : '';
 
-
+	// ============================================
+	// 프로시저 실행하여 Grid 데이터 가져오기
+	// ============================================
+	// $n_field를 $s_code로 사용 (검색 유형)
+	$grid_data = get_allocation_car_grid_data($t_date, $office_cd, $io_type, $so_mode, $aloc_type, $n_field, $s_text, $sort_sql, isset($Grid_Data) ? $Grid_Data : null, true);
+	$grid_data_json = json_encode($grid_data, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT | JSON_HEX_APOS);
 ?>
 
 <?php $this->load->view('common/footer'); ?>
@@ -243,7 +248,7 @@
 				<button class="event-btn cancel-btn" data-name="타이틀항목 초기화">
 					<span class="event-btn-icon icon-reset"></span>
 					<span>타이틀항목 초기화</span>
-				</button>				
+				</button>									
 									
 			</nav>
 		</div>
@@ -332,13 +337,1886 @@
 		</div>
 		</form>					
 	</div>
-	<div id="section_allocation_car_list_<?php echo $section_allocation_page; ?>" style="height: 600px; max-height: 600px; flex: 1; border: 0px solid #CCC2C2; width: 100%; overflow: hidden; display: flex; flex-direction: row;">
-		<div id="csetp_1" class="csetp_1"></div>
+	<div id="section_allocation_car_list_area" style="height: 600px; max-height: 600px; flex: 1; border: 0px solid #CCC2C2; width: 100%; overflow: hidden; display: flex; flex-direction: row;">
+		<div id="section_allocation_car_list_<?php echo $section_allocation_page; ?>" class="csetp_1">
+			
+		<script>
+				// ========== 1. 데이터 및 전역 변수 선언 ==========
+				let tabledata = <?php echo $grid_data_json; ?>;
+				// tabledata가 undefined이거나 null이거나 배열이 아닌 경우 빈 배열로 초기화
+				if (typeof tabledata === 'undefined' || tabledata === null || !Array.isArray(tabledata)) {
+				    tabledata = [];
+				}
+				// undefined나 null 값을 가진 항목 제거
+				tabledata = tabledata.filter(function(item) {
+				    return item !== null && item !== undefined && typeof item === 'object';
+				});
+				let isDragging = false;
+				let startCell = null;
+				let endCell = null;
+				let selectedCells = [];
+				let selectionOverlay = null;
+				
+				// ========== 2. 다중 정렬 관련 변수 ==========
+				let sortState = []; 
+				const MAX_CLICK_COUNT = 3;
+				const sortableColumns = [
+				    'OP_NM', 'SO_MODE_H', 'IO_TYPE', 'CUSTOM_CARNO_NUM', 'TRAN_NM_H', 
+				    'CAR_TEL_H', 'G_CAR_NO', 'ALOC_TYPE', 'ACT_SHIP_A_NM', 'ACT_SHIP_TEL',
+				    'ACT_SHIP_PIC_NM', 'SHIP_NM', 'LOAD_NM', 'LOAD_TEL', 'LOAD_PIC_NM',
+				    'LOAD_AREA', 'LOAD_REQ_HM', 'PKG', 'CBM', 'WGT', 'GOD_M_SIZE', 
+				    'ORD_ETC', 'FDS_NM', 'UNLOAD_NM', 'UNLOAD_TEL', 'UNLOAD_PIC_NM',
+				    'UNLOAD_REQ_DT', 'BILL_NM', 'HBL_NO', 'LOAD_CY', 'LOAD_CY_PIC_NM',
+				    'LOAD_CY_TEL', 'UNLOAD_CY_PIC_NM', 'UNLOAD_CY', 'UNLOAD_CY_TEL',
+				    'ITEM_NM', 'GOOD_NM', 'CNTR_NO', 'SEAL_NO'
+				];
+				
+				// ========== 3. 검색 관련 변수 ==========
+				var currentSearchTerm = '';
+				var searchIndex = 0;
+				var searchResults = [];
+				var isFiltered = false;
+				
+				// ========== 4. 페이지별 설정값 ==========
+				//applyFontSize();
+				
+				let savedOrder = [];
+				try {
+				    const savedOrderStr = localStorage.getItem('Wonder_Section_Allocation_Column_Header_<?php echo $section_allocation_page; ?>');
+				    if (savedOrderStr) {
+				        savedOrder = JSON.parse(savedOrderStr);
+				        console.log('저장된 컬럼 순서:', savedOrder);
+				    }
+				} catch (e) {
+				    console.error('컬럼 순서 로딩 실패:', e);
+				    savedOrder = [];
+				}
+				
+				function applySorting() {
+				    console.log('========== applySorting 시작 ==========');
+				    console.log('적용할 sortState:', JSON.parse(JSON.stringify(sortState)));
+				    
+				    var tableHolder = document.querySelector('#section_allocation_car_list_<?php echo $section_allocation_page; ?> .tabulator-tableholder');
+				    var scrollLeft = tableHolder ? tableHolder.scrollLeft : 0;
+				    console.log('현재 수평 스크롤 위치:', scrollLeft);
+				    
+				    const allData = table.getData();
+				    const normalData = allData.filter(d => !d.isEmpty);
+				    const emptyData = allData.filter(d => d.isEmpty);
+				    
+				    console.log(`정렬 전 - 일반 데이터: ${normalData.length}개, 빈 행: ${emptyData.length}개`);
+				    
+				    if (sortState.length === 0) {
+				        table.setData([...normalData, ...emptyData]);
+				        console.log('? 정렬 초기화 (원본 순서)');
+				        
+				        setTimeout(function() {
+				            if (tableHolder) {
+				                tableHolder.scrollLeft = scrollLeft;
+				                console.log('스크롤 위치 복원:', scrollLeft);
+				            }
+				        }, 50);
+				        return;
+				    }
+				    
+				    const sortedData = normalData.sort((a, b) => {
+				        for (let i = 0; i < sortState.length; i++) {
+				            const sort = sortState[i];
+				            const field = sort.field;
+				            const dir = sort.dir;
+				            
+				            const aVal = (a[field] === null || a[field] === undefined || a[field] === '') ? '' : String(a[field]).trim();
+				            const bVal = (b[field] === null || b[field] === undefined || b[field] === '') ? '' : String(b[field]).trim();
+				            
+				            // 공백을 정렬 방향에 따라 배치
+				            if (aVal === '' && bVal !== '') {
+				                return dir === 'asc' ? -1 : 1;  // 오름차순: 앞, 내림차순: 뒤
+				            }
+				            if (aVal !== '' && bVal === '') {
+				                return dir === 'asc' ? 1 : -1;  // 오름차순: 뒤, 내림차순: 앞
+				            }
+				            if (aVal === '' && bVal === '') continue;
+				            
+				            const compareResult = aVal.localeCompare(bVal, 'ko-KR', { 
+				                numeric: true, 
+				                sensitivity: 'base' 
+				            });
+				            
+				            if (compareResult !== 0) {
+				                return dir === 'asc' ? compareResult : -compareResult;
+				            }
+				        }
+				        return 0;
+				    });
+				    
+				    console.log('정렬 완료 - 순서:');
+				    sortedData.slice(0, 10).forEach((data, idx) => {
+				        console.log(`  ${idx + 1}. 발주처: ${data.ACT_SHIP_A_NM || '(빈값)'}, 발주담당: ${data.ACT_SHIP_PIC_NM || '(빈값)'}`);
+				    });
+				    
+				    table.setData([...sortedData, ...emptyData]);
+				    
+				    console.log('? 테이블 데이터 업데이트 완료');
+				    
+				    setTimeout(function() {
+				        if (tableHolder) {
+				            tableHolder.scrollLeft = scrollLeft;
+				            console.log('스크롤 위치 복원:', scrollLeft);
+				        }
+				    }, 50);
+				}
+				
+				function clearAllSorts() {
+				    sortState = [];
+				    localStorage.removeItem('Wonder_Section_Allocation_SortState_<?php echo $section_allocation_page; ?>');
+				    
+				    const allData = table.getData();
+				    const normalData = allData.filter(d => !d.isEmpty);
+				    const emptyData = allData.filter(d => d.isEmpty);
+				    
+				    table.setData([...normalData, ...emptyData]);
+				    updateSortUI();
+				    console.log('모든 정렬이 초기화되었습니다.');
+				}
+				
+				function initializeSortState() {
+				    sortState = [];
+				    
+				    const savedSortState = localStorage.getItem('Wonder_Section_Allocation_SortState_<?php echo $section_allocation_page; ?>');
+				    if (savedSortState) {
+				        try {
+				            sortState = JSON.parse(savedSortState);
+				            console.log('정렬 상태 복원:', sortState);
+				        } catch (e) {
+				            console.error('정렬 상태 복원 실패:', e);
+				            sortState = [];
+				        }
+				    }
+				    
+				    if (sortState.length > 0) {
+				        applySorting();
+				    }
+				    
+				    updateSortUI();
+				}
+				
+				function saveSortState() {
+				    localStorage.setItem('Wonder_Section_Allocation_SortState_<?php echo $section_allocation_page; ?>', JSON.stringify(sortState));
+				    console.log('정렬 상태 저장:', sortState);
+				}
+				
+				// ========== 8. 컬럼 관련 함수들 ==========
+				function loadColumnWidths() {
+				    let savedWidths = localStorage.getItem("Wonder_Section_Allocation_ColumnWidths_<?php echo $section_allocation_page; ?>");
+				    if (savedWidths) {
+				        let widths = JSON.parse(savedWidths);
+				        table.getColumns().forEach((col, index) => {
+				            if (widths[index] !== undefined) {
+				                col.setWidth(widths[index]);
+				            }
+				        });
+				    }
+				}
+				
+				function saveAllocation_Column_Header() {
+				    const columns = table.getColumns();
+				    const order = columns.map(col => col.getField());
+				    localStorage.setItem('Wonder_Section_Allocation_Column_Header_<?php echo $section_allocation_page; ?>', JSON.stringify(order));
+				    console.log("컬럼 순서 저장됨:", order);
+				}
+				
+				
+				function saveColumnVisibility() {
+				    const visibility = {};
+				    columnData.forEach(column => {
+				        if (column.visible !== false && column.field && 
+				            !['SO_NO', 'DRV_CD', 'DRV_NM', 'LISENCE_NO_H', 'LOAD_REQ_DT', 
+				             'TOSS_ORDER', 'CAR_DIVISION', 'A_GPS_ID', 'B_GPS_ID', 
+				             'A_APP_ID', 'B_APP_ID', 'LOAD_IMG', 'UNLOAD_IMG', 
+				             'CLAIM', 'SO_STAT', 'SO_OFF', 'LOAD_F_IMG', 'UNLOAD_F_IMG',
+				             'TRAN_VEN_YN', 'T_INFO_YN', 'T_INFO_EMAIL'].includes(column.field)) {
+				            const checkbox = document.getElementById(column.field);
+				            if (checkbox) {
+				                visibility[column.field] = checkbox.checked;
+				            }
+				        }
+				    });
+				    localStorage.setItem('Wonder_Section_Allocation_car_list_<?php echo $section_allocation_page; ?>_column', JSON.stringify(visibility));
+				    console.log('컬럼 가시성이 저장되었습니다!');
+				}
+				
+				function restoreColumnVisibility() {
+				    const visibility = JSON.parse(localStorage.getItem('Wonder_Section_Allocation_car_list_<?php echo $section_allocation_page; ?>_column'));
+				    if (visibility) {
+				        for (const [field, isVisible] of Object.entries(visibility)) {
+				            const checkbox = document.getElementById(`${field}`);
+				            if (checkbox) {
+				                checkbox.checked = isVisible;
+				                try {
+				                    const column = table.getColumn(field);
+				                    if (column && !isVisible) {
+				                        column.hide();
+				                    }
+				                } catch (e) {
+				                    console.log(`컬럼 ${field}를 찾을 수 없습니다.`);
+				                }
+				            }
+				        }
+				    }
+				}
+				
+				
+				// ========== 10. 초기화 함수 ==========
+				function resetAllocationTable() {
+				    if (confirm('테이블 설정을 초기화하시겠습니까?\n(컬럼 순서, 너비, 가시성, 정렬 상태가 초기화됩니다)')) {
+				        localStorage.removeItem('Wonder_Section_Allocation_Column_Header_<?php echo $section_allocation_page; ?>');
+				        localStorage.removeItem('Wonder_Section_Allocation_ColumnWidths_<?php echo $section_allocation_page; ?>');
+				        localStorage.removeItem('Wonder_Section_Allocation_car_list_<?php echo $section_allocation_page; ?>_column');
+				        localStorage.removeItem('Wonder_Section_Allocation_SortState_<?php echo $section_allocation_page; ?>');
+				        alert('초기화 완료! 페이지를 새로고침합니다.');
+				        location.reload();
+				    }
+				}
+				window.resetAllocationTable = resetAllocationTable;
+				
+				// ========== 11. 컬럼 데이터 정의 ==========
+				const columnData = [
+				    {
+				        title:"담당자", 
+						headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>담당자</div>
+				                        <span class='custom-sort-button' data-sort-field='OP_NM'>▼</span>
+				                    </div>`;
+				        },						
+				        field:"OP_NM", 
+				        width:45, 
+				        hozAlign:"center", 
+				        headerSort:false,
+				        visible: true
+				    },
+				    {title:" ", field:"ORDER_VIEW",formatter: OrderViewFormatter, width:25,headerSort: false,minWidth: 25,maxWidth: 25,visible: true},
+				    {title:" ", field:"LMS_VIEW",formatter: LmsViewFormatter,  width:25,headerSort: false,minWidth: 25,maxWidth: 25,visible: true},
+				    {title:" ", field:"CAR_OPERATE",formatter: CarOperateViewFormatter,  width:25,headerSort: false,minWidth: 25,maxWidth: 25,visible: true},
+				    {title:" ", field:"SO_PT",formatter: SoPtFormatter, width:25, headerSort: false,minWidth: 25,maxWidth: 25,visible: true},
+				    {title:"M", field:"S_ORDER",hozAlign:"center",  width:25,headerSort: false,minWidth: 25,maxWidth: 25,visible: true},
+				    {
+				        title:"상품", 
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>상품<br><span class='custom-sort-button' data-sort-field='SO_MODE_H'>▼</span></div>
+				                    </div>`;
+				        },						
+				        field:"SO_MODE_H", 
+				        width:40,
+				        hozAlign:"center",
+				        headerSort:false,
+				        visible: true
+				    },
+				    {
+				        title:"구분", 
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>구분<br><span class='custom-sort-button' data-sort-field='IO_TYPE'>▼</span></div>
+				                    </div>`;
+				        },						
+				        field:"IO_TYPE", 
+				        width:30,
+				        hozAlign:"center", 
+				        headerSort:false,
+				        visible: true
+				    },
+				    {title:"픽업<br>출발", field:"LOAD_ST_HM",hozAlign:"center",  width:35,headerSort: false,minWidth: 35,maxWidth: 35,visible: true},
+				    {title:"픽업<br>도착", field:"LOAD_PLAN_HM",hozAlign:"center",  width:35,headerSort: false,minWidth: 35,maxWidth: 35,visible: true},
+				    {title:"픽업<br>완료", field:"LOAD_HM",hozAlign:"center",formatter: LoadHmFormatter,  width:35,headerSort: false,minWidth: 35,maxWidth: 35,visible: true},
+				    {title:"하차<br>도착", field:"UNLOAD_HM",hozAlign:"center",formatter: UnLoadHmFormatter,  width:35,headerSort: false,minWidth: 35,maxWidth: 35,visible: true},
+				    {
+				        title:"일반배차", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>일반배차</div>
+				                        <span class='custom-sort-button' data-sort-field='CUSTOM_CARNO_NUM'>▼</span>
+				                    </div>`;
+				        },
+				        field:"CUSTOM_CARNO_NUM", 
+				        width:70, 
+				        tooltip:true,
+				        headerSort: false,
+				        formatter: Custom_Carno_NumFormatter,
+				        visible: true 
+				    },
+				    {
+				        title:"배차업체", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>배차업체</div>
+				                        <span class='custom-sort-button' data-sort-field='TRAN_NM_H'>▼</span>
+				                    </div>`;
+				        },
+				        field:"TRAN_NM_H", 
+				        width:100,
+				        tooltip:true,
+				        hozAlign:"left", 
+				        headerSort: false,
+				        visible: true
+				    },
+				    {
+				        title:"차량전화", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>차량전화</div>
+				                        <span class='custom-sort-button' data-sort-field='CAR_TEL_H'>▼</span>
+				                    </div>`;
+				        },	
+				        field:"CAR_TEL_H", 
+				        width:90, 
+				        hozAlign:"left", 
+				        headerSort: false,
+				        visible: true
+				    },
+				    {
+				        title:"구간배차", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>구간배차</div>
+				                        <span class='custom-sort-button' data-sort-field='G_CAR_NO'>▼</span>
+				                    </div>`;
+				        },
+				        field:"G_CAR_NO", 
+				        width:70, 
+				        hozAlign:"left", 
+				        headerSort: false,
+				        formatter: Section_Carno_NumFormatter,
+				        visible: true
+				    },
+				    {
+				        title:"배차유형", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>배차유형</div>
+				                        <span class='custom-sort-button' data-sort-field='ALOC_TYPE'>▼</span>
+				                    </div>`;
+				        },	
+				        field:"ALOC_TYPE", 
+				        width:55, 
+				        hozAlign:"center", 
+				        formatter: AlocTypeFormatter, 
+				        headerSort: false,
+				        visible: true
+				    },
+				    {
+				        title:"발주처", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>발주처</div>
+				                        <span class='custom-sort-button' data-sort-field='ACT_SHIP_A_NM'>▼</span>
+				                    </div>`;
+				        },	
+				        field:"ACT_SHIP_A_NM", 
+				        width:100, 
+				        tooltip:true,
+				        hozAlign:"left", 
+				        headerSort: false,
+				        visible: true
+				    },
+				    {
+				        title:"발주처전화", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>발주처전화</div>
+				                        <span class='custom-sort-button' data-sort-field='ACT_SHIP_TEL'>▼</span>
+				                    </div>`;
+				        },	
+				        field:"ACT_SHIP_TEL", 
+				        width:90,
+				        tooltip:true,
+				        hozAlign:"left", 
+				        headerSort: false,
+				        visible: true
+				    },
+				    {
+				        title:"발주담당",
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>발주담당</div>
+				                        <span class='custom-sort-button' data-sort-field='ACT_SHIP_PIC_NM'>▼</span>
+				                    </div>`;
+				        },	
+				        field:"ACT_SHIP_PIC_NM", 
+				        width:70,
+				        tooltip:true,
+				        hozAlign:"left", 
+				        headerSort: false,
+				        visible: true
+				    },
+				    {
+				        title:"화주", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>화주</div>
+				                        <span class='custom-sort-button' data-sort-field='SHIP_NM'>▼</span>
+				                    </div>`;
+				        },	
+				        field:"SHIP_NM", 
+				        width:100, 
+				        tooltip:true,
+				        hozAlign:"left", 
+				        formatter: ShipNmFormatter,
+				        headerSort: false,
+				        visible: true
+				    },
+				    {
+				        title:"픽업지", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>픽업지</div>
+				                        <span class='custom-sort-button' data-sort-field='LOAD_NM'>▼</span>
+				                    </div>`;
+				        },	
+				        field:"LOAD_NM", 
+				        width:100,
+				        tooltip:true,
+				        hozAlign:"left", 
+				        headerSort: false,
+				        visible: true
+				    },
+				    {
+				        title:"픽업지전화", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>픽업지전화</div>
+				                        <span class='custom-sort-button' data-sort-field='LOAD_TEL'>▼</span>
+				                    </div>`;
+				        },	
+				        field:"LOAD_TEL", 
+				        width:90,
+				        tooltip:true,
+				        hozAlign:"left", 
+				        headerSort: false,
+				        visible: true
+				    },
+				    {
+				        title:"픽업담당", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>픽업담당</div>
+				                        <span class='custom-sort-button' data-sort-field='LOAD_PIC_NM'>▼</span>
+				                    </div>`;
+				        },	
+				        field:"LOAD_PIC_NM", 
+				        width:70,
+				        tooltip:true,
+				        hozAlign:"left", 
+				        headerSort: false,
+				        visible: true
+				    },
+				    {
+				        title:"픽업지역", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>픽업지역</div>
+				                        <span class='custom-sort-button' data-sort-field='LOAD_AREA'>▼</span>
+				                    </div>`;
+				        },	
+				        field:"LOAD_AREA", 
+				        width:80, 
+				        tooltip:true,
+				        hozAlign:"left", 
+				        headerSort: false,
+				        visible: true
+				    },
+				    {
+				        title:"픽업요청", 
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>픽업<br>요청<br><span class='custom-sort-button' data-sort-field='LOAD_REQ_HM'>▼</span></div>
+				                    </div>`;
+				        },	 
+				        field:"LOAD_REQ_HM", 
+				        width:45, 
+				        hozAlign:"center", 
+				        headerSort: false,
+				        visible: true
+				    },
+				    {title:"픽업<br>예정", field:"ARR_PLAN_HM",hozAlign:"center", width:35,headerSort: false,minWidth: 35,maxWidth: 35,visible: true},
+				    {
+				        title:"총수량", 
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>총수량<br><span class='custom-sort-button' data-sort-field='PKG'>▼</span></div>
+				                    </div>`;
+				        },	
+				        field:"PKG", 
+				        width:50, 
+				        hozAlign:"center", 
+				        headerSort: false,
+				        formatter: function(cell) {
+				            const value = cell.getValue();
+				            const SO_NO = cell.getRow().getData().SO_NO;
+				            const SO_MODE_H = cell.getRow().getData().SO_MODE_H;
+				            let PkgFormatted='';
+				            if (value === null || value === undefined || value === '') {
+				                PkgFormatted='';
+				            }else{
+				                const PKG = parseFloat(value);
+				                PkgFormatted = PKG % 1 === 0 ? PKG.toString() : PKG.toFixed(0);
+				            }
+				            return `<div class='OrderView' style='position: relative;top: -2px;' onclick="ord_view('${SO_NO}','${SO_MODE_H}','car');">
+				                        <span>${PkgFormatted}</span>
+				                    </div>`;
+				         },
+				        visible: true
+				    },
+				    {
+				        title:"총부피", 
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>총부피<br><span class='custom-sort-button' data-sort-field='CBM'>▼</span></div>
+				                    </div>`;
+				        },	
+				        field:"CBM", 
+				        width:50, 
+				        hozAlign:"center", 
+				        headerSort: false,
+				        formatter: function(cell) {
+				            const value = cell.getValue();
+				            const SO_NO = cell.getRow().getData().SO_NO;
+				            const SO_MODE_H = cell.getRow().getData().SO_MODE_H;
+				            let CbmFormatted='';
+				            if (value === null || value === undefined || value === '') {
+				                CbmFormatted='';
+				            }else{
+				                const CBM = parseFloat(value);
+				                CbmFormatted = CBM % 1 === 0 ? CBM.toString() : CBM.toFixed(2);
+				            }
+				            return `<div class='OrderView' style='position: relative;top: -2px;' onclick="ord_view('${SO_NO}','${SO_MODE_H}','car');">
+				                        <span>${CbmFormatted}</span>
+				                    </div>`;
+				        },
+				        visible: true
+				    },
+				    {
+				        title:"총무게", 
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>총무게<br><span class='custom-sort-button' data-sort-field='WGT'>▼</span></div>
+				                    </div>`;
+				        },	
+				        field:"WGT", 
+				        width:50, 
+				        hozAlign:"center", 
+				        headerSort: false,
+				        formatter: function(cell) {
+				            const value = cell.getValue();
+				            const SO_NO = cell.getRow().getData().SO_NO;
+				            const SO_MODE_H = cell.getRow().getData().SO_MODE_H;
+				            let weightFormatted='';
+				            if (value === null || value === undefined || value === '') {
+				                weightFormatted='';
+				            }else{
+				                const WGT = parseFloat(value);
+				                weightFormatted = WGT % 1 === 0 ? WGT.toString() : WGT.toFixed(2);
+				            }
+				            return `<div class='OrderView' style='position: relative;top: -2px;' onclick="ord_view('${SO_NO}','${SO_MODE_H}','car');">
+				                        <span>${weightFormatted}</span>
+				                    </div>`;
+				        },
+				        visible: true
+				    },
+				    {
+				        title:"<div class='custom-header'>사이즈<br><span class='custom-sort-button' data-sort-field='GOD_M_SIZE'></span></div>", 
+				        field:"GOD_M_SIZE", 
+				        width:120, 
+				        tooltip:true,
+				        hozAlign:"left", 
+				        headerSort: false,
+				        visible: true
+				    },
+				    {
+				        title:"비고",
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>비고</div>
+				                        <span class='custom-sort-button' data-sort-field='ORD_ETC'>▼</span>
+				                    </div>`;
+				        },	
+				        field:"ORD_ETC", 
+				        width:120, 
+				        tooltip:true,
+				        hozAlign:"left", 
+				        headerSort: false,
+				        visible: true
+				    },
+				    {
+				        title:"목적국", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>목적국</div>
+				                        <span class='custom-sort-button' data-sort-field='FDS_NM'>▼</span>
+				                    </div>`;
+				        },
+				        field:"FDS_NM", 
+				        width:70, 
+				        tooltip:true,
+				        hozAlign:"left", 
+				        headerSort: false,
+				        visible: true
+				    },
+				    {
+				        title:"하차지", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>하차지</div>
+				                        <span class='custom-sort-button' data-sort-field='UNLOAD_NM'>▼</span>
+				                    </div>`;
+				        },	
+				        field:"UNLOAD_NM", 
+				        width:100, 
+				        tooltip:true,
+				        hozAlign:"left", 
+				        headerSort: false,
+				        visible: true
+				    },
+				    {
+				        title:"하차지전화", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>하차지전화</div>
+				                        <span class='custom-sort-button' data-sort-field='UNLOAD_TEL'>▼</span>
+				                    </div>`;
+				        },	
+				        field:"UNLOAD_TEL", 
+				        width:90,
+				        tooltip:true,
+				        hozAlign:"left", 
+				        headerSort: false,
+				        visible: true
+				    },
+				    {
+				        title:"하차담당", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>하차담당</div>
+				                        <span class='custom-sort-button' data-sort-field='UNLOAD_PIC_NM'>▼</span>
+				                    </div>`;
+				        },
+				        field:"UNLOAD_PIC_NM", 
+				        width:70,
+				        tooltip:true,
+				        hozAlign:"left", 
+				        headerSort: false,
+				        visible: true
+				    },
+				    {
+				        title:"하차요청일", 
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>하차요청일<br><span class='custom-sort-button' data-sort-field='UNLOAD_REQ_DT'>▼</span></div>
+				                        
+				                    </div>`;
+				        },	
+				        field:"UNLOAD_REQ_DT", 
+				        width:80, 
+				        hozAlign:"center", 
+				        headerSort: false,
+				        visible: true
+				    },
+				    {title:"하차<br>시간", field:"UNLOAD_REQ_HM",hozAlign:"center", width:40,headerSort: false,visible: true},
+				    {title:"도착<br>보고", field:"ARRIVAL",hozAlign:"center", width:30,headerSort: false,minWidth: 30,maxWidth: 30,visible: true},
+				    {title:"서류", field:"DOC", width:30,hozAlign:"center",headerSort: false,minWidth: 30,maxWidth: 30,visible: true},
+				    {title:"하차<br>긴급", field:"EM_UNLOAD_REQ", width:30,hozAlign:"center",headerSort: false,minWidth: 30,maxWidth: 30,visible: true},
+				    {title:"통관", field:"CUSTOMS", width:30,hozAlign:"center",headerSort: false,minWidth: 30,maxWidth: 30,visible: true},
+				    {title:"보세", field:"BOND", width:30,hozAlign:"center",headerSort: false,minWidth: 30,maxWidth: 30,visible: true},
+				    {
+				        title:"운송매출",
+				        field:"U_S_AMT",
+				        hozAlign:"right",
+				        width:60,
+				        headerSort: false,
+				        formatter: function(cell) {
+				            const value = cell.getValue();
+				            return value !== null && value !== undefined && value !== '' ? addComma(parseFloat(value).toFixed(0)) : '';
+				        },
+				        visible: true
+				    },
+				    {
+				        title:"운송매입",
+				        field:"U_B_AMT",
+				        hozAlign:"right",
+				        width:60,
+				        headerSort: false,
+				        formatter: function(cell) {
+				            const value = cell.getValue();
+				            return value !== null && value !== undefined && value !== '' ? addComma(parseFloat(value).toFixed(0)) : '';
+				        },
+				        visible: true
+				    },
+				    {
+				        title:"기타매출",
+				        field:"K_S_AMT",
+				        hozAlign:"right",
+				        width:60,
+				        headerSort: false,
+				        formatter: function(cell) {
+				            const value = cell.getValue();
+				            return value !== null && value !== undefined && value !== '' ? addComma(parseFloat(value).toFixed(0)) : '';
+				        },
+				        visible: true
+				    },
+				    {
+				        title:"기타매입",
+				        field:"K_B_AMT",
+				        hozAlign:"right",
+				        width:60,
+				        headerSort: false,
+				        formatter: function(cell) {
+				            const value = cell.getValue();
+				            return value !== null && value !== undefined && value !== '' ? addComma(parseFloat(value).toFixed(0)) : '';
+				        },
+				        visible: true
+				    },
+				    {
+				        title:"도착매출",
+				        field:"A_S_AMT",
+				        hozAlign:"right",
+				        width:60,
+				        headerSort: false,
+				        formatter: function(cell) {
+				            const value = cell.getValue();
+				            return value !== null && value !== undefined && value !== '' ? addComma(parseFloat(value).toFixed(0)) : '';
+				        },
+				        visible: true
+				    },
+				    {
+				        title:"도착매입",
+				        field:"A_B_AMT",
+				        hozAlign:"right",
+				        width:60,
+				        headerSort: false,
+				        formatter: function(cell) {
+				            const value = cell.getValue();
+				            return value !== null && value !== undefined && value !== '' ? addComma(parseFloat(value).toFixed(0)) : '';
+				        },
+				        visible: true
+				    },
+				    {
+				        title:"총매출",
+				        field:"T_S_AMT",
+				        hozAlign:"right",
+				        width:60,
+				        headerSort: false,
+				        formatter: function(cell) {
+				            const value = cell.getValue();
+				            return value !== null && value !== undefined && value !== '' ? addComma(parseFloat(value).toFixed(0)) : '';
+				        },
+				        visible: true
+				    },
+				    {
+				        title:"총매입",
+				        field:"T_B_AMT",
+				        hozAlign:"right",
+				        width:60,
+				        headerSort: false,
+				        formatter: function(cell) {
+				            const value = cell.getValue();
+				            return value !== null && value !== undefined && value !== '' ? addComma(parseFloat(value).toFixed(0)) : '';
+				        },
+				        visible: true
+				    },
+				    {
+				        title:"청구처",
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>청구처</div>
+				                        <span class='custom-sort-button' data-sort-field='BILL_NM'>▼</span>
+				                    </div>`;
+				        },	
+				        field:"BILL_NM", 
+				        width:100, 
+				        tooltip: function(cell){
+				            return  cell.getValue();
+				        },
+				        hozAlign:"left", 
+				        headerSort: false,
+				        visible: true
+				    },
+				    {
+				        title:"HBL_NO", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>HBL_NO</div>
+				                        <span class='custom-sort-button' data-sort-field='HBL_NO'>▼</span>
+				                    </div>`;
+				        },	
+				        field:"HBL_NO", 
+				        width:90, 
+				        tooltip:true,
+				        hozAlign:"left", 
+				        headerSort: false,
+				        formatter: Hbl_No_Formatter,
+				        visible: true
+				    },
+				    {
+				        title:"픽업CY", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>픽업CY</div>
+				                        <span class='custom-sort-button' data-sort-field='LOAD_CY'>▼</span>
+				                    </div>`;
+				        },	 
+				        field:"LOAD_CY", 
+				        width:100,
+				        tooltip:true,
+				        hozAlign:"left", 
+				        headerSort: false,
+				        visible: true
+				    },
+				    {
+					        title:"픽업CY담당", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>픽업CY담당</div>
+				                        <span class='custom-sort-button' data-sort-field='LOAD_CY_PIC_NM'>▼</span>
+				                    </div>`;
+				        },
+				        field:"LOAD_CY_PIC_NM", 
+				        width:80, 
+				        tooltip:true,
+				        hozAlign:"left", 
+				        headerSort: false,
+				        visible: true
+				    },
+				    {
+				        title:"픽업CY전화", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>픽업CY전화</div>
+				                        <span class='custom-sort-button' data-sort-field='LOAD_CY_TEL'>▼</span>
+				                    </div>`;
+				        },	 
+				        field:"LOAD_CY_TEL", 
+				        width:80,
+				        tooltip:true,
+				        hozAlign:"left", 
+				        headerSort: false,
+				        visible: true
+				    },
+				    {
+				        title:"하차CY담당", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>하차CY담당</div>
+				                        <span class='custom-sort-button' data-sort-field='UNLOAD_CY_PIC_NM'>▼</span>
+				                    </div>`;
+				        },	
+				        field:"UNLOAD_CY_PIC_NM", 
+				        width:80,
+				        tooltip:true,
+				        hozAlign:"left", 
+				        headerSort: false,
+				        visible: true
+				    },
+				    {
+				        title:"하차CY", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>하차CY</div>
+				                        <span class='custom-sort-button' data-sort-field='UNLOAD_CY'>▼</span>
+				                    </div>`;
+				        },	
+				        field:"UNLOAD_CY", 
+				        width:100,
+				        tooltip:true,
+				        hozAlign:"left", 
+				        headerSort: false,
+				        visible: true
+				    },
+				    {
+				        title:"하차CY전화", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>하차CY담당</div>
+				                        <span class='custom-sort-button' data-sort-field='UNLOAD_CY_TEL'>▼</span>
+				                    </div>`;
+				        },
+				        field:"UNLOAD_CY_TEL", 
+				        width:80,
+				        tooltip:true,
+				        hozAlign:"left", 
+				        headerSort: false,
+				        visible: true
+				    },
+				    {
+				        title:"아이템", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>아이템</div>
+				                        <span class='custom-sort-button' data-sort-field='ITEM_NM'>▼</span>
+				                    </div>`;
+				        },	
+				        field:"ITEM_NM", 
+				        width:80,
+				        tooltip:true,
+				        hozAlign:"left", 
+				        headerSort: false,
+				        visible: true
+				    },
+				    {
+				        title:"품목", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>품목</div>
+				                        <span class='custom-sort-button' data-sort-field='GOOD_NM'>▼</span>
+				                    </div>`;
+				        },	 
+				        field:"GOOD_NM", 
+				        width:60,
+				        tooltip:true,
+				        hozAlign:"left", 
+				        headerSort: false,
+				        visible: true
+				    },
+				    {
+				        title:"CNTR_NO", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>CNTR_NO</div>
+				                        <span class='custom-sort-button' data-sort-field='CNTR_NO'>▼</span>
+				                    </div>`;
+				        },		 
+				        field:"CNTR_NO", 
+				        width:80,
+				        tooltip:true,
+				        hozAlign:"left", 
+				        headerSort: false,
+				        visible: true
+				    },
+				    {
+				        title:"SEAL_NO", 
+				        headerFilter: "input",
+				        headerFilterPlaceholder: "검색",
+						headerFilterParams: {
+							elementAttributes: {
+						   	style: "text-align: center;" // 입력 텍스트와 Placeholder를 중앙 정렬
+							}
+						},						
+				        titleFormatter: function(cell) {
+				            return `<div class='custom-header-wrapper'>
+				                        <div class='header-title'>SEAL_NO</div>
+				                        <span class='custom-sort-button' data-sort-field='SEAL_NO'>▼</span>
+				                    </div>`;
+				        },	
+				        field:"SEAL_NO",
+				        tooltip:true,
+				        width:80, 
+				        hozAlign:"left", 
+				        headerSort: false,
+				        visible: true
+				    },
+				    {title: "",field: "SO_NO",visible: false},
+				    {title: "",field: "DRV_CD",visible: false},
+				    {title: "",field: "DRV_NM",visible: false},
+				    {title: "",field: "LISENCE_NO_H",visible: false},
+				    {title: "",field: "LOAD_REQ_DT",visible: false},
+				    {title: "",field: "TOSS_ORDER",visible: false},
+				    {title: "",field: "CAR_DIVISION",visible: false},
+				    {title: "",field: "A_GPS_ID",visible: false},
+				    {title: "",field: "B_GPS_ID",visible: false},
+				    {title: "",field: "A_APP_ID",visible: false},
+				    {title: "",field: "B_APP_ID",visible: false},
+				    {title: "",field: "LOAD_IMG",visible: false},
+				    {title: "",field: "UNLOAD_IMG",visible: false},
+				    {title: "",field: "CLAIM",visible: false},
+				    {title: "",field: "SO_STAT",visible: false},
+				    {title: "",field: "SO_OFF",visible: false},
+				    {title: "",field: "LOAD_F_IMG",visible: false},
+				    {title: "",field: "UNLOAD_F_IMG",visible: false},
+				    {title: "",field: "TRAN_VEN_YN",visible: false},
+				    {title: "",field: "T_INFO_YN",visible: false},
+				    {title: "",field: "T_INFO_EMAIL",visible: false},
+				];
+				
+				// ========== 12. 컬럼 순서 결정 ==========
+				let orderedColumns = columnData;
+				
+				if (savedOrder && savedOrder.length > 0) {
+				    const orderedCols = [];
+				    savedOrder.forEach(fieldName => {
+				        const col = columnData.find(c => c.field === fieldName);
+				        if (col) {
+				            orderedCols.push(col);
+				        }
+				    });
+				    
+				    columnData.forEach(col => {
+				        if (!savedOrder.includes(col.field)) {
+				            orderedCols.push(col);
+				        }
+				    });
+				    
+				    orderedColumns = orderedCols;
+				    console.log('정렬된 컬럼 개수:', orderedColumns.length);
+				}
+				
+				// ========== 13. Tabulator 테이블 생성 ==========
+				var table = new Tabulator("#section_allocation_car_list_<?php echo $section_allocation_page; ?>", {
+				    rowHeader: {
+				        headerSort: false,
+				        resizable: false,
+				        frozen: false,
+				        headerHozAlign: "center",
+				        hozAlign: "center",
+				        formatter: "rowSelection",
+				        titleFormatter: function(cell, formatterParams, onRendered) {
+				            var checkbox = document.createElement("input");
+				            checkbox.type = "checkbox";
+				            checkbox.id = "header-select-all";            
+				            checkbox.addEventListener("change", function() {
+				                if (this.checked) {
+				                    if (isFiltered) {
+				                        var visibleRows = table.getRows("visible");
+				                        visibleRows.forEach(function(row) {
+				                            if (!row.getData().isEmpty) {
+				                                row.select();
+				                            }
+				                        });
+				                    } else {
+				                        var allRows = table.getRows();
+				                        allRows.forEach(function(row) {
+				                            if (!row.getData().isEmpty) {
+				                                row.select();
+				                            }
+				                        });
+				                    }
+				                } else {
+				                    if (isFiltered) {
+				                        var visibleRows = table.getRows("visible");
+				                        visibleRows.forEach(function(row) {
+				                            if (!row.getData().isEmpty) {
+				                                row.deselect();
+				                            }
+				                        });
+				                    } else {
+				                        table.deselectRow();
+				                    }
+				                }
+				            });
+				            
+				            return checkbox;
+				        },
+				        cellClick: function(e, cell) {
+				            if (!cell.getRow().getData().isEmpty) {
+				                cell.getRow().toggleSelect();
+				            }
+				        },
+				        width: 30,
+				    },
+				    height:"600px",
+				    maxHeight:"600px",
+				    rowHeight: 26,
+				    layout: "fitDataStretch",
+				    virtualDom: true,
+				    virtualDomBuffer: 50,
+				    scrollToRowPosition: "top",
+				    columns: orderedColumns,
+				    rowContextMenu: [
+				        {
+				            label: "기사명 복사",
+				            action: function(e, row){
+				                const rowData = row.getData();
+				                const DRV_NM = rowData.DRV_NM;
+				                navigator.clipboard.writeText(DRV_NM).then(function() {
+				                }, function() {
+				                    alert("클립보드 복사에 실패했습니다.");
+				                });
+				            }
+				        },
+				        {
+				            label: "차량번호 복사",
+				            action: function(e, row){
+				                const rowData = row.getData();
+				                const LISENCE_NO_H = rowData.LISENCE_NO_H;
+				                navigator.clipboard.writeText(LISENCE_NO_H).then(function() {
+				                }, function() {
+				                    alert("클립보드 복사에 실패했습니다.");
+				                });
+				            }
+				        },
+				        {
+				            label: "차량전화번호 복사",
+				            action: function(e, row){
+				                const rowData = row.getData();
+				                const CAR_TEL_H = rowData.CAR_TEL_H;
+				                navigator.clipboard.writeText(CAR_TEL_H).then(function() {
+				                }, function() {
+				                    alert("클립보드 복사에 실패했습니다.");
+				                });
+				            }
+				        },
+				        {
+				            label: "기사명/차량번호/차량휴대폰번호 복사",
+				            action: function(e, row){
+				                var rowData = row.getData();
+				                var dataToCopy = rowData.DRV_NM + " / " + rowData.LISENCE_NO_H + " / " + rowData.CAR_TEL_H;
+				                navigator.clipboard.writeText(dataToCopy).then(function() {
+				                }, function() {
+				                });
+				            }
+				        }
+				    ],
+				    data: (tabledata && tabledata.length > 0) ? tabledata : [], // 데이터가 없으면 빈 배열
+				    placeholder: (tabledata && tabledata.length > 0) ? undefined : "데이터가 없습니다.", // 데이터가 없을 때 플레이스홀더
+				    minHeight: (tabledata && tabledata.length > 0) ? undefined : 0, // 데이터가 없을 때 최소 높이 0
+				    selectable: true,
+				    headerFilter: true,
+				    movableColumns: true,
+				    columnResized: function(column) {
+				        console.log('컬럼 사이즈 이동');
+				    },
+				    rowFormatter: function(row) {
+				        var datas = row.getData();
+				        
+				        // datas가 없거나 undefined이거나 null이거나 객체가 아닌 경우 행 숨김
+				        if (!datas || datas === null || datas === undefined || typeof datas !== 'object') {
+				            var rowElement = row.getElement();
+				            if (rowElement) {
+				                rowElement.style.display = 'none';
+				            }
+				            return;
+				        }
+				        
+				        // isEmpty가 true인 경우: 컬럼 병합, 체크박스/아이콘 숨김, 배경색 #ccc
+				        if (datas.isEmpty === true) {
+				            var rowElement = row.getElement();
+				            if (rowElement) {
+				                // 배경색 설정
+				                rowElement.style.backgroundColor = '#ccc';
+				                
+				                // 체크박스 숨김
+				                var checkboxCell = rowElement.querySelector('.tabulator-row-header');
+				                if (checkboxCell) {
+				                    checkboxCell.style.display = 'none';
+				                }
+				                
+				                // 모든 셀 가져오기
+				                var cells = rowElement.querySelectorAll('.tabulator-cell');
+				                if (cells.length > 0) {
+				                    // 첫 번째 셀만 표시하고 나머지 숨김
+				                    var firstCell = cells[0];
+				                    firstCell.style.width = '100%';
+				                    firstCell.style.borderRight = 'none';
+				                    firstCell.style.textAlign = 'center';
+				                    firstCell.style.color = '#000';
+				                    firstCell.innerHTML = '';
+				                    
+				                    // 나머지 셀 숨김
+				                    for (let j = 1; j < cells.length; j++) {
+				                        cells[j].style.display = 'none';
+				                    }
+				                }
+				            }
+				            return;
+				        }
+				        
+				        if (datas['SO_OFF'] === "Y") {
+				            row.getElement().style.color = "#7401DF";
+				        } else {
+				            if (datas['SO_STAT'] === "00") {
+				                if (datas['SO_PT'] === "W" || datas['SO_PT'] === "E") {
+				                    row.getElement().style.color = "#FE2E2E";
+				                } else {
+				                    row.getElement().style.color = "#2E2E2E";
+				                }
+				            }
+				        }
+				    },
+				});
+				
+				// ========== 14. Tabulator 이벤트 리스너 ==========
+				table.on("rowSelectionChanged", function(data, rows) {
+				    updateHeaderCheckboxState();
+				    var validSelectedCount = data.filter(function(row) {
+				        return !row.isEmpty;
+				    }).length;
+				    document.getElementById("cnt").value = validSelectedCount;
+				});
+				
+				table.on("dataFiltered", function(filters, rows) {
+				    isFiltered = (filters && filters.length > 0);
+				    updateHeaderCheckboxState();
+				    
+				    var selectedRows = table.getSelectedRows();
+				    if (isFiltered) {
+				        var visibleRows = table.getRows("visible");
+				        var visibleSelectedCount = selectedRows.filter(function(selectedRow) {
+				            var rowData = selectedRow.getData();
+				            return visibleRows.includes(selectedRow) && !rowData.isEmpty;
+				        }).length;
+				        document.getElementById("cnt").value = visibleSelectedCount;
+				    } else {
+				        var validSelectedCount = selectedRows.filter(function(selectedRow) {
+				            return !selectedRow.getData().isEmpty;
+				        }).length;
+				        document.getElementById("cnt").value = validSelectedCount;
+				    }
+				});
+				
+				// ========== 테이블 이벤트 설정 ==========
+				// // 헤더필터를 사용하기 위한 초기화				
+				let filterEventRegistered = false;
+				let initialLoadComplete = false;	
+
+				table.on("tableBuilt", function() {
+
+				    updateHeaderCheckboxState();				    
+				    sortableColumns.forEach(field => {
+				        let sortButton = document.querySelector(`[data-sort-field="${field}"]`);
+				        if (sortButton) {
+				            sortButton.style.cursor = 'pointer';
+				            sortButton.addEventListener('click', function(e) {
+				                e.stopPropagation();
+				                handleSortClick(field);
+				            });
+				        }
+				    });				    
+				    setTimeout(() => {
+				        initializeSortState();
+				    }, 100);
+
+					//필터 검색 후 로컬 스토리지 저장 
+				    // 필터 복원 후 약간의 지연을 두고 이벤트 등록				
+					let $Form_Id='';
+					$Form_Id=document.querySelector('#Form_Id').value;
+				    loadFilterState($Form_Id);
+				    
+				    // 필터 입력 필드에 이벤트 바인딩 함수
+				    function bindFilterEvents() {
+				        document.querySelectorAll(".tabulator-header-filter input").forEach(function(input) {
+				            // 이미 바인딩된 경우 스킵
+				            if (input.dataset.filterBound === 'true') {
+				                return;
+				            }
+				            
+				            input.dataset.filterBound = 'true';
+				            
+				            // 입력 시 실시간 저장
+				            input.addEventListener("input", function() {
+				                setTimeout(function() {
+				                    saveFilterState($Form_Id);
+				                    updateFilterHighlight();
+				                }, 100);
+				            });
+				            
+				            // 값 변경 시 저장 (clear 버튼 클릭 시에도 감지)
+				            input.addEventListener("change", function() {
+				                setTimeout(function() {
+				                    saveFilterState($Form_Id);
+				                    updateFilterHighlight();
+				                }, 100);
+				            });
+				            
+				            // 포커스 해제 시 저장 (필터 값이 비워진 경우 감지)
+				            input.addEventListener("blur", function() {
+				                setTimeout(function() {
+				                    saveFilterState($Form_Id);
+				                    updateFilterHighlight();
+				                }, 100);
+				            });
+				            
+				            // X 버튼 클릭 시 (clear 버튼) - 여러 선택자 시도
+				            setTimeout(function() {
+				                const filterContainer = input.closest('.tabulator-header-filter');
+				                if (filterContainer) {
+				                    // Tabulator의 clear 버튼 선택자들
+				                    const clearSelectors = [
+				                        '.tabulator-header-filter-clear',
+				                        '.tabulator-col-filter-clear',
+				                        'button[type="button"]',
+				                        '.tabulator-header-filter button'
+				                    ];
+				                    
+				                    clearSelectors.forEach(function(selector) {
+				                        const clearBtn = filterContainer.querySelector(selector);
+				                        if (clearBtn && !clearBtn.dataset.clearBound) {
+				                            clearBtn.dataset.clearBound = 'true';
+				                            clearBtn.addEventListener("click", function(e) {
+				                                e.stopPropagation();
+				                                setTimeout(function() {
+				                                    saveFilterState($Form_Id);
+				                                    updateFilterHighlight();
+				                                }, 200);
+				                            });
+				                        }
+				                    });
+				                }
+				            }, 300);
+				        });
+				    }
+				    
+				    setTimeout(function() {
+				        if (!filterEventRegistered) {
+				            // 필터 변경 시 저장
+				            table.on("dataFiltered", function(filters, rows) {
+				                // 초기 로딩 시에는 저장하지 않음
+				                if (initialLoadComplete) {
+				                    saveFilterState($Form_Id);
+				                }
+				                updateFilterHighlight();
+				            });
+				            
+				            // 초기 필터 입력 필드에 이벤트 바인딩
+				            setTimeout(function() {
+				                bindFilterEvents();
+				                
+				                // 동적으로 추가되는 필터 입력 필드를 감지하기 위한 MutationObserver
+				                const tableElement = document.querySelector("#section_allocation_car_list_<?php echo $section_allocation_page; ?>");
+				                if (tableElement) {
+				                    const filterObserver = new MutationObserver(function(mutations) {
+				                        bindFilterEvents();
+				                    });
+				                    filterObserver.observe(tableElement, { childList: true, subtree: true });
+				                }
+				            }, 500);
+				            
+				            filterEventRegistered = true;
+				        }
+				        // 초기 로딩 완료 표시
+				        setTimeout(function() {
+				            initialLoadComplete = true;
+				        }, 500);
+				    }, 100);
+					//필터 검색 후 로컬 스토리지 저장 	
+
+				    // 데이터가 없으면 모든 빈 행과 빈 셀 숨김
+				    if (!tabledata || tabledata.length === 0) {
+				        setTimeout(function() {
+				            // 모든 행 확인 및 빈 행 제거
+				            var allRows = table.getRows();
+				            allRows.forEach(function(row) {
+				                try {
+				                    var rowElement = row.getElement();
+				                    if (rowElement) {
+				                        // 빈 행인지 확인 (모든 셀이 비어있거나 &nbsp;만 있는 경우)
+				                        var cells = rowElement.querySelectorAll('.tabulator-cell');
+				                        var isEmptyRow = true;
+				                        
+				                        cells.forEach(function(cell) {
+				                            var cellText = cell.textContent.trim();
+				                            var cellHTML = cell.innerHTML.trim();
+				                            // 셀이 비어있지 않고 &nbsp;나 공백만 있는 경우가 아닌지 확인
+				                            if (cellText !== '' && cellText !== '&nbsp;' && cellText !== '\u00A0' && cellHTML !== '' && cellHTML !== '&nbsp;') {
+				                                isEmptyRow = false;
+				                            }
+				                        });
+				                        
+				                        if (isEmptyRow) {
+				                            rowElement.classList.add('tabulator-row-empty');
+				                            rowElement.style.display = 'none';
+				                        } else {
+				                            row.delete();
+				                        }
+				                    } else {
+				                        row.delete();
+				                    }
+				                } catch(e) {
+				                    // 삭제 실패 시 무시
+				                }
+				            });
+				            
+				            // 모든 빈 셀 숨김
+				            var allCells = document.querySelectorAll('#section_allocation_car_list_<?php echo $section_allocation_page; ?> .tabulator-cell');
+				            allCells.forEach(function(cell) {
+				                var cellText = cell.textContent.trim();
+				                var cellHTML = cell.innerHTML.trim();
+				                if (cellText === '' || cellText === '&nbsp;' || cellText === '\u00A0' || cellHTML === '' || cellHTML === '&nbsp;') {
+				                    cell.classList.add('tabulator-cell-empty');
+				                    cell.style.display = 'none';
+				                }
+				            });
+				        }, 100);
+				        
+				        // 데이터가 없어도 통계 카운터는 실행 (0으로 표시)
+				        setTimeout(function() {
+				            if (typeof updateOrderCounter === 'function') {
+				                console.log('tableBuilt (데이터 없음)에서 updateOrderCounter 호출');
+				                updateOrderCounter();
+				            } else {
+				                console.warn('updateOrderCounter 함수가 아직 정의되지 않았습니다.');
+				            }
+				        }, 800);
+				        return;
+				    }
+				    
+				    updateHeaderCheckboxState();
+				    
+				    sortableColumns.forEach(field => {
+				        let sortButton = document.querySelector(`[data-sort-field="${field}"]`);
+				        if (sortButton) {
+				            sortButton.style.cursor = 'pointer';
+				            sortButton.addEventListener('click', function(e) {
+				                e.stopPropagation();
+				                handleSortClick(field);
+				            });
+				        }
+				    });
+				    
+				    setTimeout(() => {
+				        initializeSortState();
+				    }, 100);
+				    
+				    var checkbox = document.createElement("input");
+				    checkbox.type = "checkbox";
+				    checkbox.id = "header-select";
+				
+				    checkbox.addEventListener("change", function() {
+				        if (this.checked) {
+				            table.selectRow();
+				        } else {
+				            table.deselectRow();
+				        }
+				    });
+				
+				    var headerCell = document.querySelector(".tabulator-col[data-field='select'] .tabulator-col-content");
+				    if (headerCell) {
+				        headerCell.appendChild(checkbox);
+				    }
+				    addDragSelectionEvents();
+				    
+				    // 테이블이 완전히 빌드된 후 통계 카운터 실행
+				    setTimeout(function() {
+				        if (typeof updateOrderCounter === 'function') {
+				            console.log('tableBuilt에서 updateOrderCounter 호출');
+				            updateOrderCounter();
+				        } else {
+				            console.warn('updateOrderCounter 함수가 아직 정의되지 않았습니다.');
+				        }
+				    }, 800);
+
+
+
+
+
+				});
+				
+				table.on("cellClick", function(e, cell) {
+				    const A_GPS_ID = cell.getRow().getData().A_GPS_ID;
+				    const B_GPS_ID = cell.getRow().getData().B_GPS_ID;
+				    const A_APP_ID = cell.getRow().getData().A_APP_ID;
+				    const B_APP_ID = cell.getRow().getData().B_APP_ID;
+				    const LOAD_REQ_DT = cell.getRow().getData().LOAD_REQ_DT;
+				    const LOAD_REQ_HM = cell.getRow().getData().LOAD_REQ_HM;
+				    const UNLOAD_REQ_DT = cell.getRow().getData().UNLOAD_REQ_DT;
+				    const UNLOAD_REQ_HM = cell.getRow().getData().UNLOAD_REQ_HM;
+				    const GPS_A_START = LOAD_REQ_DT.replace('-','').replace('-','');
+				    const GPS_A_END =  UNLOAD_REQ_DT.replace('-','').replace('-','');
+				    
+				    let dropdown = document.getElementById("dropdown");
+				    dropdown.style.display = "block";
+				    dropdown.style.left = e.clientX + "px";
+				    dropdown.style.top = e.clientY + "px";
+				    
+				    dropdown.innerHTML = "<div class='T_menu' data-value='원더로지스'>원더로지스</div><div  class='T_menu5' data-value='모람씨엔티'>모람씨엔티</div>";
+				    switch(cell.getField()){
+				        case 'CUSTOM_CARNO_NUM':
+				            if (A_GPS_ID != '' || A_APP_ID !='') {
+				                dropdown.onclick = function(event) {
+				                    var value = event.target.getAttribute("data-value");
+				                    if (value) {
+				                        if (value === "원더로지스" && A_APP_ID !="") {
+				                            window.open('trace_location.asp?MOBILE_ID='+A_APP_ID, '_blank', 'scrollbars=yes,width=710,height=710');
+				                        } else if (value === "모람씨엔티") {
+				                            openTraceMap('0pdTt29OWdFFWPcQEDafjg==', 2,A_GPS_ID,GPS_A_START,GPS_A_END);
+				                        }
+				                        dropdown.style.display = "none";
+				                    }
+				                };
+				            }else{
+				                dropdown.style.display = "none";
+				            }
+				        break
+				        case 'G_CAR_NO':
+				            if (B_GPS_ID != '' || B_APP_ID !='') {
+				                dropdown.onclick = function(event) {
+				                    var value = event.target.getAttribute("data-value");
+				                    if (value) {
+				                        if (value === "원더로지스" && B_APP_ID !="") {
+				                            window.open('trace_location.asp?MOBILE_ID='+B_APP_ID, '_blank', 'scrollbars=yes,width=710,height=710');
+				                        } else if (value === "모람씨엔티") {
+				                            openTraceMap('0pdTt29OWdFFWPcQEDafjg==', 2,B_GPS_ID,GPS_A_START,GPS_A_END);
+				                        }
+				                        dropdown.style.display = "none";
+				                    }
+				                };
+				            }else{
+				                dropdown.style.display = "none";
+				            }
+				        break
+				        default:
+				            dropdown.style.display = "none";
+				        break;
+				    }
+				});
+				
+				table.on("columnMoved", function(column) {
+				    console.log("컬럼이 이동되었습니다:", column.getField());
+				    saveAllocation_Column_Header();
+				});
+				
+				table.on("rowClick", function(e, row){
+				    if (row.getData().isEmpty) {
+				        return;
+				    }
+				    
+				    if (row.getElement().style.background == 'rgb(206, 216, 246)'){
+				        row.getElement().style.background = "#ffffff";
+				        var checkboxCell = row.getElement().querySelector('.tabulator-row-header');
+				        if (checkboxCell) {
+				            checkboxCell.style.background = "#ffffff";
+				        }
+				    } else {
+				        row.getElement().style.background = "#CED8F6";
+				        var checkboxCell = row.getElement().querySelector('.tabulator-row-header');
+				        if (checkboxCell) {
+				            checkboxCell.style.background = "#CED8F6";
+				        }
+				    }
+				});
+				
+				table.on("rowDblClick", function(e, row){
+				    let row_datas = row.getData();
+				    ord_view(row_datas.SO_NO,row_datas.SO_MODE_H,'car');
+				});
+				
+				table.on("columnResized", function () {
+				    let widths = table.getColumns().map(col => col.getWidth());
+				    localStorage.setItem("Wonder_Section_Allocation_ColumnWidths_<?php echo $section_allocation_page; ?>", JSON.stringify(widths));
+				});
+				
+				// ========== 15. 키보드 이벤트 리스너 ==========
+				document.addEventListener('keydown', function(e) {
+				    if (e.ctrlKey && (e.key === 'f' || e.key === 'F')) {
+				        e.preventDefault();
+				        var searchTerm = prompt("검색할 내용을 입력하세요:");
+				        if (searchTerm) {
+				            performSearch(searchTerm);
+				        }
+				    } 
+				    else if (e.ctrlKey && e.key === 'c') {
+				        if (selectedCells.length > 0) {
+				            e.preventDefault();
+				            copySelectedCells();
+				        }
+				    }
+				    else if (e.key === 'Enter' && searchResults.length > 0) {
+				        e.preventDefault();
+				        nextSearchResult();
+				    } else if (e.key === 'F3' && !e.shiftKey) {
+				        e.preventDefault();
+				        nextSearchResult();
+				    } else if (e.key === 'F3' && e.shiftKey) {
+				        e.preventDefault();
+				        prevSearchResult();
+				    } else if (e.key === 'Escape') {
+				        clearHighlights();
+				        clearCellSelection();
+				    }
+				});
+				
+				// ========== 16. window.onload (페이지 초기화) ==========
+				window.onload = function() {
+				    console.log('=== 페이지 로딩 시작 ===');
+				    console.log('테이블 데이터 개수:', tabledata ? tabledata.length : 0);
+				    console.log('컬럼 개수:', orderedColumns.length);
+				    
+				    // 데이터가 없으면 테이블 초기화 중단
+				    if (!tabledata || tabledata.length === 0) {
+				        console.log('데이터가 없어 테이블 초기화를 건너뜁니다.');
+				        return;
+				    }
+				    
+				    clearAllSorts();
+				    restoreColumnVisibility();
+				    setTimeout(() => {
+				        loadColumnWidths();
+				        
+				        setTimeout(() => {
+				            initializeSortState();
+				        }, 200);
+				        
+				        // 데이터가 있는 경우에만 빈 행 추가
+				        if (tabledata && tabledata.length > 0) {
+				            var emptyRowData = {
+				                isEmpty: true,
+				                OP_NM: "",
+				                SO_MODE_H: "",
+				                IO_TYPE: "",
+				            };
+				            
+				            columnData.forEach(function(column) {
+				                if (column.field && column.field !== 'isEmpty') {
+				                    emptyRowData[column.field] = "";
+				                }
+				            });
+				
+				            table.addRow(emptyRowData, false).then(function(row){
+				                console.log("빈 행 추가 완료");
+				            });
+				        }
+				        
+				        table.redraw(true);
+				        console.log('=== 테이블 렌더링 완료 ===');
+						updateFilterHighlight();					        
+				        // 테이블 렌더링 완료 후 통계 카운터 실행
+				        setTimeout(function() {
+				            if (typeof updateOrderCounter === 'function') {
+				                console.log('window.onload에서 updateOrderCounter 호출');
+				                updateOrderCounter();
+				            } else {
+				                console.warn('updateOrderCounter 함수가 아직 정의되지 않았습니다.');
+				            }
+				        }, 1000);
+				    }, 100);
+				};
+				
+				// ========== 17. CSS 스타일 ==========
+				if (!document.getElementById('sort-number-style')) {
+				    let style = document.createElement('style');
+				    style.id = 'sort-number-style';
+				    style.textContent = `
+				        .custom-sort-button {
+				            cursor: pointer;
+				            display: inline-block;
+				            padding: 0px 3px;
+				            margin-left: 2px;
+				            user-select: none;
+				            font-size: 10px;
+				            color: #666;
+				        }
+				        .custom-sort-button:hover {
+				            background-color: rgba(0, 0, 0, 0.1);
+				            border-radius: 2px;
+				            color: #000;
+				        }
+				    `;
+				    document.head.appendChild(style);
+				}
+        </script>
+		</div>
 		<div id="csetp_2" class="csetp_2"></div>
 		<div id="csetp_3" class="csetp_3"></div>
 	</div>
 	<div id="dropdown" class="dropdown"></div>
 </div>
-
 <?php $this->load->view('common/product_select_layer'); ?>
+<?php $this->load->view('common/grid_title_select'); ?>
 <?php $this->load->view('common/bottom'); ?>

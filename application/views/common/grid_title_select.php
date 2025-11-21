@@ -88,11 +88,17 @@
                 let cellCount = 0;
         
                 columnData.forEach((column, index) => {
-                    if (column.title && column.title.trim() !== "") {
+                    if (column.field) {
+                        // 공백을 제외하고 title이 정확히 "-"일 때만 field를 사용
+                        const titleValue = column.title ? stripHtmlTags(column.title).trim() : "";
+                        const displayTitle = (titleValue === "-") 
+                            ? column.field 
+                            : (titleValue !== "" ? titleValue : column.field);
+                        
                         // product-checkbox-label과 product-checkbox 클래스 사용
                         const checkboxHtml = `<label class="product-checkbox-label">
                             <input type="checkbox" id="${column.field}" class="product-checkbox" ${column.visible ? 'checked' : ''} onchange="toggleColumn('${column.field}', this)">
-                            <span>${stripHtmlTags(column.title)}</span>
+                            <span>${displayTitle}</span>
                         </label>`;
                         const $cell = $('<td></td>').html(checkboxHtml);
                         $row.append($cell);
